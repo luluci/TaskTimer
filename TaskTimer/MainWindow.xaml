@@ -27,10 +27,11 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <Canvas Height="61" VerticalAlignment="Top" Background="#FFB7FF84">
-            <Button Content="Button" Height="29" Canvas.Left="16" Canvas.Top="18" Width="122"/>
+        <Canvas Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
+            <Button Click="Button_Timer_Click" Content="Button" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122"/>
+            <TextBlock Height="27" Canvas.Left="424" TextWrapping="Wrap" Text="{Binding BaseCount}" Canvas.Top="10" Width="130" FontWeight="Bold" TextAlignment="Center" FontSize="20"/>
         </Canvas>
-        <Grid Margin="0,61,0,84" Background="#FF98E8FF">
+        <Grid Margin="0,47,0,84" Background="#FF98E8FF">
             <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,196,73" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

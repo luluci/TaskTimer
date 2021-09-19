@@ -18,6 +18,7 @@ namespace TaskTimer
             set { key = value; }
         }
 
+        public Timer timer;
         private Action updateTaskMain;
         private Action updateTaskSub;
         public WindowViewModel()
@@ -33,6 +34,10 @@ namespace TaskTimer
                 _updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectTask));
             };
+
+            // 
+            timer = new Timer();
+            baseCount = timer.BaseCountTime();
 
             //[Test]
             // テスト用初期値設定
@@ -116,6 +121,20 @@ namespace TaskTimer
         public void addTaskSub()
         {
             this.key[_selectedIndex].SubKey.Add(new TaskKeySub("New", "New", updateTaskSub));
+        }
+
+
+        private string baseCount;
+        public string BaseCount
+        {
+            get { return baseCount; }
+        }
+
+        public void TimerEllapse(int sec)
+        {
+            this.timer.Ellapse(1);
+            baseCount = timer.BaseCountTime();
+            NotifyPropertyChanged(nameof(BaseCount));
         }
     }
 
@@ -221,5 +240,26 @@ namespace TaskTimer
             this.time = 0;
         }
         
+    }
+
+    class Timer
+    {
+        private int baseCounter;
+
+        public Timer()
+        {
+            baseCounter = 0;
+        }
+
+        public void Ellapse(int sec)
+        {
+            baseCounter += sec;
+        }
+
+        public string BaseCountTime()
+        {
+            var span = new TimeSpan(0, 0, baseCounter);
+            return span.ToString(@"hh\:mm\:ss");
+        }
     }
 }
