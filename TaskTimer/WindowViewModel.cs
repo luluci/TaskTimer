@@ -20,17 +20,28 @@ namespace TaskTimer
 
         public WindowViewModel()
         {
+            // ChildからのNotify用コールバック
+            Action updateTaskMain = () =>
+            {
+                _updateSelectTaskMain();
+                NotifyPropertyChanged(nameof(SelectTask));
+            };
+            Action updateTaskSub = () =>
+            {
+                _updateSelectTaskSub();
+                NotifyPropertyChanged(nameof(SelectTask));
+            };
 
             //[Test]
             // テスト用初期値設定
             this.key = new ObservableCollection<TaskKey>();
-            this.key.Add(new TaskKey("alias1", "code1", "name1", "1"));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "2"));
-            this.key.Add(new TaskKey("エイリアス3", "コード3", "名前3", "3"));
-            this.key.Add(new TaskKey("長い名前の表示名４", "CODE4:AAAAAAAAA-AA", "長い名前のタスク名4", "4"));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "5"));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "6"));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "7"));
+            this.key.Add(new TaskKey("alias1", "code1", "name1", "1", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", "2", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("エイリアス3", "コード3", "名前3", "3", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("長い名前の表示名４", "CODE4:AAAAAAAAA-AA", "長い名前のタスク名4", "4", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", "5", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", "6", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", "7", updateTaskMain, updateTaskSub));
 
             // Subが最初から表示されてしまうので、初期状態で最初のタスクを選択しておく。
             this.SelectedIndex = 0;
@@ -53,9 +64,7 @@ namespace TaskTimer
             set
             {
                 _selectedIndex = value;
-                //_selectTaskMain = key[value].code + " / " + key[value].name;
-                _selectTaskMain = key[value].code + " / " + key[value].name + " / " + key[value].alias;
-                _selectTask = _selectTaskMain + " " + _selectTaskSub;
+                _updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectedIndex));
                 NotifyPropertyChanged(nameof(SelectTask));
             }
@@ -69,11 +78,23 @@ namespace TaskTimer
             set
             {
                 _selectedIndexSub = value;
-                _selectTaskSub = "[" + key[_selectedIndex].SubKey[value].code + "]";
-                _selectTask = _selectTaskMain + " " + _selectTaskSub;
+                _updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectedIndexSub));
                 NotifyPropertyChanged(nameof(SelectTask));
             }
+        }
+
+        private void _updateSelectTaskMain()
+        {
+            //_selectTaskMain = key[_selectedIndex].code + " / " + key[_selectedIndex].name;
+            _selectTaskMain = key[_selectedIndex].code + " / " + key[_selectedIndex].name + " / " + key[_selectedIndex].alias;
+            _selectTask = _selectTaskMain + " " + _selectTaskSub;
+        }
+
+        private void _updateSelectTaskSub()
+        {
+            _selectTaskSub = "[" + key[_selectedIndex].SubKey[_selectedIndexSub].code + "]";
+            _selectTask = _selectTaskMain + " " + _selectTaskSub;
         }
         
         public string SelectTask
@@ -97,30 +118,35 @@ namespace TaskTimer
         public string alias;
         public string code;
         public string name;
+        private Action _updateSelectTaskMain = null;
+        private Action _updateSelectTaskSub = null;
 
         public string Alias {
             get { return alias; }
             set
             {
                 alias = value;
+                _updateSelectTaskMain?.Invoke();
             }
         }
 
-        public TaskKey(string alias, string code, string name, string id)
+        public TaskKey(string alias, string code, string name, string id, Action _main, Action _sub)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-1", "code_sub" + id + "-1"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-2", "code_sub" + id + "-2"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-3", "code_sub" + id + "-3"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-4", "code_sub" + id + "-4"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-5", "code_sub" + id + "-5"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-6", "code_sub" + id + "-6"));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-7", "code_sub" + id + "-7"));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-1", "code_sub" + id + "-1", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-2", "code_sub" + id + "-2", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-3", "code_sub" + id + "-3", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-4", "code_sub" + id + "-4", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-5", "code_sub" + id + "-5", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-6", "code_sub" + id + "-6", _sub));
+            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-7", "code_sub" + id + "-7", _sub));
 
             this.alias = alias;
             this.code = code;
             this.name = name;
+            _updateSelectTaskMain = _main;
+            _updateSelectTaskSub = _sub;
         }
         
     }
@@ -129,6 +155,7 @@ namespace TaskTimer
     {
         public string alias;
         public string code;
+        private Action _updateSelectTaskSub = null;
 
         public string Alias
         {
@@ -137,10 +164,11 @@ namespace TaskTimer
         }
 
 
-        public TaskKeySub(string alias, string code)
+        public TaskKeySub(string alias, string code, Action _sub)
         {
             this.alias = alias;
             this.code = code;
+            _updateSelectTaskSub = _sub;
         }
         
     }
