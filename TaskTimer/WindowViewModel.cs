@@ -53,10 +53,11 @@ namespace TaskTimer
             set
             {
                 _selectedIndex = value;
-                _selectTaskMain = key[value].code + " / " + key[value].name;
+                //_selectTaskMain = key[value].code + " / " + key[value].name;
+                _selectTaskMain = key[value].code + " / " + key[value].name + " / " + key[value].alias;
                 _selectTask = _selectTaskMain + " " + _selectTaskSub;
-                NotifyPropertyChanged("SelectedIndex");
-                NotifyPropertyChanged("SelectTask");
+                NotifyPropertyChanged(nameof(SelectedIndex));
+                NotifyPropertyChanged(nameof(SelectTask));
             }
         }
 
@@ -70,8 +71,8 @@ namespace TaskTimer
                 _selectedIndexSub = value;
                 _selectTaskSub = "[" + key[_selectedIndex].SubKey[value].code + "]";
                 _selectTask = _selectTaskMain + " " + _selectTaskSub;
-                NotifyPropertyChanged("SelectedIndexSub");
-                NotifyPropertyChanged("SelectTask");
+                NotifyPropertyChanged(nameof(SelectedIndexSub));
+                NotifyPropertyChanged(nameof(SelectTask));
             }
         }
         
@@ -99,7 +100,10 @@ namespace TaskTimer
 
         public string Alias {
             get { return alias; }
-            set { alias = value; }
+            set
+            {
+                alias = value;
+            }
         }
 
         public TaskKey(string alias, string code, string name, string id)

@@ -16,14 +16,26 @@
             <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,229,39" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Alias}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
             <ListBox x:Name="TaskKey2" ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="0,10,10,39" Background="White" HorizontalAlignment="Right" Width="214">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Alias}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
