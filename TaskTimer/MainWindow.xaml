@@ -22,7 +22,11 @@
         </DataTemplate>
         <DataTemplate x:Key="TaskListViewCellTemplateTime">
             <Grid>
-                <TextBlock Text="{Binding Time}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding TimeDisp}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                <TextBox Text="{Binding TimeDisp, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
     </Window.Resources>

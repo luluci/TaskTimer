@@ -59,10 +59,12 @@ namespace TaskTimer
         private void StartTimer()
         {
             timer.Start();
+            this.vm.TimerStart();
         }
         private void StopTimer()
         {
             timer.Stop();
+            this.vm.TimerStop();
         }
 
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)

@@ -71,9 +71,9 @@ namespace TaskTimer
             set
             {
                 _selectedIndex = value;
-                _updateSelectTaskMain();
+                //_updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectedIndex));
-                NotifyPropertyChanged(nameof(SelectTask));
+                //NotifyPropertyChanged(nameof(SelectTask));
             }
         }
 
@@ -85,9 +85,9 @@ namespace TaskTimer
             set
             {
                 _selectedIndexSub = value;
-                _updateSelectTaskSub();
+                //_updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectedIndexSub));
-                NotifyPropertyChanged(nameof(SelectTask));
+                //NotifyPropertyChanged(nameof(SelectTask));
             }
         }
 
@@ -132,9 +132,27 @@ namespace TaskTimer
 
         public void TimerEllapse(int sec)
         {
+            // sec秒経過
             this.timer.Ellapse(1);
+            // タスクへの計上判定
+            if (this.timer.reqTaskCount)
+            {
+                var min = this.timer.taskCounter / 60;
+                this.key[_selectedIndex].SubKey[_selectedIndexSub].TimerEllapse(min);
+            }
+            // 全体時間更新
             baseCount = timer.BaseCountTime();
             NotifyPropertyChanged(nameof(BaseCount));
+        }
+
+        public void TimerStart()
+        {
+            this.timer.CountStart();
+        }
+
+        public void TimerStop()
+        {
+
         }
     }
 
@@ -156,7 +174,7 @@ namespace TaskTimer
             set
             {
                 alias = value;
-                _updateSelectTaskMain?.Invoke();
+                //_updateSelectTaskMain?.Invoke();
             }
         }
 
@@ -166,7 +184,7 @@ namespace TaskTimer
             get { return code; }
             set {
                 code = value;
-                _updateSelectTaskMain?.Invoke();
+                //_updateSelectTaskMain?.Invoke();
             }
         }
 
@@ -177,7 +195,7 @@ namespace TaskTimer
             set
             {
                 name = value;
-                _updateSelectTaskMain?.Invoke();
+                //_updateSelectTaskMain?.Invoke();
             }
         }
 
@@ -206,6 +224,8 @@ namespace TaskTimer
     {
         private Action _updateSelectTaskSub = null;
         public int time;
+        public string timeDisp;
+        
 
         public string alias;
         public string Alias
@@ -221,14 +241,25 @@ namespace TaskTimer
             set
             {
                 code = value;
-                _updateSelectTaskSub?.Invoke();
+                //_updateSelectTaskSub?.Invoke();
+                //NotifyPropertyChanged(nameof(Code));
             }
         }
 
-        public int Time
+        public void TimerEllapse(int min)
         {
-            get { return time; }
-            set { time = value; }
+            time += min;
+        }
+        public void MakeDispTime()
+        {
+            var span = new TimeSpan(0, time, 0);
+            timeDisp = span.ToString(@"hh\:mm");
+        }
+
+        public string TimeDisp
+        {
+            get { return timeDisp; }
+            set { timeDisp = value; }
         }
 
 
@@ -238,22 +269,57 @@ namespace TaskTimer
             this.code = code;
             _updateSelectTaskSub = _sub;
             this.time = 0;
+            this.MakeDispTime();
         }
         
     }
 
     class Timer
     {
-        private int baseCounter;
+        private int baseCounter;    // 全体経過時間
+        public int taskCounter;    // タスク経過時間
+        private int delayCounter;   // タスク切り替え後の正式に計上するまでの猶予時間
+        private bool isFirstCount;  // カウント開始から一度もタスクに計上してない
+        public bool reqTaskCount;  // タスクへの計上要求
 
         public Timer()
         {
             baseCounter = 0;
+            taskCounter = 0;
+            delayCounter = 0;
+            isFirstCount = true;
+        }
+
+        public void CountStart()
+        {
+            delayCounter = 0;
+            isFirstCount = true;
+            reqTaskCount = false;
         }
 
         public void Ellapse(int sec)
         {
             baseCounter += sec;
+            taskCounter += sec;
+            delayCounter += sec;
+
+            if (isFirstCount)
+            {
+                // 初回は同じタスクのまま5分経過したら計上
+                if (delayCounter > 5 * 60)
+                {
+                    reqTaskCount = true;
+                    isFirstCount = false;
+                }
+            }
+            else
+            {
+                // 2回目以降は同じタスクのまま1分経過したら計上
+                if (delayCounter > 1 * 60)
+                {
+                    reqTaskCount = true;
+                }
+            }
         }
 
         public string BaseCountTime()
