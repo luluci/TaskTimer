@@ -18,15 +18,17 @@ namespace TaskTimer
             set { key = value; }
         }
 
+        private Action updateTaskMain;
+        private Action updateTaskSub;
         public WindowViewModel()
         {
             // ChildからのNotify用コールバック
-            Action updateTaskMain = () =>
+            updateTaskMain = () =>
             {
                 _updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectTask));
             };
-            Action updateTaskSub = () =>
+            updateTaskSub = () =>
             {
                 _updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectTask));
@@ -103,6 +105,17 @@ namespace TaskTimer
             {
                 return _selectTask;
             }
+        }
+
+
+        public void addTaskMain()
+        {
+            this.key.Add(new TaskKey("New", "New", "New", "8", updateTaskMain, updateTaskSub));
+        }
+
+        public void addTaskSub()
+        {
+            this.key[_selectedIndex].SubKey.Add(new TaskKeySub("New", "New", updateTaskSub));
         }
     }
 

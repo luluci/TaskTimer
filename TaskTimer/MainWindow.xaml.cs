@@ -47,5 +47,15 @@ namespace TaskTimer
             tb.Visibility = Visibility.Visible;
             ((TextBox)sender).Visibility = Visibility.Collapsed;
         }
+
+        private void Button_AddTask_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.addTaskMain();
+        }
+
+        private void Button_AddSubTask_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.addTaskSub();
+        }
     }
 }

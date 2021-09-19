@@ -41,6 +41,9 @@
             </ListBox>
             <TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>
         </Grid>
-        <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom"/>
+        <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
+            <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Width="115"/>
+            <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="143,14,0,0" VerticalAlignment="Top" Width="123"/>
+        </Grid>
     </Grid>
 </Window>
