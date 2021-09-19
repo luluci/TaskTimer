@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
+using static Value;
+// グローバル定数
+static class Value
+{
+    public const int countDiv = 60;
+}
+
 namespace TaskTimer
 {
+
     class WindowViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<TaskKey> key;
@@ -137,8 +145,10 @@ namespace TaskTimer
             // タスクへの計上判定
             if (this.timer.reqTaskCount)
             {
-                var min = this.timer.taskCounter / 60;
+                var min = this.timer.taskCounter / countDiv;
                 this.key[_selectedIndex].SubKey[_selectedIndexSub].TimerEllapse(min);
+                this.key[_selectedIndex].SubKey[_selectedIndexSub].MakeDispTime();
+                this.timer.CountRestart();
             }
             // 全体時間更新
             baseCount = timer.BaseCountTime();
@@ -217,11 +227,17 @@ namespace TaskTimer
             _updateSelectTaskMain = _main;
             _updateSelectTaskSub = _sub;
         }
-        
     }
 
-    class TaskKeySub
+    class TaskKeySub : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string PropertyName)
+        {
+            var e = new PropertyChangedEventArgs(PropertyName);
+            PropertyChanged?.Invoke(this, e);
+        }
+
         private Action _updateSelectTaskSub = null;
         public int time;
         public string timeDisp;
@@ -254,6 +270,7 @@ namespace TaskTimer
         {
             var span = new TimeSpan(0, time, 0);
             timeDisp = span.ToString(@"hh\:mm");
+            NotifyPropertyChanged(nameof(TimeDisp));
         }
 
         public string TimeDisp
@@ -296,6 +313,12 @@ namespace TaskTimer
             isFirstCount = true;
             reqTaskCount = false;
         }
+        public void CountRestart()
+        {
+            // タスクに計上後、再スタート
+            taskCounter = 0;
+            delayCounter = 0;
+        }
 
         public void Ellapse(int sec)
         {
@@ -306,7 +329,7 @@ namespace TaskTimer
             if (isFirstCount)
             {
                 // 初回は同じタスクのまま5分経過したら計上
-                if (delayCounter > 5 * 60)
+                if (delayCounter >= 5 * countDiv)
                 {
                     reqTaskCount = true;
                     isFirstCount = false;
@@ -315,7 +338,7 @@ namespace TaskTimer
             else
             {
                 // 2回目以降は同じタスクのまま1分経過したら計上
-                if (delayCounter > 1 * 60)
+                if (delayCounter >= 1 * countDiv)
                 {
                     reqTaskCount = true;
                 }
