@@ -128,12 +128,10 @@ namespace TaskTimer
             set { subkey = value; }
         }
 
-        public string alias;
-        public string code;
-        public string name;
         private Action _updateSelectTaskMain = null;
         private Action _updateSelectTaskSub = null;
 
+        public string alias;
         public string Alias {
             get { return alias; }
             set
@@ -143,17 +141,38 @@ namespace TaskTimer
             }
         }
 
+        public string code;
+        public string Code
+        {
+            get { return code; }
+            set {
+                code = value;
+                _updateSelectTaskMain?.Invoke();
+            }
+        }
+
+        public string name;
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
+                _updateSelectTaskMain?.Invoke();
+            }
+        }
+
         public TaskKey(string alias, string code, string name, string id, Action _main, Action _sub)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-1", "code_sub" + id + "-1", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-2", "code_sub" + id + "-2", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-3", "code_sub" + id + "-3", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-4", "code_sub" + id + "-4", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-5", "code_sub" + id + "-5", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-6", "code_sub" + id + "-6", _sub));
-            this.subkey.Add(new TaskKeySub("alias_sub" + id + "-7", "code_sub" + id + "-7", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-1", "code_sub" + id + "-1", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-2", "code_sub" + id + "-2", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-3", "code_sub" + id + "-3", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-4", "code_sub" + id + "-4", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-5", "code_sub" + id + "-5", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-6", "code_sub" + id + "-6", _sub));
+            this.subkey.Add(new TaskKeySub("sub" + id + "-7", "code_sub" + id + "-7", _sub));
 
             this.alias = alias;
             this.code = code;
@@ -166,14 +185,31 @@ namespace TaskTimer
 
     class TaskKeySub
     {
-        public string alias;
-        public string code;
         private Action _updateSelectTaskSub = null;
+        public int time;
 
+        public string alias;
         public string Alias
         {
             get { return alias; }
             set { alias = value; }
+        }
+
+        public string code;
+        public string Code
+        {
+            get { return code; }
+            set
+            {
+                code = value;
+                _updateSelectTaskSub?.Invoke();
+            }
+        }
+
+        public int Time
+        {
+            get { return time; }
+            set { time = value; }
         }
 
 
@@ -182,6 +218,7 @@ namespace TaskTimer
             this.alias = alias;
             this.code = code;
             _updateSelectTaskSub = _sub;
+            this.time = 0;
         }
         
     }

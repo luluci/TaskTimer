@@ -5,15 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTimer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="415.567" Width="598.153">
+        Title="MainWindow" Height="471.557" Width="572.024">
     <Window.Resources>
+        <Style x:Key="TaskListViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <DataTemplate x:Key="TaskListViewCellTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                <TextBox Text="{Binding Alias, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="TaskListViewCellTemplateTime">
+            <Grid>
+                <TextBlock Text="{Binding Time}" />
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Canvas Height="61" VerticalAlignment="Top" Background="#FFB7FF84">
             <Button Content="Button" Height="29" Canvas.Left="16" Canvas.Top="18" Width="122"/>
         </Canvas>
         <Grid Margin="0,61,0,84" Background="#FF98E8FF">
-            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,229,39" Background="White">
+            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,196,73" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -26,6 +44,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <!--
             <ListBox x:Name="TaskKey2" ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="0,10,10,39" Background="White" HorizontalAlignment="Right" Width="214">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -39,11 +58,24 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>
+            -->
+            <Grid Margin="0,10,10,73" Background="White" HorizontalAlignment="Right" Width="181"/>
+            <ListView ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="0,10,10,73" Background="White" HorizontalAlignment="Right" Width="181">
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
+                        <GridViewColumn Width="70" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
+                        <GridViewColumn CellTemplate="{StaticResource TaskListViewCellTemplateTime}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBox Text="{Binding Key/Code, Mode=TwoWay}" HorizontalAlignment="Left" Height="24" Margin="10,0,0,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="159"/>
+            <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Height="24" Margin="174,0,196,44" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+            <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Height="24" Margin="0,0,98,44" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="93"/>
+            <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
+            <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="10,0,0,10" Width="115" Height="27" VerticalAlignment="Bottom"/>
+            <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="142,0,0,10" Width="123" Height="27" VerticalAlignment="Bottom"/>
         </Grid>
         <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
-            <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Width="115"/>
-            <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="143,14,0,0" VerticalAlignment="Top" Width="123"/>
         </Grid>
     </Grid>
 </Window>
