@@ -13,7 +13,7 @@ using static Value;
 // グローバル定数
 static class Value
 {
-    public const int countDiv = 1;
+    public const int countDiv = 60;
 }
 
 namespace TaskTimer
@@ -34,6 +34,7 @@ namespace TaskTimer
         public Timer timer;
         private Action updateTaskMain;
         private Action<int, int> updateTaskSub;
+        private Task autosaveTask = null;
 
         public WindowViewModel()
         {
@@ -254,6 +255,8 @@ namespace TaskTimer
             UpdateBaseCount();
             // delay時間更新
             UpdateDelayCount();
+            // 自動保存処理
+            AutoSave();
         }
 
         private void UpdateBaseCount()
@@ -267,6 +270,23 @@ namespace TaskTimer
             // delay時間更新
             delayCount = timer.DelayCountTime();
             NotifyPropertyChanged(nameof(DelayCount));
+        }
+
+        private void AutoSave()
+        {
+            if (timer.ReqAutoSave())
+            {
+                // 自動保存要求があれば
+                // タスクなし または 完了済みなら自動保存する
+                // running中のタスクがあるならスキップ
+                if (autosaveTask == null || autosaveTask.IsCompleted)
+                {
+                    // UIスレッド内でログを転送
+                    this.logger.Update(this.key);
+                    // asyncにファイル書き込みを投げる
+                    autosaveTask = this.logger.SaveAsync();
+                }
+            }
         }
 
         public void TimerStart()
@@ -510,11 +530,13 @@ namespace TaskTimer
 
     class Timer
     {
-        private int baseCounter;    // 全体経過時間
-        public int taskCounter;    // タスク経過時間
-        private int delayCounter;   // タスク切り替え後の正式に計上するまでの猶予時間
-        private bool isFirstCount;  // カウント開始から一度もタスクに計上してない
-        public bool reqTaskCount;  // タスクへの計上要求
+        private int baseCounter;        // 全体経過時間
+        public int taskCounter;         // タスク経過時間
+        private int delayCounter;       // タスク切り替え後の正式に計上するまでの猶予時間
+        private bool isFirstCount;      // カウント開始から一度もタスクに計上してない
+        public bool reqTaskCount;       // タスクへの計上要求
+        public int autosaveCounter;     // 自動保存カウンタ
+        public bool reqAutoSave;        // 自動保存要求
 
         public Timer()
         {
@@ -522,6 +544,8 @@ namespace TaskTimer
             taskCounter = 0;
             delayCounter = 0;
             isFirstCount = true;
+            autosaveCounter = 0;
+            reqAutoSave = false;
         }
 
         public void CountStart()
@@ -529,6 +553,8 @@ namespace TaskTimer
             delayCounter = 0;
             isFirstCount = true;
             reqTaskCount = false;
+            autosaveCounter = 0;
+            reqAutoSave = false;
         }
         public void CountRestart()
         {
@@ -550,6 +576,7 @@ namespace TaskTimer
             baseCounter += sec;
             taskCounter += sec;
             delayCounter += sec;
+            autosaveCounter += sec;
 
             if (isFirstCount)
             {
@@ -568,6 +595,19 @@ namespace TaskTimer
                     reqTaskCount = true;
                 }
             }
+            // 30分ごとに自動保存する
+            if (autosaveCounter >= 30 * countDiv)
+            {
+                autosaveCounter = 0;
+                reqAutoSave = true;
+            }
+        }
+
+        public bool ReqAutoSave()
+        {
+            var result = reqAutoSave;
+            reqAutoSave = false;
+            return result;
         }
 
         public string BaseCountTime()

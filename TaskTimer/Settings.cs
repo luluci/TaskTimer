@@ -17,7 +17,9 @@ namespace TaskTimer
         private string rootDir;
         private string inputDir;
         private string inputKeyFile;
+        private string inputKeyFileTemp;
         private string inputSubKeyFile;
+        private string inputSubKeyFileTemp;
 
         public List<(string Code, string Name, string Alias, string SubCode, string SubAlias)> Keys;
         public List<(string Code, string Alias)> SubKeys;
@@ -26,8 +28,10 @@ namespace TaskTimer
         {
             rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             inputDir = rootDir + @"\settings";
-            inputKeyFile = inputDir + @"\key.txt";                      // Key * SubKey の全組み合わせを記憶
-            inputSubKeyFile = inputDir + @"\subkey_template.txt";       // SubKeyのテンプレート設定
+            inputKeyFile = inputDir + @"\key.txt";                          // Key * SubKey の全組み合わせを記憶
+            inputKeyFileTemp = inputDir + @"\key.tmp";                      // Key * SubKey の全組み合わせを記憶
+            inputSubKeyFile = inputDir + @"\subkey_template.txt";           // SubKeyのテンプレート設定ファイル
+            inputSubKeyFileTemp = inputDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
 
             Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias)>();
             SubKeys = new List<(string Code, string Alias)>();
@@ -146,13 +150,18 @@ namespace TaskTimer
         public async Task SaveAsync()
         {
             // ファイル書き込み
-            using (var writer = new StreamWriter(inputKeyFile))
+            // tmpファイルに一旦保存する
+            using (var writer = new StreamWriter(inputKeyFileTemp))
             {
                 foreach (var key in Keys)
                 {
                     writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}");
                 }
             }
+            // 旧ファイルを削除
+            File.Delete(inputKeyFile);
+            // tmpファイルを新ファイルとしてリネーム
+            File.Move(inputKeyFileTemp, inputKeyFile);
         }
     }
 }

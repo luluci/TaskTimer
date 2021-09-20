@@ -17,6 +17,7 @@ namespace TaskTimer
         private string baseFileName;
         private string daykey;
         private string logFile;
+        private string logFileTemp;
 
         public bool reqRestore;
 
@@ -34,6 +35,7 @@ namespace TaskTimer
             daykey = dt.ToString("yyyyMMdd");
             // ログファイル名作成
             logFile = $@"{logDir}\{baseFileName}.{daykey}.txt";
+            logFileTemp = $@"{logDir}\{baseFileName}.{daykey}.tmp";
             // ログからの復旧有無
             reqRestore = false;
         }
@@ -135,13 +137,17 @@ namespace TaskTimer
         public async Task SaveAsync()
         {
             // ファイル書き込み
-            using (var writer = new StreamWriter(logFile))
+            using (var writer = new StreamWriter(logFileTemp))
             {
                 foreach (var key in Logs)
                 {
                     writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.min}");
                 }
             }
+            // 旧ファイルを削除
+            File.Delete(logFile);
+            // tmpファイルを新ファイルとしてリネーム
+            File.Move(logFileTemp, logFile);
         }
     }
 }
