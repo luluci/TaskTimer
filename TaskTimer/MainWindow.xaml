@@ -35,7 +35,7 @@
     </Window.Resources>
     <Grid>
         <Grid Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
-            <Button Click="Button_Timer_Click" Content="Button" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Button Click="Button_Timer_Click" Content="{Binding ButtonTimerOn}" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <TextBlock Height="30" Canvas.Left="332" TextWrapping="Wrap" Text="{Binding BaseCount}" Width="130" FontWeight="Bold" TextAlignment="Center" FontSize="20" Canvas.Top="4" TextDecorations="Underline" Margin="0,2,128,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>
             <TextBlock Height="17" Canvas.Left="332" TextWrapping="Wrap" Text="総カウント時間" Width="130" FontFamily="Meiryo UI" TextAlignment="Center" FontSize="11" Canvas.Top="30" Margin="0,30,128,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
             <TextBlock Height="22" Margin="0,10,22,0" TextWrapping="Wrap" Text="{Binding DelayCount}" VerticalAlignment="Top" TextAlignment="Center" TextDecorations="Underline" HorizontalAlignment="Right" Width="80"/>
@@ -74,17 +74,19 @@
             <ListView ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="0,10,10,73" Background="White" HorizontalAlignment="Right" Width="181">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
-                        <GridViewColumn Width="70" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
+                        <GridViewColumn Width="80" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
                         <GridViewColumn CellTemplate="{StaticResource TaskListViewCellTemplateTime}" />
                     </GridView>
                 </ListView.View>
             </ListView>
             <TextBox Text="{Binding Key/Code, Mode=TwoWay}" HorizontalAlignment="Left" Height="24" Margin="10,0,0,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="159"/>
             <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Height="24" Margin="174,0,196,44" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
-            <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Height="24" Margin="0,0,98,44" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="93"/>
+            <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Height="24" Margin="0,0,111,44" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="80"/>
             <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
             <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="10,0,0,10" Width="115" Height="27" VerticalAlignment="Bottom"/>
             <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="142,0,0,10" Width="123" Height="27" VerticalAlignment="Bottom"/>
+            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Height="24" Margin="0,0,23,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="74" IsEnabled="False" IsReadOnlyCaretVisible="True"/>
+            <TextBlock HorizontalAlignment="Right" Height="19" Margin="0,0,23,43" TextWrapping="Wrap" Text="総計" VerticalAlignment="Bottom" Width="31" FontSize="11" TextAlignment="Right"/>
         </Grid>
         <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
         </Grid>

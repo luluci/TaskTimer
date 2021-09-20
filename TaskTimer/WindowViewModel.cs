@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 using static Value;
 // グローバル定数
 static class Value
 {
-    public const int countDiv = 10;
+    public const int countDiv = 1;
 }
 
 namespace TaskTimer
@@ -26,9 +27,11 @@ namespace TaskTimer
             set { key = value; }
         }
 
+        private Summary summary;
         public Timer timer;
         private Action updateTaskMain;
-        private Action updateTaskSub;
+        private Action<int, int> updateTaskSub;
+
         public WindowViewModel()
         {
             // ChildからのNotify用コールバック
@@ -37,11 +40,17 @@ namespace TaskTimer
                 _updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectTask));
             };
-            updateTaskSub = () =>
+            updateTaskSub = (int oldtime, int newtime) =>
             {
-                _updateSelectTaskSub();
-                NotifyPropertyChanged(nameof(SelectTask));
+                //_updateSelectTaskSub();
+                //NotifyPropertyChanged(nameof(SelectTask));
+                int diff = newtime - oldtime;
+                SummaryAdd(diff);
             };
+
+            //
+            summary = new Summary();
+            SummaryAdd(0);
 
             // 
             timer = new Timer();
@@ -152,7 +161,7 @@ namespace TaskTimer
         public void TimerEllapse(int sec)
         {
             // sec秒経過
-            this.timer.Ellapse(1);
+            this.timer.Ellapse(sec);
             // タスクへの計上判定
             if (this.timer.reqTaskCount)
             {
@@ -160,6 +169,7 @@ namespace TaskTimer
                 this.key[_selectedIndex].SubKey[_selectedIndexSub].TimerEllapse(min);
                 this.key[_selectedIndex].SubKey[_selectedIndexSub].MakeDispTime();
                 this.timer.CountRestart();
+                this.SummaryAdd(min);
             }
             // 全体時間更新
             UpdateBaseCount();
@@ -189,6 +199,40 @@ namespace TaskTimer
         {
 
         }
+
+        private void SummaryAdd(int sec)
+        {
+            this.summary.Add(sec);
+            var span = new TimeSpan(0, summary.timeAll, 0);
+            timeSummary = span.ToString(@"hh\:mm");
+            NotifyPropertyChanged(nameof(TimeSummary));
+        }
+
+        private string timeSummary;
+        public string TimeSummary
+        {
+            get { return timeSummary; }
+        }
+
+        public void OnButtonClick_TimerOn(bool isCounting)
+        {
+            if (isCounting)
+            {
+                // 現在カウント中なら
+                buttonTimerOn = "タイマ停止";
+            } 
+            else
+            {
+                // 現在カウント中でないなら
+                buttonTimerOn = "タイマ開始";
+            }
+            NotifyPropertyChanged(nameof(ButtonTimerOn));
+        }
+        private string buttonTimerOn = "タイマ開始";
+        public string ButtonTimerOn
+        {
+            get { return buttonTimerOn; }
+        }
     }
 
     class TaskKey
@@ -201,7 +245,7 @@ namespace TaskTimer
         }
 
         private Action _updateSelectTaskMain = null;
-        private Action _updateSelectTaskSub = null;
+        private Action<int, int> _updateSelectTaskSub = null;
 
         public string alias;
         public string Alias {
@@ -234,7 +278,7 @@ namespace TaskTimer
             }
         }
 
-        public TaskKey(string alias, string code, string name, string id, Action _main, Action _sub)
+        public TaskKey(string alias, string code, string name, string id, Action _main, Action<int, int> _sub)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
@@ -263,10 +307,11 @@ namespace TaskTimer
             PropertyChanged?.Invoke(this, e);
         }
 
-        private Action _updateSelectTaskSub = null;
+        private Action<int, int> _updateTimeSub = null;
         public int time;
         public string timeDisp;
-        
+        private readonly Regex reTimeWithColon;
+        private readonly Regex reTimeWithoutColon;
 
         public string alias;
         public string Alias
@@ -301,17 +346,83 @@ namespace TaskTimer
         public string TimeDisp
         {
             get { return timeDisp; }
-            set { timeDisp = value; }
+            set
+            {
+                Match match;
+                match = reTimeWithColon.Match(value);
+                if (match.Success)
+                {
+                    try
+                    {
+                        // HH:MMをminに直す
+                        GroupCollection groups = match.Groups;
+                        int hour = int.Parse(groups[1].ToString());
+                        int min = int.Parse(groups[2].ToString());
+                        int oldtime = this.time;
+                        this.time = hour * 60 + min;
+                        _updateTimeSub(oldtime, this.time);
+                        // 正常に解析出来たら文字列に反映
+                        timeDisp = value;
+                        NotifyPropertyChanged(nameof(TimeDisp));
+                    }
+                    catch
+                    {
+                        // 解析失敗で無視
+                    }
+                }
+                else
+                {
+                    match = reTimeWithoutColon.Match(value);
+                    if (match.Success)
+                    {
+                        try
+                        {
+                            // HH:MMをminに直す
+                            GroupCollection groups = match.Groups;
+                            int hour = int.Parse(groups[1].ToString());
+                            int min = int.Parse(groups[2].ToString());
+                            int oldtime = this.time;
+                            this.time = hour * 60 + min;
+                            _updateTimeSub(oldtime, this.time);
+                            // 正常に解析出来たら文字列に反映
+                            timeDisp = groups[1].ToString() + ":" + groups[2].ToString();
+                            NotifyPropertyChanged(nameof(TimeDisp));
+                        }
+                        catch
+                        {
+                            // 解析失敗で無視
+                        }
+                    }
+                    else
+                    {
+                        // NG文字列は無視
+                        //timeDisp = value;
+                    }
+                }
+            }
         }
 
+        /*
+        private async Task test1()
+        {
+            await test2();
+        }
+        private async Task test2()
+        {
+            await Task.Delay(10 * 1000);
+            System.Windows.MessageBox.Show("delayed！");
+        }
+        */
 
-        public TaskKeySub(string alias, string code, Action _sub)
+        public TaskKeySub(string alias, string code, Action<int, int> _sub)
         {
             this.alias = alias;
             this.code = code;
-            _updateSelectTaskSub = _sub;
+            _updateTimeSub = _sub;
             this.time = 0;
             this.MakeDispTime();
+            this.reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
+            this.reTimeWithoutColon = new Regex(@"^(\d+)(\d\d)$", RegexOptions.Compiled);
         }
         
     }
@@ -397,6 +508,21 @@ namespace TaskTimer
             }
             var span = new TimeSpan(0, 0, delay);
             return span.ToString(@"hh\:mm\:ss");
+        }
+    }
+
+    class Summary
+    {
+        public int timeAll;
+
+        public Summary()
+        {
+            timeAll = 0;
+        }
+
+        public void Add(int min)
+        {
+            timeAll += min;
         }
     }
 }

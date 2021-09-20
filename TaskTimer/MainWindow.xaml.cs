@@ -109,11 +109,13 @@ namespace TaskTimer
             {
                 IsTimerCounting = false;
                 StopTimer();
+                this.vm.OnButtonClick_TimerOn(IsTimerCounting);
             }
             else
             {
                 IsTimerCounting = true;
                 StartTimer();
+                this.vm.OnButtonClick_TimerOn(IsTimerCounting);
             }
         }
     }
