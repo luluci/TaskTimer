@@ -29,6 +29,7 @@ namespace TaskTimer
         }
 
         public Settings settings;
+        public Logger logger;
         private Summary summary;
         public Timer timer;
         private Action updateTaskMain;
@@ -39,6 +40,9 @@ namespace TaskTimer
             //
             settings = new Settings();
             settings.Load();
+            //
+            logger = new Logger();
+            logger.Load();
 
             // ChildからのNotify用コールバック
             updateTaskMain = () =>
@@ -54,8 +58,6 @@ namespace TaskTimer
                 SummaryAdd(diff);
             };
 
-            LoadSettings();
-
             //
             summary = new Summary();
             SummaryAdd(0);
@@ -63,6 +65,9 @@ namespace TaskTimer
             // 
             timer = new Timer();
             baseCount = timer.BaseCountTime();
+
+            LoadSettings();
+            LoadLog();
 
             /*
             //[Test]
@@ -112,11 +117,31 @@ namespace TaskTimer
             }
         }
 
+        private void LoadLog()
+        {
+            if (logger.reqRestore)
+            {
+                // 復旧要求があれば
+                int sum = logger.Restore(key);
+                // 
+                SummaryAdd(sum);
+            }
+        }
+
         public void Close()
         {
-            this.settings.Update(this.key);
-            var task = this.settings.SaveAsync();
-            task.Wait();
+            // Setting出力
+            {
+                this.settings.Update(this.key);
+                var task = this.settings.SaveAsync();
+                task.Wait();
+            }
+            // ログ出力
+            {
+                this.logger.Update(this.key);
+                var task = this.logger.SaveAsync();
+                task.Wait();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
