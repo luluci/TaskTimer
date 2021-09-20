@@ -210,7 +210,14 @@ namespace TaskTimer
 
         public void addTaskMain()
         {
-            this.key.Add(new TaskKey("New", "New", "New", updateTaskMain, updateTaskSub));
+            // 新しいタスク追加
+            var newtask = new TaskKey("New", "New", "New", updateTaskMain, updateTaskSub);
+            this.key.Add(newtask);
+            // SubKey追加
+            foreach (var subkey in settings.SubKeys)
+            {
+                newtask.SubKey.Add(new TaskKeySub(subkey.Alias, subkey.Code, updateTaskSub));
+            }
         }
 
         public void addTaskSub()
