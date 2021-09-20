@@ -18,7 +18,6 @@ using System.Windows.Threading;
 
 namespace TaskTimer
 {
-
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
@@ -30,11 +29,25 @@ namespace TaskTimer
         {
             InitializeComponent();
 
-            this.vm = new WindowViewModel();
+            try
+            {
+                this.vm = new WindowViewModel();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"アプリ起動で例外発生：{ex.Message}\r\nアプリを終了します。");
+                Application.Current.Shutdown();
+                return;
+            }
 
             this.DataContext = this.vm;
 
             InitTimer();
+
+            this.Closing += (s, e) =>
+            {
+                this.vm.Close();
+            };
         }
 
 

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
+using TaskTimer;
 using static Value;
 // グローバル定数
 static class Value
@@ -27,6 +28,7 @@ namespace TaskTimer
             set { key = value; }
         }
 
+        public Settings settings;
         private Summary summary;
         public Timer timer;
         private Action updateTaskMain;
@@ -34,6 +36,10 @@ namespace TaskTimer
 
         public WindowViewModel()
         {
+            //
+            settings = new Settings();
+            settings.Load();
+
             // ChildからのNotify用コールバック
             updateTaskMain = () =>
             {
@@ -48,6 +54,8 @@ namespace TaskTimer
                 SummaryAdd(diff);
             };
 
+            LoadSettings();
+
             //
             summary = new Summary();
             SummaryAdd(0);
@@ -56,20 +64,59 @@ namespace TaskTimer
             timer = new Timer();
             baseCount = timer.BaseCountTime();
 
+            /*
             //[Test]
             // テスト用初期値設定
             this.key = new ObservableCollection<TaskKey>();
-            this.key.Add(new TaskKey("alias1", "code1", "name1", "1", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "2", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("エイリアス3", "コード3", "名前3", "3", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("長い名前の表示名４", "CODE4:AAAAAAAAA-AA", "長い名前のタスク名4", "4", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "5", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "6", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", "7", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias1", "code1", "name1", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("エイリアス3", "コード3", "名前3", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("長い名前の表示名４", "CODE4:AAAAAAAAA-AA", "長い名前のタスク名4", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
+            */
 
             // Subが最初から表示されてしまうので、初期状態で最初のタスクを選択しておく。
             this.SelectedIndex = 0;
             this.SelectedIndexSub = 0;
+        }
+
+        private void LoadSettings()
+        {
+            // インスタンス作成
+            this.key = new ObservableCollection<TaskKey>();
+            // 設定ロード
+            (string, string, string) mainkey = ("", "", "");
+            (string, string, string) nextkey;
+            TaskKey newkey = new TaskKey("", "", "", updateTaskMain, updateTaskSub);    // ダミーで初期化
+            // settingからタスク設定をロード
+            foreach (var keys in settings.Keys)
+            {
+                nextkey = (keys.Code, keys.Name, keys.Alias);
+                if (mainkey.Equals(nextkey))
+                {
+                    // Keyが同じならサブに追加
+                    newkey.SubKey.Add(new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub));
+                }
+                else
+                {
+                    // Keyが異なれば新しくオブジェクト追加
+                    newkey = new TaskKey(keys.Alias, keys.Code, keys.Name, updateTaskMain, updateTaskSub);
+                    this.key.Add(newkey);
+                    // SubKey追加
+                    newkey.SubKey.Add(new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub));
+                    // Key更新
+                    mainkey = nextkey;
+                }
+            }
+        }
+
+        public void Close()
+        {
+            this.settings.Update(this.key);
+            var task = this.settings.SaveAsync();
+            task.Wait();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -138,7 +185,7 @@ namespace TaskTimer
 
         public void addTaskMain()
         {
-            this.key.Add(new TaskKey("New", "New", "New", "8", updateTaskMain, updateTaskSub));
+            this.key.Add(new TaskKey("New", "New", "New", updateTaskMain, updateTaskSub));
         }
 
         public void addTaskSub()
@@ -278,10 +325,11 @@ namespace TaskTimer
             }
         }
 
-        public TaskKey(string alias, string code, string name, string id, Action _main, Action<int, int> _sub)
+        public TaskKey(string alias, string code, string name, Action _main, Action<int, int> _sub)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
+            /*
             this.subkey.Add(new TaskKeySub("sub" + id + "-1", "code_sub" + id + "-1", _sub));
             this.subkey.Add(new TaskKeySub("sub" + id + "-2", "code_sub" + id + "-2", _sub));
             this.subkey.Add(new TaskKeySub("sub" + id + "-3", "code_sub" + id + "-3", _sub));
@@ -289,6 +337,7 @@ namespace TaskTimer
             this.subkey.Add(new TaskKeySub("sub" + id + "-5", "code_sub" + id + "-5", _sub));
             this.subkey.Add(new TaskKeySub("sub" + id + "-6", "code_sub" + id + "-6", _sub));
             this.subkey.Add(new TaskKeySub("sub" + id + "-7", "code_sub" + id + "-7", _sub));
+            */
 
             this.alias = alias;
             this.code = code;

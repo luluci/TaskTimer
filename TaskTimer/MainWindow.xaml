@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTimer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="471.557" Width="572.024">
+        Title="MainWindow" Height="650.057" Width="572.024">
     <Window.Resources>
         <Style x:Key="TaskListViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed"/>
