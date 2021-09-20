@@ -74,6 +74,18 @@ namespace TaskTimer
             ((TextBlock)sender).Visibility = Visibility.Collapsed;
         }
 
+        private void TextBlock_SelectAll_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBox txt = (TextBox)((Grid)((TextBlock)sender).Parent).Children[1];
+            txt.SelectAll();
+            // テキストボックス選択時に全範囲選択したいとき
+            // MouseLeftButtonDownイベントがキャレットを動かして解除してしまうので、
+            // マウスイベントをハンドリング済みにすることで防ぐ
+            e.Handled = true;
+            txt.Visibility = Visibility.Visible;
+            ((TextBlock)sender).Visibility = Visibility.Collapsed;
+        }
+
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             TextBlock tb = (TextBlock)((Grid)((TextBox)sender).Parent).Children[0];
