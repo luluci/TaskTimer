@@ -418,7 +418,10 @@ namespace TaskTimer
         public string Alias
         {
             get { return alias; }
-            set { alias = value; }
+            set {
+                alias = value;
+                NotifyPropertyChanged(nameof(Alias));
+            }
         }
 
         public string code;
@@ -429,7 +432,7 @@ namespace TaskTimer
             {
                 code = value;
                 //_updateSelectTaskSub?.Invoke();
-                //NotifyPropertyChanged(nameof(Code));
+                NotifyPropertyChanged(nameof(Code));
             }
         }
 
