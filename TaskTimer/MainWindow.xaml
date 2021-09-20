@@ -22,6 +22,9 @@
         </DataTemplate>
         <DataTemplate x:Key="TaskListViewCellTemplateTime">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="50" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
@@ -31,10 +34,13 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <Canvas Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
-            <Button Click="Button_Timer_Click" Content="Button" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122"/>
-            <TextBlock Height="27" Canvas.Left="424" TextWrapping="Wrap" Text="{Binding BaseCount}" Canvas.Top="10" Width="130" FontWeight="Bold" TextAlignment="Center" FontSize="20"/>
-        </Canvas>
+        <Grid Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
+            <Button Click="Button_Timer_Click" Content="Button" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <TextBlock Height="30" Canvas.Left="332" TextWrapping="Wrap" Text="{Binding BaseCount}" Width="130" FontWeight="Bold" TextAlignment="Center" FontSize="20" Canvas.Top="4" TextDecorations="Underline" Margin="0,2,128,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            <TextBlock Height="17" Canvas.Left="332" TextWrapping="Wrap" Text="総カウント時間" Width="130" FontFamily="Meiryo UI" TextAlignment="Center" FontSize="11" Canvas.Top="30" Margin="0,30,128,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+            <TextBlock Height="22" Margin="0,10,22,0" TextWrapping="Wrap" Text="{Binding DelayCount}" VerticalAlignment="Top" TextAlignment="Center" TextDecorations="Underline" HorizontalAlignment="Right" Width="80"/>
+            <TextBlock Height="17" Margin="0,30,22,0" TextWrapping="Wrap" Text="次回計上まで" VerticalAlignment="Top" TextAlignment="Center" FontSize="10" HorizontalAlignment="Right" Width="80"/>
+        </Grid>
         <Grid Margin="0,47,0,84" Background="#FF98E8FF">
             <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,196,73" Background="White">
                 <ListBox.ItemTemplate>

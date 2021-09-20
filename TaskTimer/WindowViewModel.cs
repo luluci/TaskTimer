@@ -11,7 +11,7 @@ using static Value;
 // グローバル定数
 static class Value
 {
-    public const int countDiv = 60;
+    public const int countDiv = 10;
 }
 
 namespace TaskTimer
@@ -82,6 +82,9 @@ namespace TaskTimer
                 //_updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectedIndex));
                 //NotifyPropertyChanged(nameof(SelectTask));
+                // delay時間更新
+                timer.CountDelay();
+                UpdateDelayCount();
             }
         }
 
@@ -96,6 +99,9 @@ namespace TaskTimer
                 //_updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectedIndexSub));
                 //NotifyPropertyChanged(nameof(SelectTask));
+                // delay時間更新
+                timer.CountDelay();
+                UpdateDelayCount();
             }
         }
 
@@ -137,6 +143,11 @@ namespace TaskTimer
         {
             get { return baseCount; }
         }
+        private string delayCount;
+        public string DelayCount
+        {
+            get { return delayCount; }
+        }
 
         public void TimerEllapse(int sec)
         {
@@ -151,8 +162,22 @@ namespace TaskTimer
                 this.timer.CountRestart();
             }
             // 全体時間更新
+            UpdateBaseCount();
+            // delay時間更新
+            UpdateDelayCount();
+        }
+
+        private void UpdateBaseCount()
+        {
             baseCount = timer.BaseCountTime();
             NotifyPropertyChanged(nameof(BaseCount));
+        }
+
+        private void UpdateDelayCount()
+        {
+            // delay時間更新
+            delayCount = timer.DelayCountTime();
+            NotifyPropertyChanged(nameof(DelayCount));
         }
 
         public void TimerStart()
@@ -318,6 +343,14 @@ namespace TaskTimer
             // タスクに計上後、再スタート
             taskCounter = 0;
             delayCounter = 0;
+            reqTaskCount = false;
+        }
+        public void CountDelay()
+        {
+            // タスク計上のdelay設定
+            // 選択タスクを変更したとき、delayを最初からやり直す
+            delayCounter = 0;
+            reqTaskCount = false;
         }
 
         public void Ellapse(int sec)
@@ -348,6 +381,21 @@ namespace TaskTimer
         public string BaseCountTime()
         {
             var span = new TimeSpan(0, 0, baseCounter);
+            return span.ToString(@"hh\:mm\:ss");
+        }
+
+        public string DelayCountTime()
+        {
+            var delay = 0;
+            if (isFirstCount)
+            {
+                delay = 5 * countDiv - delayCounter;
+            }
+            else
+            {
+                delay = 1 * countDiv - delayCounter;
+            }
+            var span = new TimeSpan(0, 0, delay);
             return span.ToString(@"hh\:mm\:ss");
         }
     }
