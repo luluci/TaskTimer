@@ -13,6 +13,28 @@ namespace TaskTimer
     {
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_&@・（）、。,/]+";
 
+        static public bool CheckFileOpen(string path)
+        {
+            if (IsFileLocked(path))
+            {
+                // ファイルを開けないなら確認
+                var result = System.Windows.MessageBox.Show("ファイルが開かれています。\r\n閉じたら[OK], 保存しないなら[Cancel]", "!?", System.Windows.MessageBoxButton.OKCancel);
+                
+                if (result == System.Windows.MessageBoxResult.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // ファイルを開けるならOK
+                return true;
+            }
+        }
 
         static public bool IsFileLocked(string path)
         {
@@ -22,13 +44,13 @@ namespace TaskTimer
                 using (FileStream fp = File.Open(path, FileMode.Open, FileAccess.Write))
                 {
                     // 開ける
-                    return true;
+                    return false;
                 }
             }
             catch
             {
                 // 開けない
-                return false;
+                return true;
             }
         }
     }
