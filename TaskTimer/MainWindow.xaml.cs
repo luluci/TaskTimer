@@ -131,5 +131,10 @@ namespace TaskTimer
                 this.vm.OnButtonClick_TimerOn(IsTimerCounting);
             }
         }
+
+        private void Button_AddItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.addTaskItem();
+        }
     }
 }

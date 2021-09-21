@@ -78,17 +78,28 @@ namespace TaskTimer
                                 {
                                     min = 0;
                                 }
-                                RestoreLogs.Add(
-                                    (
-                                        match.Groups[1].ToString(),
-                                        match.Groups[2].ToString(),
-                                        match.Groups[3].ToString(),
-                                        match.Groups[4].ToString(),
-                                        match.Groups[5].ToString(),
-                                        match.Groups[6].ToString()
-                                    ),
-                                    min
+                                var key = (
+                                    match.Groups[1].ToString(),
+                                    match.Groups[2].ToString(),
+                                    match.Groups[3].ToString(),
+                                    match.Groups[4].ToString(),
+                                    match.Groups[5].ToString(),
+                                    match.Groups[6].ToString()
                                 );
+                                if (!RestoreLogs.ContainsKey(key))
+                                {
+                                    RestoreLogs.Add(
+                                        (
+                                            match.Groups[1].ToString(),
+                                            match.Groups[2].ToString(),
+                                            match.Groups[3].ToString(),
+                                            match.Groups[4].ToString(),
+                                            match.Groups[5].ToString(),
+                                            match.Groups[6].ToString()
+                                        ),
+                                        min
+                                    );
+                                }
                             }
                         }
                     }

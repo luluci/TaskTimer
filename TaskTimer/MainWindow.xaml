@@ -104,6 +104,7 @@
             <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="142,0,0,10" Width="123" Height="27" VerticalAlignment="Bottom"/>
             <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Height="24" Margin="0,0,23,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True"/>
             <TextBlock HorizontalAlignment="Right" Height="19" Margin="0,0,23,43" TextWrapping="Wrap" Text="総計" VerticalAlignment="Bottom" Width="31" FontSize="11" TextAlignment="Right"/>
+            <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="284,0,0,10" Width="123" VerticalAlignment="Bottom"/>
         </Grid>
         <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
         </Grid>

@@ -13,7 +13,7 @@ using static Value;
 // グローバル定数
 static class Value
 {
-    public const int countDiv = 60;
+    public const int countDiv = 1;
 }
 
 namespace TaskTimer
