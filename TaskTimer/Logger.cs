@@ -21,8 +21,8 @@ namespace TaskTimer
 
         public bool reqRestore;
 
-        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, int min)> Logs;
-        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias), int> RestoreLogs;
+        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)> Logs;
+        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int> RestoreLogs;
 
         public Logger()
         {
@@ -42,7 +42,7 @@ namespace TaskTimer
 
         public void Load()
         {
-            RestoreLogs = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias), int>();
+            RestoreLogs = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int>();
             // 同じ日付のログがあったらツールが途中終了したものとして、続きからカウントできるようにする。
             // 設定ファイルからロード
             // フォルダチェック
@@ -59,7 +59,7 @@ namespace TaskTimer
                 {
                     // ファイルから読み込み
                     string reStrWord = @"[\w\+\-\.\@\:]+";
-                    Regex re = new Regex($@"^({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+(\d+)$", RegexOptions.Compiled);
+                    Regex re = new Regex($@"^({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+(\d+)$", RegexOptions.Compiled);
                     using (var reader = new StreamReader(logFile))
                     {
                         string buff;
@@ -72,13 +72,23 @@ namespace TaskTimer
                                 int min;
                                 try
                                 {
-                                    min = int.Parse(match.Groups[6].ToString());
+                                    min = int.Parse(match.Groups[7].ToString());
                                 }
                                 catch
                                 {
                                     min = 0;
                                 }
-                                RestoreLogs.Add((match.Groups[1].ToString(), match.Groups[2].ToString(), match.Groups[3].ToString(), match.Groups[4].ToString(), match.Groups[5].ToString()), min);
+                                RestoreLogs.Add(
+                                    (
+                                        match.Groups[1].ToString(),
+                                        match.Groups[2].ToString(),
+                                        match.Groups[3].ToString(),
+                                        match.Groups[4].ToString(),
+                                        match.Groups[5].ToString(),
+                                        match.Groups[6].ToString()
+                                    ),
+                                    min
+                                );
                             }
                         }
                     }
@@ -99,12 +109,15 @@ namespace TaskTimer
             {
                 foreach (var subkey in key.SubKey)
                 {
-                    var dictkey = (key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias);
-                    if (RestoreLogs.TryGetValue(dictkey, out int min))
+                    foreach (var item in subkey.Item)
                     {
-                        subkey.time = min;
-                        subkey.MakeDispTime();
-                        sum += min;
+                        var dictkey = (key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item);
+                        if (RestoreLogs.TryGetValue(dictkey, out int min))
+                        {
+                            item.time = min;
+                            item.MakeDispTime();
+                            sum += min;
+                        }
                     }
                 }
             }
@@ -120,15 +133,18 @@ namespace TaskTimer
                 elem += key.SubKey.Count;
             }
             // 要素分の領域を確保して初期化
-            Logs = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, int min)>(elem);
+            Logs = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)>(elem);
             // 最新のタスク設定を取得
             foreach (var key in TaskKeys)
             {
                 foreach (var subkey in key.SubKey)
                 {
-                    if (subkey.time != 0)
+                    foreach (var item in subkey.Item)
                     {
-                        Logs.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, subkey.time));
+                        if (item.time != 0)
+                        {
+                            Logs.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.time));
+                        }
                     }
                 }
             }
@@ -141,7 +157,7 @@ namespace TaskTimer
             {
                 foreach (var key in Logs)
                 {
-                    writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.min}");
+                    writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.min}");
                 }
             }
             // 旧ファイルを削除

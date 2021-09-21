@@ -33,7 +33,7 @@ namespace TaskTimer
         private Summary summary;
         public Timer timer;
         private Action updateTaskMain;
-        private Action<int, int> updateTaskSub;
+        private Action<int, int> updateItem;
         private Task autosaveTask = null;
 
         public WindowViewModel()
@@ -48,10 +48,10 @@ namespace TaskTimer
             // ChildからのNotify用コールバック
             updateTaskMain = () =>
             {
-                _updateSelectTaskMain();
-                NotifyPropertyChanged(nameof(SelectTask));
+                //_updateSelectTaskMain();
+                //NotifyPropertyChanged(nameof(SelectTask));
             };
-            updateTaskSub = (int oldtime, int newtime) =>
+            updateItem = (int oldtime, int newtime) =>
             {
                 //_updateSelectTaskSub();
                 //NotifyPropertyChanged(nameof(SelectTask));
@@ -86,6 +86,7 @@ namespace TaskTimer
             // Subが最初から表示されてしまうので、初期状態で最初のタスクを選択しておく。
             this.SelectedIndex = 0;
             this.SelectedIndexSub = 0;
+            this.selectedIndexItem = 0;
         }
 
         private void LoadSettings()
@@ -93,27 +94,51 @@ namespace TaskTimer
             // インスタンス作成
             this.key = new ObservableCollection<TaskKey>();
             // 設定ロード
-            (string, string, string) mainkey = ("", "", "");
-            (string, string, string) nextkey;
-            TaskKey newkey = new TaskKey("", "", "", updateTaskMain, updateTaskSub);    // ダミーで初期化
+            (string, string, string) mainCurrKey = ("", "", "");
+            (string, string, string) mainNextKey;
+            (string, string) subCurrKey = ("", "");
+            (string, string) subNextKey;
+            TaskKey taskMain = new TaskKey("", "", "", updateTaskMain);    // ダミーで初期化
+            TaskKeySub taskSub = new TaskKeySub("", "");
             // settingからタスク設定をロード
             foreach (var keys in settings.Keys)
             {
-                nextkey = (keys.Code, keys.Name, keys.Alias);
-                if (mainkey.Equals(nextkey))
+                mainNextKey = (keys.Code, keys.Name, keys.Alias);
+                subNextKey = (keys.SubCode, keys.SubAlias);
+                if (mainCurrKey.Equals(mainNextKey))
                 {
-                    // Keyが同じならサブに追加
-                    newkey.SubKey.Add(new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub));
+                    // MainKeyが同じならSubKeyチェック
+                    if (subCurrKey.Equals(subNextKey))
+                    {
+                        // SubKeyが同じならItem追加
+                        taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                    }
+                    else
+                    {
+                        // SubKeyが異なればオブジェクト追加
+                        // SubKey追加
+                        taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode);
+                        taskMain.SubKey.Add(taskSub);
+                        // Item追加
+                        taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                        // SubKey更新
+                        subCurrKey = subNextKey;
+                    }
                 }
                 else
                 {
-                    // Keyが異なれば新しくオブジェクト追加
-                    newkey = new TaskKey(keys.Alias, keys.Code, keys.Name, updateTaskMain, updateTaskSub);
-                    this.key.Add(newkey);
+                    // MainKeyが異なれば新しくオブジェクト追加
+                    taskMain = new TaskKey(keys.Alias, keys.Code, keys.Name, updateTaskMain);
+                    this.key.Add(taskMain);
                     // SubKey追加
-                    newkey.SubKey.Add(new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub));
-                    // Key更新
-                    mainkey = nextkey;
+                    taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode);
+                    taskMain.SubKey.Add(taskSub);
+                    // Item追加
+                    taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                    // MainKey更新
+                    mainCurrKey = mainNextKey;
+                    // SubKey更新
+                    subCurrKey = subNextKey;
                 }
             }
         }
@@ -154,13 +179,13 @@ namespace TaskTimer
 
         private string _selectTask;
         private string _selectTaskMain;
-        private int _selectedIndex;
+        private int selectedIndex;
         public int SelectedIndex
         {
-            get { return _selectedIndex; }
+            get { return selectedIndex; }
             set
             {
-                _selectedIndex = value;
+                selectedIndex = value;
                 //_updateSelectTaskMain();
                 NotifyPropertyChanged(nameof(SelectedIndex));
                 //NotifyPropertyChanged(nameof(SelectTask));
@@ -171,13 +196,13 @@ namespace TaskTimer
         }
 
         private string _selectTaskSub;
-        private int _selectedIndexSub;
+        private int selectedIndexSub;
         public int SelectedIndexSub
         {
-            get { return _selectedIndexSub; }
+            get { return selectedIndexSub; }
             set
             {
-                _selectedIndexSub = value;
+                selectedIndexSub = value;
                 //_updateSelectTaskSub();
                 NotifyPropertyChanged(nameof(SelectedIndexSub));
                 //NotifyPropertyChanged(nameof(SelectTask));
@@ -187,45 +212,65 @@ namespace TaskTimer
             }
         }
 
-        private void _updateSelectTaskMain()
+        private int selectedIndexItem;
+        public int SelectedIndexItem
         {
-            //_selectTaskMain = key[_selectedIndex].code + " / " + key[_selectedIndex].name;
-            _selectTaskMain = key[_selectedIndex].code + " / " + key[_selectedIndex].name + " / " + key[_selectedIndex].alias;
-            _selectTask = _selectTaskMain + " " + _selectTaskSub;
-        }
-
-        private void _updateSelectTaskSub()
-        {
-            _selectTaskSub = "[" + key[_selectedIndex].SubKey[_selectedIndexSub].code + "]";
-            _selectTask = _selectTaskMain + " " + _selectTaskSub;
-        }
-        
-        public string SelectTask
-        {
-            get
+            get { return selectedIndexItem; }
+            set
             {
-                return _selectTask;
+                selectedIndexItem = value;
+                NotifyPropertyChanged(nameof(SelectedIndexItem));
+                // delay時間更新
+                timer.CountDelay();
+                UpdateDelayCount();
             }
         }
-
 
         public void addTaskMain()
         {
             // 新しいタスク追加
-            var newtask = new TaskKey("New", "New", "New", updateTaskMain, updateTaskSub);
+            var newtask = new TaskKey("NewAlias", "NewCode", "NewName", updateTaskMain);
             this.key.Add(newtask);
-            // SubKey追加
+            // テンプレート展開
+            (string, string) subCurrKey = ("", "");
+            (string, string) subNextKey;
+            TaskKeySub taskSub = new TaskKeySub("", "");
             foreach (var subkey in settings.SubKeys)
             {
-                newtask.SubKey.Add(new TaskKeySub(subkey.Alias, subkey.Code, updateTaskSub));
+                subNextKey = (subkey.Code, subkey.Alias);
+                // subKeyチェック
+                if (subCurrKey.Equals(subNextKey))
+                {
+                    // SubKeyが同じならItem追加
+                    taskSub.Item.Add(new TaskItem(subkey.Item, updateItem));
+                }
+                else
+                {
+                    // SubKeyが異なればオブジェクト追加
+                    // SubKey追加
+                    taskSub = new TaskKeySub(subkey.Alias, subkey.Code);
+                    newtask.SubKey.Add(taskSub);
+                    // Item追加
+                    taskSub.Item.Add(new TaskItem(subkey.Item, updateItem));
+                    // SubKey更新
+                    subCurrKey = subNextKey;
+                }
             }
         }
 
         public void addTaskSub()
         {
-            this.key[_selectedIndex].SubKey.Add(new TaskKeySub("New", "New", updateTaskSub));
+            // SubKey追加
+            TaskKeySub taskSub = new TaskKeySub("NewAlias", "NewCode");
+            this.key[selectedIndex].SubKey.Add(taskSub);
+            // Item追加
+            taskSub.Item.Add(new TaskItem("NewItem", updateItem));
         }
 
+        public void addTaskItem()
+        {
+            this.key[selectedIndex].SubKey[selectedIndexSub].Item.Add(new TaskItem("NewItem", updateItem));
+        }
 
         private string baseCount;
         public string BaseCount
@@ -246,8 +291,8 @@ namespace TaskTimer
             if (this.timer.reqTaskCount)
             {
                 var min = this.timer.taskCounter / countDiv;
-                this.key[_selectedIndex].SubKey[_selectedIndexSub].TimerEllapse(min);
-                this.key[_selectedIndex].SubKey[_selectedIndexSub].MakeDispTime();
+                this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].TimerEllapse(min);
+                this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].MakeDispTime();
                 this.timer.CountRestart();
                 this.SummaryAdd(min);
             }
@@ -377,7 +422,7 @@ namespace TaskTimer
             }
         }
 
-        public TaskKey(string alias, string code, string name, Action _main, Action<int, int> _sub)
+        public TaskKey(string alias, string code, string name, Action _main)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
@@ -395,7 +440,6 @@ namespace TaskTimer
             this.code = code;
             this.name = name;
             _updateSelectTaskMain = _main;
-            _updateSelectTaskSub = _sub;
         }
     }
 
@@ -408,11 +452,12 @@ namespace TaskTimer
             PropertyChanged?.Invoke(this, e);
         }
 
-        private Action<int, int> _updateTimeSub = null;
-        public int time;
-        public string timeDisp;
-        private readonly Regex reTimeWithColon;
-        private readonly Regex reTimeWithoutColon;
+        private ObservableCollection<TaskItem> item;
+        public ObservableCollection<TaskItem> Item
+        {
+            get { return item; }
+            set { item = value; }
+        }
 
         public string alias;
         public string Alias
@@ -431,8 +476,63 @@ namespace TaskTimer
             set
             {
                 code = value;
-                //_updateSelectTaskSub?.Invoke();
                 NotifyPropertyChanged(nameof(Code));
+            }
+        }
+
+        /*
+        private async Task test1()
+        {
+            await test2();
+        }
+        private async Task test2()
+        {
+            await Task.Delay(10 * 1000);
+            System.Windows.MessageBox.Show("delayed！");
+        }
+        */
+
+        public TaskKeySub(string alias, string code)
+        {
+            this.item = new ObservableCollection<TaskItem>();
+            this.alias = alias;
+            this.code = code;
+        }
+        
+    }
+
+    class TaskItem : INotifyPropertyChanged
+    {
+        public string item;
+        public int time;
+        public string timeDisp;
+        private readonly Regex reTimeWithColon;
+        private readonly Regex reTimeWithoutColon;
+        private Action<int, int> _updateTimeItem = null;
+
+        public TaskItem(string item, Action<int, int> _item)
+        {
+            this.item = item;
+            this.time = 0;
+            this._updateTimeItem = _item;
+            this.MakeDispTime();
+            this.reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
+            this.reTimeWithoutColon = new Regex(@"^(\d+)(\d\d)$", RegexOptions.Compiled);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string PropertyName)
+        {
+            var e = new PropertyChangedEventArgs(PropertyName);
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        public string Item
+        {
+            get { return item; }
+            set {
+                item = value;
+                NotifyPropertyChanged(nameof(Item));
             }
         }
 
@@ -464,7 +564,7 @@ namespace TaskTimer
                         int min = int.Parse(groups[2].ToString());
                         int oldtime = this.time;
                         this.time = hour * 60 + min;
-                        _updateTimeSub(oldtime, this.time);
+                        _updateTimeItem(oldtime, this.time);
                         // 正常に解析出来たら文字列に反映
                         timeDisp = value;
                         NotifyPropertyChanged(nameof(TimeDisp));
@@ -487,7 +587,7 @@ namespace TaskTimer
                             int min = int.Parse(groups[2].ToString());
                             int oldtime = this.time;
                             this.time = hour * 60 + min;
-                            _updateTimeSub(oldtime, this.time);
+                            _updateTimeItem(oldtime, this.time);
                             // 正常に解析出来たら文字列に反映
                             timeDisp = groups[1].ToString() + ":" + groups[2].ToString();
                             NotifyPropertyChanged(nameof(TimeDisp));
@@ -505,30 +605,6 @@ namespace TaskTimer
                 }
             }
         }
-
-        /*
-        private async Task test1()
-        {
-            await test2();
-        }
-        private async Task test2()
-        {
-            await Task.Delay(10 * 1000);
-            System.Windows.MessageBox.Show("delayed！");
-        }
-        */
-
-        public TaskKeySub(string alias, string code, Action<int, int> _sub)
-        {
-            this.alias = alias;
-            this.code = code;
-            _updateTimeSub = _sub;
-            this.time = 0;
-            this.MakeDispTime();
-            this.reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
-            this.reTimeWithoutColon = new Regex(@"^(\d+)(\d\d)$", RegexOptions.Compiled);
-        }
-        
     }
 
     class Timer

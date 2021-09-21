@@ -20,8 +20,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Alias}" MinWidth="150" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                <TextBox Text="{Binding Alias, Mode=TwoWay}" MinWidth="150" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                <TextBlock Text="{Binding Item}" MinWidth="150" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                <TextBox Text="{Binding Item, Mode=TwoWay}" MinWidth="150" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="TaskListViewCellTemplateTime">
@@ -59,7 +59,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <ListBox IsSynchronizedWithCurrentItem="True" Margin="235,10,0,73" Background="White" HorizontalAlignment="Left" Width="90">
+            <ListBox ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="235,10,0,73" Background="White" HorizontalAlignment="Left" Width="90">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -88,7 +88,7 @@
             </ListBox>
             -->
             <Grid Margin="330,10,10,73" Background="White"/>
-            <ListView ItemsSource="{Binding Key/SubKey}" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,10,10,73" Background="White">
+            <ListView ItemsSource="{Binding Key/SubKey/Item}" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexItem, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,10,10,73" Background="White">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
                         <GridViewColumn ctrl:RangeColumn.IsFillColumn="true" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
