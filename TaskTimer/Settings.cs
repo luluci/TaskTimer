@@ -40,8 +40,6 @@ namespace TaskTimer
 
         public void Load()
         {
-            string reStrWord = @"[\w\+\-\.\@\:\+\*\(\)_&@・（）]+";
-
             // 設定ファイルからロード
             // フォルダチェック
             if (!Directory.Exists(inputDir))
@@ -54,7 +52,7 @@ namespace TaskTimer
             if (File.Exists(inputKeyFile))
             {
                 // ファイルが存在するならロード
-                Regex re = new Regex($@"^({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})$", RegexOptions.Compiled);
+                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
                 // ファイルが存在するならロード
                 using (var reader = new StreamReader(inputKeyFile))
                 {
@@ -93,7 +91,7 @@ namespace TaskTimer
             if (File.Exists(inputSubKeyFile))
             {
                 //
-                Regex re = new Regex($@"^({reStrWord})\t+({reStrWord})\t+({reStrWord})$", RegexOptions.Compiled);
+                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
                 // ファイルが存在するならロード
                 using (var reader = new StreamReader(inputSubKeyFile))
                 {

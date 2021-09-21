@@ -58,8 +58,7 @@ namespace TaskTimer
                 if (File.Exists(logFile))
                 {
                     // ファイルから読み込み
-                    string reStrWord = @"[\w\+\-\.\@\:]+";
-                    Regex re = new Regex($@"^({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+({reStrWord})\t+(\d+)$", RegexOptions.Compiled);
+                    Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+(\d+)$", RegexOptions.Compiled);
                     using (var reader = new StreamReader(logFile))
                     {
                         string buff;
