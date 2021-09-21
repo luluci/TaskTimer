@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
         xmlns:local="clr-namespace:TaskTimer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650.057" Width="572.024">
+        Title="TaskTimer" Height="650.057" Width="661.024">
     <Window.Resources>
         <Style x:Key="TaskListViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed"/>
@@ -13,23 +14,26 @@
         </Style>
         <DataTemplate x:Key="TaskListViewCellTemplate">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                <TextBox Text="{Binding Alias, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                <TextBlock Text="{Binding Alias}" MinWidth="150" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                <TextBox Text="{Binding Alias, Mode=TwoWay}" MinWidth="150" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="TaskListViewCellTemplateTime">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="50" />
+                    <ColumnDefinition  />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Text="{Binding TimeDisp}" MouseDown="TextBlock_SelectAll_MouseDown" Grid.Row="0" />
-                <TextBox Text="{Binding TimeDisp, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                <TextBox Text="{Binding TimeDisp, Mode=TwoWay}" Width="50" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -42,7 +46,7 @@
             <TextBlock Height="17" Margin="0,30,22,0" TextWrapping="Wrap" Text="次回計上まで" VerticalAlignment="Top" TextAlignment="Center" FontSize="10" HorizontalAlignment="Right" Width="80"/>
         </Grid>
         <Grid Margin="0,47,0,84" Background="#FF98E8FF">
-            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,196,73" Background="White">
+            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,0,73" Background="White" HorizontalAlignment="Left" Width="220">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -50,7 +54,20 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                            <TextBox Text="{Binding Alias, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox IsSynchronizedWithCurrentItem="True" Margin="235,10,0,73" Background="White" HorizontalAlignment="Left" Width="90">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -70,12 +87,12 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             -->
-            <Grid Margin="0,10,10,73" Background="White" HorizontalAlignment="Right" Width="181"/>
-            <ListView ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="0,10,10,73" Background="White" HorizontalAlignment="Right" Width="181">
+            <Grid Margin="330,10,10,73" Background="White"/>
+            <ListView ItemsSource="{Binding Key/SubKey}" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,10,10,73" Background="White">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
-                        <GridViewColumn Width="80" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
-                        <GridViewColumn CellTemplate="{StaticResource TaskListViewCellTemplateTime}" />
+                        <GridViewColumn ctrl:RangeColumn.IsFillColumn="true" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
+                        <GridViewColumn ctrl:RangeColumn.MinWidth="80" CellTemplate="{StaticResource TaskListViewCellTemplateTime}" />
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -85,7 +102,7 @@
             <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
             <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="10,0,0,10" Width="115" Height="27" VerticalAlignment="Bottom"/>
             <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="142,0,0,10" Width="123" Height="27" VerticalAlignment="Bottom"/>
-            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Height="24" Margin="0,0,23,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="74" IsEnabled="False" IsReadOnlyCaretVisible="True"/>
+            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Height="24" Margin="0,0,23,44" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True"/>
             <TextBlock HorizontalAlignment="Right" Height="19" Margin="0,0,23,43" TextWrapping="Wrap" Text="総計" VerticalAlignment="Bottom" Width="31" FontSize="11" TextAlignment="Right"/>
         </Grid>
         <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
