@@ -13,7 +13,7 @@ namespace TaskTimer
     {
         // 時間カウント分解能
 #if DEBUG
-        public const int countDiv = 1;
+        public const int countDiv = 10;
 #else
         public const int countDiv = 60;
 #endif

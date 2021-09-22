@@ -284,7 +284,7 @@ namespace TaskTimer
             // タスクへの計上判定
             if (this.timer.reqTaskCount)
             {
-                var min = this.timer.taskCounter / Util.countDiv;
+                var min = this.timer.PullMin();
                 this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].TimerEllapse(min);
                 this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].MakeDispTime();
                 this.timer.CountRestart();
@@ -674,6 +674,17 @@ namespace TaskTimer
                 autosaveCounter = 0;
                 reqAutoSave = true;
             }
+        }
+
+        public int PullMin()
+        {
+            // 管理している経過時間から(分)を取り出して渡す
+            // 経過時間(分)を計算
+            int result = this.taskCounter / Util.countDiv;
+            // 取り出した分をカウンタから差し引く
+            this.taskCounter -= result * Util.countDiv;
+            // 経過時間(分)を返す
+            return result;
         }
 
         public bool ReqAutoSave()
