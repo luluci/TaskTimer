@@ -141,5 +141,10 @@ namespace TaskTimer
         {
             this.vm.MakeSummary();
         }
+
+        private void DataGrid_Summary_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.vm.OnMouseLeftButtonUp_Summary();
+        }
     }
 }

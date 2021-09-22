@@ -18,7 +18,7 @@ namespace TaskTimer
         public const int countDiv = 60;
 #endif
 
-        public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_&@・（）、。,/]+";
+        public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
 
         static public bool CheckFileOpen(string path)
         {

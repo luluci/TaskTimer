@@ -219,6 +219,17 @@ namespace TaskTimer
             }
         }
 
+        private int selectedIndexSummary;
+        public int SelectedIndexSummary
+        {
+            get { return selectedIndexSummary; }
+            set
+            {
+                selectedIndexSummary = value;
+                this.summary.SelectedIndex = value;
+            }
+        }
+
         public void addTaskMain()
         {
             // 新しいタスク追加
@@ -360,6 +371,20 @@ namespace TaskTimer
         {
             summary.Update(key);
             NotifyPropertyChanged(nameof(SummaryView));
+        }
+
+        public void OnMouseLeftButtonUp_Summary()
+        {
+            // index取得
+            (int key, int subkey, int item) = summary.GetIndex(selectedIndexSummary);
+            //
+            SelectedIndex = key;
+            NotifyPropertyChanged(nameof(SelectedIndex));
+            SelectedIndexSub = subkey;
+            NotifyPropertyChanged(nameof(SelectedIndexSub));
+            SelectedIndexItem = item;
+            NotifyPropertyChanged(nameof(SelectedIndexItem));
+
         }
 
         public void OnButtonClick_TimerOn(bool isCounting)

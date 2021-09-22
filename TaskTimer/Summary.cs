@@ -30,6 +30,16 @@ namespace TaskTimer
             set { data = value; }
         }
 
+        private int selectedIndex;
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set
+            {
+                selectedIndex = value;
+            }
+        }
+
         /** Summary作成
          * 
          */
@@ -38,31 +48,55 @@ namespace TaskTimer
             // 要素分の領域を確保して初期化
             data = new ObservableCollection<SummaryNode>();
             // 最新のタスク設定を取得
+            int keyIndex = 0;
             foreach (var key in TaskKeys)
             {
+                int subkeyIndex = 0;
                 foreach (var subkey in key.SubKey)
                 {
+                    int itemIndex = 0;
                     foreach (var item in subkey.Item)
                     {
                         if (item.time != 0)
                         {
-                            data.Add(new SummaryNode(key.Alias, item.Item, item.timeDisp));
+                            data.Add(new SummaryNode(key.Alias, item.Item, item.timeDisp, keyIndex, subkeyIndex, itemIndex));
                         }
+
+                        itemIndex++;
                     }
+
+                    subkeyIndex++;
                 }
+
+                keyIndex++;
             }
+        }
+
+        public (int, int, int) GetIndex(int idx)
+        {
+            return data[idx].GetIndex();
         }
     }
 
     class SummaryNode
     {
+        private int keyIndex;
+        private int subkeyIndex;
+        private int itemIndex;
 
-
-        public SummaryNode(string alias, string item, string time)
+        public SummaryNode(string alias, string item, string time, int keyIndex, int subkeyIndex, int itemIndex)
         {
             this.alias = alias;
             this.item = item;
             this.time = time;
+            this.keyIndex = keyIndex;
+            this.subkeyIndex = subkeyIndex;
+            this.itemIndex = itemIndex;
+        }
+
+        public (int,int,int) GetIndex()
+        {
+            return (keyIndex, subkeyIndex, itemIndex);
         }
 
         private string alias;

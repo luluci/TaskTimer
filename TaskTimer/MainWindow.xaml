@@ -108,7 +108,7 @@
         </Grid>
         <Grid Background="#FFFAFF99" Height="189" VerticalAlignment="Bottom">
             <Button Click="Button_MakeSummary_Click" Content="Summary作成" Height="Auto" Margin="10,10,0,147" HorizontalAlignment="Left" Width="126"/>
-            <DataGrid ItemsSource="{Binding SummaryView}" RowHeight="30" AutoGenerateColumns="False" Margin="10,52,10,10" FontSize="12">
+            <DataGrid SelectedIndex="{Binding SelectedIndexSummary}" MouseLeftButtonUp="DataGrid_Summary_MouseLeftButtonUp" ItemsSource="{Binding SummaryView}" RowHeight="30" AutoGenerateColumns="False" Margin="10,52,10,10" FontSize="12">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Visibility" Value="Collapsed"/>
