@@ -136,5 +136,10 @@ namespace TaskTimer
         {
             this.vm.addTaskItem();
         }
+
+        private void Button_MakeSummary_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.MakeSummary();
+        }
     }
 }

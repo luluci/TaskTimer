@@ -6,7 +6,7 @@
         xmlns:ctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
         xmlns:local="clr-namespace:TaskTimer"
         mc:Ignorable="d"
-        Title="TaskTimer" Height="650.057" Width="661.024">
+        Title="TaskTimer" Height="774.557" Width="661.024">
     <Window.Resources>
         <Style x:Key="TaskListViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed"/>
@@ -45,7 +45,7 @@
             <TextBlock Height="22" Margin="0,10,22,0" TextWrapping="Wrap" Text="{Binding DelayCount}" VerticalAlignment="Top" TextAlignment="Center" TextDecorations="Underline" HorizontalAlignment="Right" Width="80"/>
             <TextBlock Height="17" Margin="0,30,22,0" TextWrapping="Wrap" Text="次回計上まで" VerticalAlignment="Top" TextAlignment="Center" FontSize="10" HorizontalAlignment="Right" Width="80"/>
         </Grid>
-        <Grid Margin="0,47,0,84" Background="#FF98E8FF">
+        <Grid Margin="0,47,0,189" Background="#FF98E8FF">
             <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,0,73" Background="White" HorizontalAlignment="Left" Width="220">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -106,7 +106,38 @@
             <TextBlock HorizontalAlignment="Right" Height="19" Margin="0,0,23,43" TextWrapping="Wrap" Text="総計" VerticalAlignment="Bottom" Width="31" FontSize="11" TextAlignment="Right"/>
             <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="284,0,0,10" Width="123" VerticalAlignment="Bottom"/>
         </Grid>
-        <Grid Background="#FFFAFF99" Height="84" VerticalAlignment="Bottom">
+        <Grid Background="#FFFAFF99" Height="189" VerticalAlignment="Bottom">
+            <Button Click="Button_MakeSummary_Click" Content="Summary作成" Height="Auto" Margin="10,10,0,147" HorizontalAlignment="Left" Width="126"/>
+            <DataGrid ItemsSource="{Binding SummaryView}" RowHeight="30" AutoGenerateColumns="False" Margin="10,52,10,10" FontSize="12">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Width="200" Binding="{Binding Alias, Mode=OneWay}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Binding="{Binding Item, Mode=OneWay}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="70" Binding="{Binding Time, Mode=OneWay}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
     </Grid>
 </Window>

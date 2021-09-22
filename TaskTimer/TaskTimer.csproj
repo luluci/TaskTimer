@@ -129,6 +129,7 @@
     </Compile>
     <Compile Include="Logger.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Summary.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WindowViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -12,7 +12,6 @@ using TaskTimer;
 
 namespace TaskTimer
 {
-
     class WindowViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<TaskKey> key;
@@ -350,6 +349,17 @@ namespace TaskTimer
         public string TimeSummary
         {
             get { return timeSummary; }
+        }
+
+        public ObservableCollection<SummaryNode> SummaryView
+        {
+            get { return summary.Data; }
+        }
+
+        public void MakeSummary()
+        {
+            summary.Update(key);
+            NotifyPropertyChanged(nameof(SummaryView));
         }
 
         public void OnButtonClick_TimerOn(bool isCounting)
@@ -716,18 +726,4 @@ namespace TaskTimer
         }
     }
 
-    class Summary
-    {
-        public int timeAll;
-
-        public Summary()
-        {
-            timeAll = 0;
-        }
-
-        public void Add(int min)
-        {
-            timeAll += min;
-        }
-    }
 }
