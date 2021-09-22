@@ -9,12 +9,6 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 using TaskTimer;
-using static Value;
-// グローバル定数
-static class Value
-{
-    public const int countDiv = 1;
-}
 
 namespace TaskTimer
 {
@@ -290,7 +284,7 @@ namespace TaskTimer
             // タスクへの計上判定
             if (this.timer.reqTaskCount)
             {
-                var min = this.timer.taskCounter / countDiv;
+                var min = this.timer.taskCounter / Util.countDiv;
                 this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].TimerEllapse(min);
                 this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].MakeDispTime();
                 this.timer.CountRestart();
@@ -660,7 +654,7 @@ namespace TaskTimer
             if (isFirstCount)
             {
                 // 初回は同じタスクのまま5分経過したら計上
-                if (delayCounter >= 5 * countDiv)
+                if (delayCounter >= 5 * Util.countDiv)
                 {
                     reqTaskCount = true;
                     isFirstCount = false;
@@ -669,13 +663,13 @@ namespace TaskTimer
             else
             {
                 // 2回目以降は同じタスクのまま1分経過したら計上
-                if (delayCounter >= 1 * countDiv)
+                if (delayCounter >= 1 * Util.countDiv)
                 {
                     reqTaskCount = true;
                 }
             }
             // 30分ごとに自動保存する
-            if (autosaveCounter >= 30 * countDiv)
+            if (autosaveCounter >= 30 * Util.countDiv)
             {
                 autosaveCounter = 0;
                 reqAutoSave = true;
@@ -700,11 +694,11 @@ namespace TaskTimer
             var delay = 0;
             if (isFirstCount)
             {
-                delay = 5 * countDiv - delayCounter;
+                delay = 5 * Util.countDiv - delayCounter;
             }
             else
             {
-                delay = 1 * countDiv - delayCounter;
+                delay = 1 * Util.countDiv - delayCounter;
             }
             var span = new TimeSpan(0, 0, delay);
             return span.ToString(@"hh\:mm\:ss");

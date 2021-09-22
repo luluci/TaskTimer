@@ -11,6 +11,13 @@ namespace TaskTimer
 {
     static class Util
     {
+        // 時間カウント分解能
+#if DEBUG
+        public const int countDiv = 1;
+#else
+        public const int countDiv = 60;
+#endif
+
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_&@・（）、。,/]+";
 
         static public bool CheckFileOpen(string path)
