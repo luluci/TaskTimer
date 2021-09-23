@@ -387,6 +387,93 @@ namespace TaskTimer
 
         }
 
+        public void SaveSummary(SummarySaveFormat form)
+        {
+            // GUI無効化
+            EnableSaveSummary1All = false;
+            EnableSaveSummary1NonZero = false;
+            EnableSaveSummary2All = false;
+            EnableSaveSummary2NonZero = false;
+            // ログバッファ作成
+            summary.MakeLog(key, form);
+            // ログ保存
+            SaveSummaryAsync(form);
+        }
+        public async Task SaveSummaryAsync(SummarySaveFormat form)
+        {
+            // Summary保存
+            await summary.SaveAsync(form);
+            // GUI有効化
+            EnableSaveSummary1All = true;
+            EnableSaveSummary1NonZero = true;
+            EnableSaveSummary2All = true;
+            EnableSaveSummary2NonZero = true;
+        }
+
+        public void OnClick_SaveSummary1All()
+        {
+            SaveSummary(SummarySaveFormat.CodeNameSubAll);
+        }
+
+        public void OnClick_SaveSummary1NonZero()
+        {
+            SaveSummary(SummarySaveFormat.CodeNameSubNonZero);
+        }
+
+        public void OnClick_SaveSummary2All()
+        {
+            SaveSummary(SummarySaveFormat.CodeNameAliasSubItemAll);
+        }
+
+        public void OnClick_SaveSummary2NonZero()
+        {
+            SaveSummary(SummarySaveFormat.CodeNameAliasSubItemNonZero);
+        }
+
+        public bool enableSaveSummary1All = true;
+        public bool EnableSaveSummary1All
+        {
+            get { return enableSaveSummary1All; }
+            set
+            {
+                enableSaveSummary1All = value;
+                NotifyPropertyChanged(nameof(EnableSaveSummary1All));
+            }
+        }
+
+        public bool enableSaveSummary1NonZero = true;
+        public bool EnableSaveSummary1NonZero
+        {
+            get { return enableSaveSummary1NonZero; }
+            set
+            {
+                enableSaveSummary1NonZero = value;
+                NotifyPropertyChanged(nameof(EnableSaveSummary1NonZero));
+            }
+        }
+
+        public bool enableSaveSummary2All = true;
+        public bool EnableSaveSummary2All
+        {
+            get { return enableSaveSummary2All; }
+            set
+            {
+                enableSaveSummary2All = value;
+                NotifyPropertyChanged(nameof(EnableSaveSummary2All));
+            }
+        }
+
+        public bool enableSaveSummary2NonZero = true;
+        public bool EnableSaveSummary2NonZero
+        {
+            get { return enableSaveSummary2NonZero; }
+            set
+            {
+                enableSaveSummary2NonZero = value;
+                NotifyPropertyChanged(nameof(EnableSaveSummary2NonZero));
+            }
+        }
+
         public void OnButtonClick_TimerOn(bool isCounting)
         {
             if (isCounting)

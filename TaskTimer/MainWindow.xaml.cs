@@ -146,5 +146,25 @@ namespace TaskTimer
         {
             this.vm.OnMouseLeftButtonUp_Summary();
         }
+
+        private void Button_SaveSummary1All_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_SaveSummary1All();
+        }
+
+        private void Button_SaveSummary1NonZero_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_SaveSummary1NonZero();
+        }
+
+        private void Button_SaveSummary2All_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_SaveSummary2All();
+        }
+
+        private void Button_SaveSummary2NonZero_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_SaveSummary2NonZero();
+        }
     }
 }

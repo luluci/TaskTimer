@@ -60,5 +60,11 @@ namespace TaskTimer
                 return true;
             }
         }
+
+        static public string Min2Time(int min)
+        {
+            var span = new TimeSpan(0, min, 0);
+            return span.ToString(@"hh\:mm");
+        }
     }
 }
