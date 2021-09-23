@@ -166,5 +166,10 @@ namespace TaskTimer
         {
             vm.OnClick_SaveSummary2NonZero();
         }
+
+        private void Button_OpenSummaryDir_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_OpenSummaryDir();
+        }
     }
 }

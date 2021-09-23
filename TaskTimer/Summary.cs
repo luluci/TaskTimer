@@ -53,6 +53,22 @@ namespace TaskTimer
             data = new ObservableCollection<SummaryNode>();
         }
 
+        private void MakeOutDir()
+        {
+            // フォルダチェック
+            if (!Directory.Exists(outDir))
+            {
+                // 存在しない場合は作成する
+                Directory.CreateDirectory(outDir);
+            }
+        }
+
+        public void OpenOutDir()
+        {
+            MakeOutDir();
+            System.Diagnostics.Process.Start("explorer.exe", outDir);
+        }
+
         public void Add(int min)
         {
             timeAll += min;
@@ -135,11 +151,7 @@ namespace TaskTimer
         public async Task SaveAsync(SummarySaveFormat format)
         {
             // フォルダチェック
-            if (!Directory.Exists(outDir))
-            {
-                // 存在しない場合は作成する
-                Directory.CreateDirectory(outDir);
-            }
+            MakeOutDir();
             // 保存
             string outputTemp;
             string output;

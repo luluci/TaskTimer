@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
         xmlns:local="clr-namespace:TaskTimer"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="TaskTimer.MainWindow"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:materialDesignMahApps="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="TaskTimer.MainWindow"
         mc:Ignorable="d"
         Title="TaskTimer" Height="774.557" Width="661.024">
     <Window.Resources>
@@ -133,14 +133,15 @@
                     </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="159,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="155,45,0,0" VerticalAlignment="Top" Width="194"/>
-            <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="206,14,0,0" VerticalAlignment="Top" Width="57"/>
-            <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="269,14,0,0" VerticalAlignment="Top" Width="74"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="376,45,0,0" VerticalAlignment="Top" Width="193"/>
-            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="379,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
-            <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="426,15,0,0" VerticalAlignment="Top" Width="57"/>
-            <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="490,15,0,0" VerticalAlignment="Top" Width="74"/>
+            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="154,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="150,45,0,0" VerticalAlignment="Top" Width="194"/>
+            <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="201,14,0,0" VerticalAlignment="Top" Width="57"/>
+            <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="264,14,0,0" VerticalAlignment="Top" Width="74"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="359,45,0,0" VerticalAlignment="Top" Width="193"/>
+            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="362,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
+            <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="409,15,0,0" VerticalAlignment="Top" Width="57"/>
+            <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="473,15,0,0" VerticalAlignment="Top" Width="74"/>
+            <Button Click="Button_OpenSummaryDir_Click" Content="Dir" HorizontalAlignment="Left" Height="26" Margin="577,15,0,0" VerticalAlignment="Top" Width="52"/>
         </Grid>
     </Grid>
 </Window>

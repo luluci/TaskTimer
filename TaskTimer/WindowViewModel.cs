@@ -430,6 +430,11 @@ namespace TaskTimer
             SaveSummary(SummarySaveFormat.CodeNameAliasSubItemNonZero);
         }
 
+        public void OnClick_OpenSummaryDir()
+        {
+            summary.OpenOutDir();
+        }
+
         public bool enableSaveSummary1All = true;
         public bool EnableSaveSummary1All
         {
