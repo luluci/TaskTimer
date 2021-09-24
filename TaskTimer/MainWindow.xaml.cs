@@ -90,12 +90,12 @@ namespace TaskTimer
         private void TextBlock_SelectAll_MouseDown(object sender, MouseButtonEventArgs e)
         {
             TextBox txt = (TextBox)((Grid)((TextBlock)sender).Parent).Children[1];
-            txt.SelectAll();
             // テキストボックス選択時に全範囲選択したいとき
             // MouseLeftButtonDownイベントがキャレットを動かして解除してしまうので、
             // マウスイベントをハンドリング済みにすることで防ぐ
-            e.Handled = true;
             txt.Visibility = Visibility.Visible;
+            txt.SelectAll();
+            e.Handled = true;
             ((TextBlock)sender).Visibility = Visibility.Collapsed;
         }
 
@@ -175,6 +175,15 @@ namespace TaskTimer
         private void Button_ManualSave_Click(object sender, RoutedEventArgs e)
         {
             vm.OnClick_ManualSave();
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                var tb = sender as TextBox;
+                tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
         }
     }
 }

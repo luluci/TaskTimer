@@ -22,7 +22,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Text="{Binding Item}" MinWidth="150" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                <TextBox Text="{Binding Item, Mode=TwoWay}" MinWidth="150" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                <TextBox Text="{Binding Item, Mode=TwoWay}" MinWidth="150" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="TaskListViewCellTemplateTime">

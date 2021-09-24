@@ -61,6 +61,12 @@ namespace TaskTimer
             }
         }
 
+        static public string Sec2Time(int sec)
+        {
+            var span = new TimeSpan(0, 0, sec);
+            return span.ToString(@"hh\:mm\:ss");
+        }
+
         static public string Min2Time(int min)
         {
             int hr = min / 60;

@@ -867,8 +867,7 @@ namespace TaskTimer
 
         public string BaseCountTime()
         {
-            var span = new TimeSpan(0, 0, baseCounter);
-            return span.ToString(@"hh\:mm\:ss");
+            return Util.Sec2Time(baseCounter);
         }
 
         public string DelayCountTime()
@@ -882,8 +881,7 @@ namespace TaskTimer
             {
                 delay = 1 * Util.countDiv - delayCounter;
             }
-            var span = new TimeSpan(0, 0, delay);
-            return span.ToString(@"hh\:mm\:ss");
+            return Util.Sec2Time(delay);
         }
     }
 
