@@ -27,7 +27,8 @@ namespace TaskTimer
         public Timer timer;
         private Action updateTaskMain;
         private Action<int, int> updateItem;
-        private Task autosaveTask = null;
+        private Task logSaveTask = null;
+        private Task settingSaveTask = null;
 
         public WindowViewModel()
         {
@@ -150,16 +151,20 @@ namespace TaskTimer
         public void Close()
         {
             // Setting出力
+            // running中のタスクがあるならスキップ
+            if (settingSaveTask == null || settingSaveTask.IsCompleted)
             {
                 this.settings.Update(this.key);
-                var task = this.settings.SaveAsync();
-                task.Wait();
+                settingSaveTask = this.settings.SaveAsync();
+                settingSaveTask.Wait();
             }
             // ログ出力
+            // running中のタスクがあるならスキップ
+            if (logSaveTask == null || logSaveTask.IsCompleted)
             {
                 this.logger.Update(this.key);
-                var task = this.logger.SaveAsync();
-                task.Wait();
+                logSaveTask = this.logger.SaveAsync();
+                logSaveTask.Wait();
             }
         }
 
@@ -169,9 +174,7 @@ namespace TaskTimer
             var e = new PropertyChangedEventArgs(PropertyName);
             PropertyChanged?.Invoke(this, e);
         }
-
-        private string _selectTask;
-        private string _selectTaskMain;
+        
         private int selectedIndex;
         public int SelectedIndex
         {
@@ -187,8 +190,7 @@ namespace TaskTimer
                 UpdateDelayCount();
             }
         }
-
-        private string _selectTaskSub;
+        
         private int selectedIndexSub;
         public int SelectedIndexSub
         {
@@ -308,6 +310,16 @@ namespace TaskTimer
             AutoSave();
         }
 
+        public void TimerStart()
+        {
+            this.timer.CountStart();
+        }
+
+        public void TimerStop()
+        {
+
+        }
+
         private void UpdateBaseCount()
         {
             baseCount = timer.BaseCountTime();
@@ -328,25 +340,55 @@ namespace TaskTimer
                 // 自動保存要求があれば
                 // タスクなし または 完了済みなら自動保存する
                 // running中のタスクがあるならスキップ
-                if (autosaveTask == null || autosaveTask.IsCompleted)
+                if (logSaveTask == null || logSaveTask.IsCompleted)
                 {
                     // UIスレッド内でログを転送
                     this.logger.Update(this.key);
                     // asyncにファイル書き込みを投げる
-                    autosaveTask = this.logger.SaveAsync();
+                    logSaveTask = this.logger.SaveAsync();
                 }
             }
         }
-
-        public void TimerStart()
+        
+        public void OnClick_ManualSave()
         {
-            this.timer.CountStart();
+            // タスクなし または 完了済みならSetting/log手動出力
+            // running中のタスクがあるならスキップ
+            // 基本的にsettingはタスク終了時のみ保存するので問題ない。アンドで両方チェックしてしまう
+            if ((logSaveTask == null || logSaveTask.IsCompleted) && (settingSaveTask == null || settingSaveTask.IsCompleted))
+            {
+                // GUI無効化
+                EnableManualSave = false;
+                // ログ作成
+                // UIスレッド内でログを転送
+                this.settings.Update(this.key);
+                this.logger.Update(this.key);
+                // ログ保存
+                logSaveTask = ManualSaveAsync();
+                settingSaveTask = logSaveTask;
+            }
+        }
+        public async Task ManualSaveAsync()
+        {
+            // ログ保存
+            await this.settings.SaveAsync();
+            await this.logger.SaveAsync();
+            // GUI有効化
+            EnableManualSave = true;
         }
 
-        public void TimerStop()
+        public bool enableManualSave = true;
+        public bool EnableManualSave
         {
-
+            get { return enableManualSave; }
+            set
+            {
+                enableManualSave = value;
+                NotifyPropertyChanged(nameof(EnableManualSave));
+            }
         }
+
+
 
         private void SummaryAdd(int sec)
         {
@@ -501,6 +543,7 @@ namespace TaskTimer
         {
             get { return buttonTimerOn; }
         }
+
     }
 
     class TaskKey

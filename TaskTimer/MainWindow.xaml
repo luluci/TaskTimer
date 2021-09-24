@@ -45,6 +45,7 @@
             <TextBlock Height="17" Canvas.Left="332" TextWrapping="Wrap" Text="総カウント時間" Width="130" FontFamily="Meiryo UI" TextAlignment="Center" FontSize="11" Canvas.Top="30" Margin="0,30,128,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
             <TextBlock Height="22" Margin="0,10,22,0" TextWrapping="Wrap" Text="{Binding DelayCount}" VerticalAlignment="Top" TextAlignment="Center" TextDecorations="Underline" HorizontalAlignment="Right" Width="80"/>
             <TextBlock Height="17" Margin="0,30,22,0" TextWrapping="Wrap" Text="次回計上まで" VerticalAlignment="Top" TextAlignment="Center" FontSize="10" HorizontalAlignment="Right" Width="80"/>
+            <Button Click="Button_ManualSave_Click" Content="Save" HorizontalAlignment="Left" Height="27" Margin="179,10,0,0" VerticalAlignment="Top" Width="67" ToolTip="Log,Settingsを手動でセーブする"/>
         </Grid>
         <Grid Margin="0,47,0,220" Background="#FF98E8FF">
             <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,10,0,73" Background="White" HorizontalAlignment="Left" Width="204">
