@@ -34,7 +34,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Text="{Binding TimeDisp}" MouseDown="TextBlock_SelectAll_MouseDown" Grid.Row="0" />
-                <TextBox Text="{Binding TimeDisp, Mode=TwoWay}" Width="50" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                <TextBox Text="{Binding TimeDisp, Mode=TwoWay}" Width="50" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -56,7 +56,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -69,7 +69,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" Visibility="Collapsed" Grid.Row="0" />
+                            <TextBox Text="{Binding Alias, Mode=TwoWay}" Width="190" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

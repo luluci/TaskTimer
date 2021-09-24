@@ -182,7 +182,7 @@ namespace TaskTimer
             if (e.Key == Key.Enter)
             {
                 var tb = sender as TextBox;
-                tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
         }
     }
