@@ -63,8 +63,29 @@ namespace TaskTimer
 
         static public string Min2Time(int min)
         {
-            var span = new TimeSpan(0, min, 0);
-            return span.ToString(@"hh\:mm");
+            int hr = min / 60;
+            int mm = min % 60;
+            return $"{hr:00}:{mm:00}";
+        }
+
+        static public int GetRegGroup2Min(System.Text.RegularExpressions.Group group)
+        {
+            string buff = group.ToString();
+            if (buff.Length == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                try
+                {
+                    return int.Parse(buff);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
         }
     }
 }

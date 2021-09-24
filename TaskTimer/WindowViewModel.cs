@@ -393,8 +393,7 @@ namespace TaskTimer
         private void SummaryAdd(int sec)
         {
             this.summary.Add(sec);
-            var span = new TimeSpan(0, summary.timeAll, 0);
-            timeSummary = span.ToString(@"hh\:mm");
+            timeSummary = Util.Min2Time(summary.timeAll);
             NotifyPropertyChanged(nameof(TimeSummary));
         }
 
@@ -684,7 +683,7 @@ namespace TaskTimer
             this._updateTimeItem = _item;
             this.MakeDispTime();
             this.reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
-            this.reTimeWithoutColon = new Regex(@"^(\d+)(\d\d)$", RegexOptions.Compiled);
+            this.reTimeWithoutColon = new Regex(@"(?:^(?<min>\d{1,2})$|^(?<hr>\d+)(?<min>\d\d)$)", RegexOptions.Compiled);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -709,8 +708,7 @@ namespace TaskTimer
         }
         public void MakeDispTime()
         {
-            var span = new TimeSpan(0, time, 0);
-            timeDisp = span.ToString(@"hh\:mm");
+            timeDisp = Util.Min2Time(time);
             NotifyPropertyChanged(nameof(TimeDisp));
         }
 
@@ -727,8 +725,8 @@ namespace TaskTimer
                     {
                         // HH:MMをminに直す
                         GroupCollection groups = match.Groups;
-                        int hour = int.Parse(groups[1].ToString());
-                        int min = int.Parse(groups[2].ToString());
+                        int hour = Util.GetRegGroup2Min(groups[1]);
+                        int min = Util.GetRegGroup2Min(groups[2]);
                         int oldtime = this.time;
                         this.time = hour * 60 + min;
                         _updateTimeItem(oldtime, this.time);
@@ -750,13 +748,13 @@ namespace TaskTimer
                         {
                             // HH:MMをminに直す
                             GroupCollection groups = match.Groups;
-                            int hour = int.Parse(groups[1].ToString());
-                            int min = int.Parse(groups[2].ToString());
+                            int hour = Util.GetRegGroup2Min(groups["hr"]);
+                            int min = Util.GetRegGroup2Min(groups["min"]);
                             int oldtime = this.time;
                             this.time = hour * 60 + min;
                             _updateTimeItem(oldtime, this.time);
                             // 正常に解析出来たら文字列に反映
-                            timeDisp = groups[1].ToString() + ":" + groups[2].ToString();
+                            timeDisp = $"{hour:00}:{min:00}";
                             NotifyPropertyChanged(nameof(TimeDisp));
                         }
                         catch
