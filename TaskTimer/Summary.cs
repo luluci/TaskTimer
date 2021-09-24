@@ -243,7 +243,14 @@ namespace TaskTimer
 
         public (int, int, int) GetIndex(int idx)
         {
-            return data[idx].GetIndex();
+            if (data.Count > idx && idx >= 0)
+            {
+                return data[idx].GetIndex();
+            }
+            else
+            {
+                return (-1, -1, -1);
+            }
         }
     }
 

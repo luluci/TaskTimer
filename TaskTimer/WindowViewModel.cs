@@ -377,13 +377,16 @@ namespace TaskTimer
         {
             // index取得
             (int key, int subkey, int item) = summary.GetIndex(selectedIndexSummary);
-            //
-            SelectedIndex = key;
-            NotifyPropertyChanged(nameof(SelectedIndex));
-            SelectedIndexSub = subkey;
-            NotifyPropertyChanged(nameof(SelectedIndexSub));
-            SelectedIndexItem = item;
-            NotifyPropertyChanged(nameof(SelectedIndexItem));
+            if (key >= 0)
+            {
+                //
+                SelectedIndex = key;
+                NotifyPropertyChanged(nameof(SelectedIndex));
+                SelectedIndexSub = subkey;
+                NotifyPropertyChanged(nameof(SelectedIndexSub));
+                SelectedIndexItem = item;
+                NotifyPropertyChanged(nameof(SelectedIndexItem));
+            }
 
         }
 
