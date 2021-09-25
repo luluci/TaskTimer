@@ -131,7 +131,7 @@ namespace TaskTimer
                 {
                     foreach (var subkey in SubKeys)
                     {
-                        writer.WriteLine($"{subkey.Code}\t{subkey.Alias}");
+                        writer.WriteLine($"{subkey.Code}\t{subkey.Alias}\t{subkey.Item}");
                     }
                 }
             }
