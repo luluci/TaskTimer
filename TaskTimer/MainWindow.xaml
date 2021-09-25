@@ -6,6 +6,9 @@
         xmlns:ctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
         xmlns:local="clr-namespace:TaskTimer"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:materialDesignMahApps="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="TaskTimer.MainWindow"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
         mc:Ignorable="d"
         Title="TaskTimer" Height="774.557" Width="661.024">
     <Window.Resources>
@@ -142,7 +145,9 @@
             <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="362,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
             <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="409,15,0,0" VerticalAlignment="Top" Width="57"/>
             <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="473,15,0,0" VerticalAlignment="Top" Width="74"/>
-            <Button Click="Button_OpenSummaryDir_Click" Content="Dir" HorizontalAlignment="Left" Height="26" Margin="577,15,0,0" VerticalAlignment="Top" Width="52"/>
+            <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="595,10,0,0" VerticalAlignment="Top" Width="33" Padding="5,4">
+                <materialDesign:PackIcon Kind="FolderDownloadOutline" Height="23" Width="23"/>
+            </Button>
         </Grid>
     </Grid>
 </Window>
