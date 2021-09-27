@@ -41,7 +41,7 @@
             </Grid>
         </DataTemplate>
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="root" Focusable="True">
         <Grid Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
             <Button Click="Button_Timer_Click" Content="{Binding ButtonTimerOn}" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <TextBlock Height="30" Canvas.Left="332" TextWrapping="Wrap" Text="{Binding BaseCount}" Width="130" FontWeight="Bold" TextAlignment="Center" FontSize="20" Canvas.Top="4" TextDecorations="Underline" Margin="0,2,128,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>

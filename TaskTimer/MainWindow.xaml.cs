@@ -48,6 +48,8 @@ namespace TaskTimer
             {
                 this.vm.Close();
             };
+
+            FocusManager.SetIsFocusScope(this, true);
         }
 
 
@@ -84,6 +86,8 @@ namespace TaskTimer
         {
             TextBox txt = (TextBox)((Grid)((TextBlock)sender).Parent).Children[1];
             txt.Visibility = Visibility.Visible;
+            txt.Focus();
+            e.Handled = true;
             ((TextBlock)sender).Visibility = Visibility.Collapsed;
         }
 
@@ -94,6 +98,7 @@ namespace TaskTimer
             // MouseLeftButtonDownイベントがキャレットを動かして解除してしまうので、
             // マウスイベントをハンドリング済みにすることで防ぐ
             txt.Visibility = Visibility.Visible;
+            txt.Focus();
             txt.SelectAll();
             e.Handled = true;
             ((TextBlock)sender).Visibility = Visibility.Collapsed;
@@ -182,7 +187,10 @@ namespace TaskTimer
             if (e.Key == Key.Enter)
             {
                 var tb = sender as TextBox;
-                tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                //tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                //FocusManager.SetIsFocusScope(root, true);
+                FocusManager.SetFocusedElement(this, root);
+                //System.Windows.Input.Keyboard.ClearFocus();
             }
         }
     }
