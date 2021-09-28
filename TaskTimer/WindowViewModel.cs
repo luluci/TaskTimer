@@ -9,9 +9,25 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 using TaskTimer;
+using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace TaskTimer
 {
+    enum TaskClass
+    {
+        MainKey,
+        SubKey,
+        Item,
+    }
+
+    enum TaskViewOpe
+    {
+        Up,
+        Down,
+        Delete,
+    }
+
     class WindowViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<TaskKey> key;
@@ -29,6 +45,7 @@ namespace TaskTimer
         private Action<int, int> updateItem;
         private Task logSaveTask = null;
         private Task settingSaveTask = null;
+        private TaskClass selectTaskClass;
 
         public WindowViewModel()
         {
@@ -81,6 +98,9 @@ namespace TaskTimer
             this.SelectedIndex = 0;
             this.SelectedIndexSub = 0;
             this.selectedIndexItem = 0;
+
+            // 要素の移動(Up,Down,Deleteボタンを押下したときの操作対象)に関する設定
+            selectTaskClass = TaskClass.MainKey;            // 操作対象：MainKey
         }
 
         private void LoadSettings()
@@ -543,6 +563,159 @@ namespace TaskTimer
             get { return buttonTimerOn; }
         }
 
+
+        public void SelectTaskView(TaskClass cls)
+        {
+            selectTaskClass = cls;
+        }
+
+        public void TaskViewOpe(TaskViewOpe ope)
+        {
+            switch (selectTaskClass)
+            {
+                case TaskClass.MainKey:
+                    taskViewOpeMain(ope);
+                    break;
+
+                case TaskClass.SubKey:
+                    taskViewOpeSub(ope);
+                    break;
+
+                case TaskClass.Item:
+                    taskViewOpeItem(ope);
+                    break;
+
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+        private void taskViewOpeMain(TaskViewOpe ope)
+        {
+            switch (ope)
+            {
+                case TaskTimer.TaskViewOpe.Up:
+                    //
+                    if (selectedIndex > 0)
+                    {
+                        taskSwapMainKey(selectedIndex, selectedIndex - 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Down:
+                    //
+                    if (selectedIndex < key.Count - 1)
+                    {
+                        taskSwapMainKey(selectedIndex, selectedIndex + 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Delete:
+                    // 必ず1つ以上のタスクが存在するようにチェック
+                    if (key.Count > 1)
+                    {
+                        taskDeleteMainKey(selectedIndex);
+                    }
+                    break;
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+        private void taskViewOpeSub(TaskViewOpe ope)
+        {
+            switch (ope)
+            {
+                case TaskTimer.TaskViewOpe.Up:
+                    //
+                    if (selectedIndexSub > 0)
+                    {
+                        taskSwapSubKey(selectedIndexSub, selectedIndexSub - 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Down:
+                    //
+                    if (selectedIndexSub < key[selectedIndex].SubKey.Count - 1)
+                    {
+                        taskSwapSubKey(selectedIndexSub, selectedIndexSub + 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Delete:
+                    // 必ず1つ以上のタスクが存在するようにチェック
+                    if (key[selectedIndex].SubKey.Count > 1)
+                    {
+                        taskDeleteSubKey(selectedIndexSub);
+                    }
+                    break;
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+        private void taskViewOpeItem(TaskViewOpe ope)
+        {
+            switch (ope)
+            {
+                case TaskTimer.TaskViewOpe.Up:
+                    //
+                    if (selectedIndexItem > 0)
+                    {
+                        taskSwapItem(selectedIndexItem, selectedIndexItem - 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Down:
+                    //
+                    if (selectedIndexItem < key[selectedIndex].SubKey[selectedIndexSub].Item.Count - 1)
+                    {
+                        taskSwapItem(selectedIndexItem, selectedIndexItem + 1);
+                    }
+                    break;
+                case TaskTimer.TaskViewOpe.Delete:
+                    // 必ず1つ以上のタスクが存在するようにチェック
+                    if (key[selectedIndex].SubKey[selectedIndexSub].Item.Count > 1)
+                    {
+                        taskDeleteItem(selectedIndexItem);
+                    }
+                    break;
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+
+        private void taskSwapMainKey(int curr, int tgt)
+        {
+            // 
+            key.Move(curr, tgt);
+            SelectedIndex = tgt;
+        }
+        private void taskDeleteMainKey(int curr)
+        {
+            // 
+            key.RemoveAt(curr);
+        }
+
+        private void taskSwapSubKey(int curr, int tgt)
+        {
+            // 
+            key[selectedIndex].SubKey.Move(curr, tgt);
+            SelectedIndexSub = tgt;
+        }
+        private void taskDeleteSubKey(int curr)
+        {
+            // 
+            key[selectedIndex].SubKey.RemoveAt(curr);
+        }
+
+        private void taskSwapItem(int curr, int tgt)
+        {
+            // 
+            key[selectedIndex].SubKey[selectedIndexSub].Item.Move(curr, tgt);
+            SelectedIndexItem = tgt;
+        }
+        private void taskDeleteItem(int curr)
+        {
+            // 
+            key[selectedIndex].SubKey[selectedIndexSub].Item.RemoveAt(curr);
+        }
     }
 
     class TaskKey

@@ -193,5 +193,65 @@ namespace TaskTimer
                 //System.Windows.Input.Keyboard.ClearFocus();
             }
         }
+
+        private void Button_TaskViewOpeUp_Click(object sender, RoutedEventArgs e)
+        {
+            vm.TaskViewOpe(TaskViewOpe.Up);
+        }
+
+        private void Button_TaskViewOpeDown_Click(object sender, RoutedEventArgs e)
+        {
+            vm.TaskViewOpe(TaskViewOpe.Down);
+        }
+
+        private void Button_TaskViewOpeDelete_Click(object sender, RoutedEventArgs e)
+        {
+            vm.TaskViewOpe(TaskViewOpe.Delete);
+        }
+
+        private void TaskMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //vm.SelectTaskView(TaskClass.MainKey);
+        }
+
+        private void TaskSub_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //vm.SelectTaskView(TaskClass.SubKey);
+        }
+
+        private void TaskItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //vm.SelectTaskView(TaskClass.Item);
+        }
+
+        private void ListView_TaskMain_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm.SelectTaskView(TaskClass.MainKey);
+        }
+
+        private void ListBox_TaskSub_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm.SelectTaskView(TaskClass.SubKey);
+        }
+
+        private void ListView_TaskItem_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm.SelectTaskView(TaskClass.Item);
+        }
+
+        private void ListView_TaskMain_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FocusManager.SetFocusedElement(this, root);
+        }
+
+        private void ListBox_TaskSub_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FocusManager.SetFocusedElement(this, root);
+        }
+
+        private void ListView_TaskItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FocusManager.SetFocusedElement(this, root);
+        }
     }
 }

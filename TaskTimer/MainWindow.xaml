@@ -51,7 +51,16 @@
             <Button Click="Button_ManualSave_Click" Content="Save" HorizontalAlignment="Left" Height="27" Margin="179,10,0,0" VerticalAlignment="Top" Width="67" ToolTip="Log,Settingsを手動でセーブする"/>
         </Grid>
         <Grid Margin="0,47,0,251" Background="#FF98E8FF">
-            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,36,0,42" Background="White" HorizontalAlignment="Left" Width="204">
+            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" MouseLeftButtonDown="ListView_TaskMain_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskMain_PreviewMouseLeftButtonUp" SelectionChanged="TaskMain_SelectionChanged" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,36,0,42" Background="White" HorizontalAlignment="Left" Width="204">
+                <!--
+                Prism.ObservesPropertyを使うこと！
+                xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding Path=ShowCommand}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+                -->
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -64,7 +73,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <ListBox ItemsSource="{Binding Key/SubKey}" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="219,36,0,42" Background="White" HorizontalAlignment="Left" Width="106">
+            <ListBox ItemsSource="{Binding Key/SubKey}" MouseLeftButtonDown="ListBox_TaskSub_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_TaskSub_PreviewMouseLeftButtonUp" SelectionChanged="TaskSub_SelectionChanged" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="219,36,0,42" Background="White" HorizontalAlignment="Left" Width="106">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -93,7 +102,7 @@
             </ListBox>
             -->
             <Grid Margin="330,36,10,42" Background="White"/>
-            <ListView ItemsSource="{Binding Key/SubKey/Item}" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexItem, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,36,10,42" Background="White">
+            <ListView ItemsSource="{Binding Key/SubKey/Item}" MouseLeftButtonDown="ListView_TaskItem_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskItem_PreviewMouseLeftButtonUp" SelectionChanged="TaskItem_SelectionChanged" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexItem, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,36,10,42" Background="White">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
                         <GridViewColumn ctrl:RangeColumn.IsFillColumn="true" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
@@ -110,13 +119,13 @@
             <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,6,23,0" TextWrapping="Wrap" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True" Height="24" VerticalAlignment="Top"/>
             <TextBlock HorizontalAlignment="Right" Margin="0,12,23,0" TextWrapping="Wrap" Text="総計" Width="31" FontSize="11" TextAlignment="Right" Height="19" VerticalAlignment="Top"/>
             <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="475,0,0,10" Width="123" VerticalAlignment="Bottom"/>
-            <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ上に移動">
+            <Button Click="Button_TaskViewOpeUp_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ上に移動">
                 <materialDesign:PackIcon Kind="ChevronUp" Height="23" Width="23"/>
             </Button>
-            <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="50,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ下に移動">
+            <Button Click="Button_TaskViewOpeDown_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="50,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ下に移動">
                 <materialDesign:PackIcon Kind="ChevronDown" Height="23" Width="23"/>
             </Button>
-            <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="110,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を削除">
+            <Button Click="Button_TaskViewOpeDelete_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="110,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を削除">
                 <materialDesign:PackIcon Kind="Delete" Height="23" Width="23"/>
             </Button>
         </Grid>
