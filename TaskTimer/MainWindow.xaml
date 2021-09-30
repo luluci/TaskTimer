@@ -51,7 +51,7 @@
             <Button Click="Button_ManualSave_Click" Content="Save" HorizontalAlignment="Left" Height="27" Margin="179,10,0,0" VerticalAlignment="Top" Width="67" ToolTip="Log,Settingsを手動でセーブする"/>
         </Grid>
         <Grid Margin="0,47,0,251" Background="#FF98E8FF">
-            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" MouseLeftButtonDown="ListView_TaskMain_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskMain_PreviewMouseLeftButtonUp" SelectionChanged="TaskMain_SelectionChanged" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,36,0,42" Background="White" HorizontalAlignment="Left" Width="204">
+            <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" MouseLeftButtonDown="ListView_TaskMain_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskMain_PreviewMouseLeftButtonUp" SelectionChanged="TaskMain_SelectionChanged" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,43,0,33" Background="White" HorizontalAlignment="Left" Width="204">
                 <!--
                 Prism.ObservesPropertyを使うこと！
                 xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
@@ -73,7 +73,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <ListBox ItemsSource="{Binding Key/SubKey}" MouseLeftButtonDown="ListBox_TaskSub_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_TaskSub_PreviewMouseLeftButtonUp" SelectionChanged="TaskSub_SelectionChanged" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="219,36,0,42" Background="White" HorizontalAlignment="Left" Width="106">
+            <ListBox ItemsSource="{Binding Key/SubKey}" MouseLeftButtonDown="ListBox_TaskSub_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_TaskSub_PreviewMouseLeftButtonUp" SelectionChanged="TaskSub_SelectionChanged" SelectedIndex="{Binding SelectedIndexSub, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="219,43,0,33" Background="White" HorizontalAlignment="Left" Width="106">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -101,8 +101,8 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             -->
-            <Grid Margin="330,36,10,42" Background="White"/>
-            <ListView ItemsSource="{Binding Key/SubKey/Item}" MouseLeftButtonDown="ListView_TaskItem_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskItem_PreviewMouseLeftButtonUp" SelectionChanged="TaskItem_SelectionChanged" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexItem, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,36,10,42" Background="White">
+            <Grid Margin="330,43,10,33" Background="White"/>
+            <ListView ItemsSource="{Binding Key/SubKey/Item}" MouseLeftButtonDown="ListView_TaskItem_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskItem_PreviewMouseLeftButtonUp" SelectionChanged="TaskItem_SelectionChanged" ctrl:ListViewLayoutManager.Enabled="true" SelectedIndex="{Binding SelectedIndexItem, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="330,43,10,33" Background="White">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ResourceKey=TaskListViewHeaderStyle}">
                         <GridViewColumn ctrl:RangeColumn.IsFillColumn="true" CellTemplate="{StaticResource TaskListViewCellTemplate}" />
@@ -110,28 +110,28 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <TextBox Text="{Binding Key/Code, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,6,0,0" TextWrapping="Wrap" Width="159" Height="24" VerticalAlignment="Top"/>
-            <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Margin="174,6,196,0" TextWrapping="Wrap" Height="24" VerticalAlignment="Top"/>
-            <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Margin="0,6,111,0" TextWrapping="Wrap" HorizontalAlignment="Right" Width="80" Height="24" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding Key/Code, Mode=TwoWay}" HorizontalAlignment="Left" Margin="13,0,0,6" TextWrapping="Wrap" Width="159" Height="24" VerticalAlignment="Bottom"/>
+            <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Margin="177,0,193,6" TextWrapping="Wrap" Height="24" VerticalAlignment="Bottom"/>
+            <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Margin="0,0,108,6" TextWrapping="Wrap" HorizontalAlignment="Right" Width="80" Height="24" VerticalAlignment="Bottom"/>
             <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
-            <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="219,0,0,10" Width="115" Height="27" VerticalAlignment="Bottom"/>
-            <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="343,0,0,10" Width="123" Height="27" VerticalAlignment="Bottom"/>
-            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,6,23,0" TextWrapping="Wrap" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True" Height="24" VerticalAlignment="Top"/>
-            <TextBlock HorizontalAlignment="Right" Margin="0,12,23,0" TextWrapping="Wrap" Text="総計" Width="31" FontSize="11" TextAlignment="Right" Height="19" VerticalAlignment="Top"/>
-            <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="475,0,0,10" Width="123" VerticalAlignment="Bottom"/>
-            <Button Click="Button_TaskViewOpeUp_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ上に移動">
+            <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="219,8,0,0" Width="115" Height="27" VerticalAlignment="Top"/>
+            <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="343,8,0,0" Width="123" Height="27" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,0,20,6" TextWrapping="Wrap" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True" Height="24" VerticalAlignment="Bottom"/>
+            <TextBlock HorizontalAlignment="Right" Margin="0,0,20,5" TextWrapping="Wrap" Text="総計" Width="31" FontSize="11" TextAlignment="Right" Height="19" VerticalAlignment="Bottom"/>
+            <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="475,8,0,0" Width="123" VerticalAlignment="Top"/>
+            <Button Click="Button_TaskViewOpeUp_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,5,0,0" Width="33" ToolTip="選択している要素を１つ上に移動" VerticalAlignment="Top">
                 <materialDesign:PackIcon Kind="ChevronUp" Height="23" Width="23"/>
             </Button>
-            <Button Click="Button_TaskViewOpeDown_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="50,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を１つ下に移動">
+            <Button Click="Button_TaskViewOpeDown_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="50,5,0,0" Width="33" ToolTip="選択している要素を１つ下に移動" VerticalAlignment="Top">
                 <materialDesign:PackIcon Kind="ChevronDown" Height="23" Width="23"/>
             </Button>
-            <Button Click="Button_TaskViewOpeDelete_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="110,0,0,5" Width="33" VerticalAlignment="Bottom" ToolTip="選択している要素を削除">
+            <Button Click="Button_TaskViewOpeDelete_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="110,5,0,0" Width="33" ToolTip="選択している要素を削除" VerticalAlignment="Top">
                 <materialDesign:PackIcon Kind="Delete" Height="23" Width="23"/>
             </Button>
         </Grid>
         <Grid Background="#FFFAFF99" Height="251" VerticalAlignment="Bottom">
-            <Button Click="Button_MakeSummary_Click" Content="Summary作成" Height="27" Margin="10,10,0,214" HorizontalAlignment="Left" Width="126"/>
-            <DataGrid SelectedIndex="{Binding SelectedIndexSummary}" MouseLeftButtonUp="DataGrid_Summary_MouseLeftButtonUp" ItemsSource="{Binding SummaryView}" RowHeight="32" AutoGenerateColumns="False" Margin="10,46,10,10" FontSize="11">
+            <Button Click="Button_MakeSummary_Click" Content="Summary作成" Height="27" Margin="16,213,0,11" HorizontalAlignment="Left" Width="126"/>
+            <DataGrid SelectedIndex="{Binding SelectedIndexSummary}" MouseLeftButtonUp="DataGrid_Summary_MouseLeftButtonUp" ItemsSource="{Binding SummaryView}" RowHeight="32" AutoGenerateColumns="False" Margin="10,10,10,46" FontSize="11">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -155,15 +155,15 @@
                     </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="154,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="150,40,0,0" VerticalAlignment="Top" Width="194"/>
-            <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="201,9,0,0" VerticalAlignment="Top" Width="57"/>
-            <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="264,9,0,0" VerticalAlignment="Top" Width="74"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="359,40,0,0" VerticalAlignment="Top" Width="193"/>
-            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="362,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
-            <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="409,10,0,0" VerticalAlignment="Top" Width="57"/>
-            <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="473,10,0,0" VerticalAlignment="Top" Width="74"/>
-            <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="595,7,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
+            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="160,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="156,243,0,0" VerticalAlignment="Top" Width="194"/>
+            <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="207,212,0,0" VerticalAlignment="Top" Width="57"/>
+            <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="270,212,0,0" VerticalAlignment="Top" Width="74"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="365,243,0,0" VerticalAlignment="Top" Width="193"/>
+            <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="368,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
+            <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="415,213,0,0" VerticalAlignment="Top" Width="57"/>
+            <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="479,213,0,0" VerticalAlignment="Top" Width="74"/>
+            <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="601,210,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
                 <materialDesign:PackIcon Kind="FolderDownloadOutline" Height="23" Width="23"/>
             </Button>
         </Grid>
