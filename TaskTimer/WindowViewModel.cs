@@ -30,6 +30,14 @@ namespace TaskTimer
 
     class WindowViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string PropertyName)
+        {
+            var e = new PropertyChangedEventArgs(PropertyName);
+            PropertyChanged?.Invoke(this, e);
+        }
+
+
         private ObservableCollection<TaskKey> key;
         public ObservableCollection<TaskKey> Key
         {
@@ -46,6 +54,7 @@ namespace TaskTimer
         private Task logSaveTask = null;
         private Task settingSaveTask = null;
         private TaskClass selectTaskClass;
+        private bool isTargetDateChanged = false;
 
         public WindowViewModel()
         {
@@ -188,13 +197,39 @@ namespace TaskTimer
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string PropertyName)
+        public DateTime TargetDate
         {
-            var e = new PropertyChangedEventArgs(PropertyName);
-            PropertyChanged?.Invoke(this, e);
+            get
+            {
+                return Util.TargetDate;
+            }
+            set
+            {
+                if (!Util.TargetDate.Date.Equals(value.Date))
+                {
+                    isTargetDateChanged = true;
+                }
+                Util.TargetDate = value;
+            }
         }
-        
+
+        public void TargetDateChanged()
+        {
+            // SetterでUtil.TargetDate更新後にコールされる
+            // Setter内で処理したくなかったのでこちらで
+            // 実際に日時が変わったときのみ処理
+            if (isTargetDateChanged)
+            {
+                // フラグを下す
+                isTargetDateChanged = false;
+                // タイマを止める
+
+            }
+        }
+
+
+
+
         private int selectedIndex;
         public int SelectedIndex
         {

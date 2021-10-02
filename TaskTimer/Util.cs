@@ -18,6 +18,8 @@ namespace TaskTimer
         public const int countDiv = 60;
 #endif
 
+        public static DateTime TargetDate = DateTime.Now;
+
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
 
         static public bool CheckFileOpen(string path)

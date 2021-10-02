@@ -253,5 +253,10 @@ namespace TaskTimer
         {
             FocusManager.SetFocusedElement(this, root);
         }
+
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            vm.TargetDateChanged();
+        }
     }
 }

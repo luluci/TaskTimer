@@ -21,6 +21,7 @@ namespace TaskTimer
         private string inputKeyFileTemp;
         private string inputSubKeyFile;
         private string inputSubKeyFileTemp;
+        private bool settingFileLoaded;
 
         public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)> Keys;
         public List<(string Code, string Alias, string Item)> SubKeys;
@@ -33,6 +34,7 @@ namespace TaskTimer
             inputKeyFileTemp = inputDir + @"\key.tmp";                      // Key * SubKey の全組み合わせを記憶
             inputSubKeyFile = inputDir + @"\subkey_template.txt";           // SubKeyのテンプレート設定ファイル
             inputSubKeyFileTemp = inputDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
+            settingFileLoaded = false;
 
             Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)>();
             SubKeys = new List<(string Code, string Alias, string Item)>();
@@ -40,6 +42,9 @@ namespace TaskTimer
 
         public void Load()
         {
+            // keyファイル、subkye_templateファイルを読み込み済みならスキップ
+            if (settingFileLoaded) return;
+
             // 設定ファイルからロード
             // フォルダチェック
             if (!Directory.Exists(inputDir))
@@ -135,6 +140,9 @@ namespace TaskTimer
                     }
                 }
             }
+
+            // 一応最後にロード済み設定
+            settingFileLoaded = true;
         }
 
         public void Update(ObservableCollection<TaskKey> TaskKeys)

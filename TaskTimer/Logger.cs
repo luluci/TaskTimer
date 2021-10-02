@@ -151,7 +151,8 @@ namespace TaskTimer
                 {
                     foreach (var item in subkey.Item)
                     {
-                        if (item.time != 0)
+                        // 全部出力する
+                        //if (item.time != 0)
                         {
                             Logs.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.time));
                         }
