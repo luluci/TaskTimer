@@ -15,7 +15,7 @@ namespace TaskTimer
     class Logger
     {
         private string rootDir;
-        private string logDir;
+        private string outDir;
         private string baseFileName;
         private string daykey;
         private string logFile;
@@ -29,12 +29,28 @@ namespace TaskTimer
         public Logger()
         {
             rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            logDir = rootDir + @"\log";
+            outDir = rootDir + @"\log";
             baseFileName = "log";
             // ターゲット日時からファイル名等作成
             UpdateDate();
             // ログファイルからの読み出しデータ有無
             hasLog = false;
+        }
+
+        private void MakeOutDir()
+        {
+            // フォルダチェック
+            if (!Directory.Exists(outDir))
+            {
+                // 存在しない場合は作成する
+                Directory.CreateDirectory(outDir);
+            }
+        }
+
+        public void OpenOutDir()
+        {
+            MakeOutDir();
+            System.Diagnostics.Process.Start("explorer.exe", outDir);
         }
 
         public void UpdateDate()
@@ -43,20 +59,22 @@ namespace TaskTimer
             // ログファイルキーとする
             daykey = Util.TargetDate.ToString("yyyyMMdd");
             // ログファイル名作成
-            logFile = $@"{logDir}\{baseFileName}.{daykey}.txt";
-            logFileTemp = $@"{logDir}\{baseFileName}.{daykey}.tmp";
+            logFile = $@"{outDir}\{baseFileName}.{daykey}.txt";
+            logFileTemp = $@"{outDir}\{baseFileName}.{daykey}.tmp";
         }
 
         public void Load()
         {
+            // ログ読み出し情報初期化
+            hasLog = false;
             LoadLog = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int>();
             // 同じ日付のログがあったらツールが途中終了したものとして、続きからカウントできるようにする。
             // 設定ファイルからロード
             // フォルダチェック
-            if (!Directory.Exists(logDir))
+            if (!Directory.Exists(outDir))
             {
                 // 存在しない場合は作成する
-                Directory.CreateDirectory(logDir);
+                Directory.CreateDirectory(outDir);
             }
             else
             {

@@ -682,6 +682,11 @@ namespace TaskTimer
             summary.OpenOutDir();
         }
 
+        public void OnClick_OpenLogDir()
+        {
+            logger.OpenOutDir();
+        }
+
         public bool enableSaveSummary1All = true;
         public bool EnableSaveSummary1All
         {

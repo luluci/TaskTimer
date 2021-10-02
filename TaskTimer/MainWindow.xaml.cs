@@ -134,6 +134,11 @@ namespace TaskTimer
             vm.OnClick_OpenSummaryDir();
         }
 
+        private void Button_OpenLogDir_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_OpenLogDir();
+        }
+
         private void Button_ManualSave_Click(object sender, RoutedEventArgs e)
         {
             vm.OnClick_ManualSave();
