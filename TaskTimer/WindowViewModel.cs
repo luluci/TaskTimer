@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using TaskTimer;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace TaskTimer
 {
@@ -55,6 +56,7 @@ namespace TaskTimer
         private Task settingSaveTask = null;
         private TaskClass selectTaskClass;
         private bool isTargetDateChanged = false;
+        private DispatcherTimer ticker;
 
         public WindowViewModel()
         {
@@ -110,6 +112,18 @@ namespace TaskTimer
 
             // 要素の移動(Up,Down,Deleteボタンを押下したときの操作対象)に関する設定
             selectTaskClass = TaskClass.MainKey;            // 操作対象：MainKey
+
+            // Ticker設定
+            // 1秒基準でカウント
+            ticker = new DispatcherTimer();
+            ticker.Interval = new TimeSpan(0, 0, 1);
+            ticker.Tick += new EventHandler(timer_Tick);
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            // 1秒経過を通知
+            TimerEllapse(1);
         }
 
         private void LoadSettings()
@@ -179,6 +193,9 @@ namespace TaskTimer
 
         public void Close()
         {
+            //
+            ticker.Stop();
+
             // Setting出力
             // running中のタスクがあるならスキップ
             if (settingSaveTask == null || settingSaveTask.IsCompleted)
@@ -367,12 +384,13 @@ namespace TaskTimer
 
         public void TimerStart()
         {
+            ticker.Start();
             this.timer.CountStart();
         }
 
         public void TimerStop()
         {
-
+            ticker.Stop();
         }
 
         private void UpdateBaseCount()
@@ -578,16 +596,18 @@ namespace TaskTimer
             }
         }
 
-        public void OnButtonClick_TimerOn(bool isCounting)
+        public void OnButtonClick_TimerOn()
         {
-            if (isCounting)
+            if (ticker.IsEnabled)
             {
                 // 現在カウント中なら
+                TimerStop();
                 buttonTimerOn = "タイマ停止";
             } 
             else
             {
                 // 現在カウント中でないなら
+                TimerStart();
                 buttonTimerOn = "タイマ開始";
             }
             NotifyPropertyChanged(nameof(ButtonTimerOn));

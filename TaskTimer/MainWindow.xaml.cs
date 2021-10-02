@@ -41,9 +41,7 @@ namespace TaskTimer
             }
 
             this.DataContext = this.vm;
-
-            InitTimer();
-
+            
             this.Closing += (s, e) =>
             {
                 this.vm.Close();
@@ -51,37 +49,7 @@ namespace TaskTimer
 
             FocusManager.SetIsFocusScope(this, true);
         }
-
-
-        // ストップウォッチ制御
-        bool IsTimerCounting = false;
-        DispatcherTimer timer;
-        private void InitTimer()
-        {
-            // 1秒基準でカウント
-            timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Tick += new EventHandler(timer_Tick);
-
-            // 終了時にタイマを止める
-            this.Closing += (s, e) => timer.Stop();
-        }
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            // 1秒経過を通知
-            this.vm.TimerEllapse(1);
-        }
-        private void StartTimer()
-        {
-            timer.Start();
-            this.vm.TimerStart();
-        }
-        private void StopTimer()
-        {
-            timer.Stop();
-            this.vm.TimerStop();
-        }
-
+        
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             TextBox txt = (TextBox)((Grid)((TextBlock)sender).Parent).Children[1];
@@ -123,18 +91,7 @@ namespace TaskTimer
 
         private void Button_Timer_Click(object sender, RoutedEventArgs e)
         {
-            if (IsTimerCounting)
-            {
-                IsTimerCounting = false;
-                StopTimer();
-                this.vm.OnButtonClick_TimerOn(IsTimerCounting);
-            }
-            else
-            {
-                IsTimerCounting = true;
-                StartTimer();
-                this.vm.OnButtonClick_TimerOn(IsTimerCounting);
-            }
+            this.vm.OnButtonClick_TimerOn();
         }
 
         private void Button_AddItem_Click(object sender, RoutedEventArgs e)
