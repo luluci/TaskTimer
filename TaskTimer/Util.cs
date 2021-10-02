@@ -23,6 +23,16 @@ namespace TaskTimer
 
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
 
+        static public bool CheckTargetDateIsToday()
+        {
+            return TargetDate.Date.Equals(CurrentDate.Date);
+        }
+        static public bool CheckTargetDateIsNotPast()
+        {
+            // ターゲット >= 現在
+            return TargetDate.Date.CompareTo(CurrentDate.Date) >= 0;
+        }
+
         static public bool CheckFileOpen(string path)
         {
             if (IsFileLocked(path))

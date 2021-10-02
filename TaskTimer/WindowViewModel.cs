@@ -103,6 +103,8 @@ namespace TaskTimer
 
             // Logに全要素を吐き出す前提
             // ロードしたLogファイルが存在すればLogに必要な情報はすべてあるのでLogの展開のみ行う
+            // インスタンス作成
+            this.key = new ObservableCollection<TaskKey>();
             LoadTask();
 
             /*
@@ -118,10 +120,6 @@ namespace TaskTimer
             this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
             */
 
-            // Subが最初から表示されてしまうので、初期状態で最初のタスクを選択しておく。
-            this.SelectedIndex = 0;
-            this.SelectedIndexSub = 0;
-            this.selectedIndexItem = 0;
 
             // 要素の移動(Up,Down,Deleteボタンを押下したときの操作対象)に関する設定
             selectTaskClass = TaskClass.MainKey;            // 操作対象：MainKey
@@ -143,8 +141,8 @@ namespace TaskTimer
 
         private void LoadTask()
         {
-            // インスタンス作成
-            this.key = new ObservableCollection<TaskKey>();
+            // インスタンス初期化
+            this.key.Clear();
             // タスク展開
             if (logger.hasLog)
             {
@@ -156,6 +154,10 @@ namespace TaskTimer
                 // Logファイルから読みだしたデータが無ければsettingsからタスクを展開
                 LoadSettings();
             }
+            // 初期状態で最初のタスクを選択しておく。
+            this.SelectedIndex = 0;
+            this.SelectedIndexSub = 0;
+            this.selectedIndexItem = 0;
         }
 
         private void LoadSettings()
@@ -285,9 +287,12 @@ namespace TaskTimer
             // running中のタスクがあるならスキップ
             if (settingSaveTask == null || settingSaveTask.IsCompleted)
             {
-                this.settings.Update(this.key);
-                settingSaveTask = this.settings.SaveAsync();
-                settingSaveTask.Wait();
+                if (Util.CheckTargetDateIsToday())
+                {
+                    this.settings.Update(this.key);
+                    settingSaveTask = this.settings.SaveAsync();
+                    settingSaveTask.Wait();
+                }
             }
             // ログ出力
             // running中のタスクがあるならスキップ
@@ -326,8 +331,12 @@ namespace TaskTimer
                 isTargetDateChanged = false;
                 // タイマを止める
                 TimerStop();
-                // 変更後日時でログをロードする
+                // 現在ログを保存しておく
+                SaveLog();
+                // 指定日時のログを展開する
+                logger.UpdateDate();
                 logger.Load();
+                LoadTask();
             }
         }
 
@@ -510,7 +519,15 @@ namespace TaskTimer
         {
             if (timer.ReqAutoSave())
             {
-                // 自動保存要求があれば
+                SaveLog();
+            }
+        }
+
+        private void SaveLog()
+        {
+            if (hasChangeLog)
+            {
+                // 自動保存要求とログ変化があれば
                 // タスクなし または 完了済みなら自動保存する
                 // running中のタスクがあるならスキップ
                 if (logSaveTask == null || logSaveTask.IsCompleted)
@@ -527,16 +544,27 @@ namespace TaskTimer
         
         public void OnClick_ManualSave()
         {
+            // ログ更新保存済みならスキップ
+            if (!hasChangeLog) return;
+
             // タスクなし または 完了済みならSetting/log手動出力
             // running中のタスクがあるならスキップ
             // 基本的にsettingはタスク終了時のみ保存するので問題ない。アンドで両方チェックしてしまう
             if ((logSaveTask == null || logSaveTask.IsCompleted) && (settingSaveTask == null || settingSaveTask.IsCompleted))
             {
+                // ログ更新保存済み
+                hasChangeLog = false;
                 // GUI無効化
                 EnableManualSave = false;
                 // ログ作成
                 // UIスレッド内でログを転送
-                this.settings.Update(this.key);
+                if (Util.CheckTargetDateIsToday())
+                {
+                    // 今日を対象としたkeyの変化のみ保存する
+                    // 過去のタスクは保存しない
+                    // 未来のタスクなんてわからないので保存する必要なし
+                    this.settings.Update(this.key);
+                }
                 this.logger.Update(this.key);
                 // ログ保存
                 logSaveTask = ManualSaveAsync();
@@ -837,36 +865,48 @@ namespace TaskTimer
 
         private void taskSwapMainKey(int curr, int tgt)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key.Move(curr, tgt);
             SelectedIndex = tgt;
         }
         private void taskDeleteMainKey(int curr)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key.RemoveAt(curr);
         }
 
         private void taskSwapSubKey(int curr, int tgt)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key[selectedIndex].SubKey.Move(curr, tgt);
             SelectedIndexSub = tgt;
         }
         private void taskDeleteSubKey(int curr)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key[selectedIndex].SubKey.RemoveAt(curr);
         }
 
         private void taskSwapItem(int curr, int tgt)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key[selectedIndex].SubKey[selectedIndexSub].Item.Move(curr, tgt);
             SelectedIndexItem = tgt;
         }
         private void taskDeleteItem(int curr)
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 
             key[selectedIndex].SubKey[selectedIndexSub].Item.RemoveAt(curr);
         }
