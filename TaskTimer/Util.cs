@@ -18,7 +18,8 @@ namespace TaskTimer
         public const int countDiv = 60;
 #endif
 
-        public static DateTime TargetDate = DateTime.Now;
+        public static readonly DateTime CurrentDate = DateTime.Now;     // 今日の日時。起動時の日時に依存して固定とする
+        public static DateTime TargetDate = DateTime.Now;               // カレンダーで指定する表示対象の日時
 
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
 

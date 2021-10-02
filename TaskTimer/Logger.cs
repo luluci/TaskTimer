@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 
 namespace TaskTimer
 {
+    using LogList = List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)>;
+
     class Logger
     {
         private string rootDir;
@@ -19,30 +21,35 @@ namespace TaskTimer
         private string logFile;
         private string logFileTemp;
 
-        public bool reqRestore;
+        public bool hasLog;
 
-        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)> Logs;
-        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int> RestoreLogs;
+        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)> SaveBuff;
+        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int> LoadLog;
 
         public Logger()
         {
             rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             logDir = rootDir + @"\log";
             baseFileName = "log";
+            // ターゲット日時からファイル名等作成
+            UpdateDate();
+            // ログファイルからの読み出しデータ有無
+            hasLog = false;
+        }
+
+        public void UpdateDate()
+        {
             // 本日の日付取得
             // ログファイルキーとする
-            DateTime dt = DateTime.Now;
-            daykey = dt.ToString("yyyyMMdd");
+            daykey = Util.TargetDate.ToString("yyyyMMdd");
             // ログファイル名作成
             logFile = $@"{logDir}\{baseFileName}.{daykey}.txt";
             logFileTemp = $@"{logDir}\{baseFileName}.{daykey}.tmp";
-            // ログからの復旧有無
-            reqRestore = false;
         }
 
         public void Load()
         {
-            RestoreLogs = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int>();
+            LoadLog = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int>();
             // 同じ日付のログがあったらツールが途中終了したものとして、続きからカウントできるようにする。
             // 設定ファイルからロード
             // フォルダチェック
@@ -85,27 +92,22 @@ namespace TaskTimer
                                     match.Groups[5].ToString(),
                                     match.Groups[6].ToString()
                                 );
-                                if (!RestoreLogs.ContainsKey(key))
+                                if (LoadLog.ContainsKey(key))
                                 {
-                                    RestoreLogs.Add(
-                                        (
-                                            match.Groups[1].ToString(),
-                                            match.Groups[2].ToString(),
-                                            match.Groups[3].ToString(),
-                                            match.Groups[4].ToString(),
-                                            match.Groups[5].ToString(),
-                                            match.Groups[6].ToString()
-                                        ),
-                                        min
-                                    );
+                                    LoadLog[key] += min;
+                                }
+                                else
+                                {
+                                    // 同一アイテムが存在しなければ追加
+                                    LoadLog.Add(key, min);
                                 }
                             }
                         }
                     }
-                    if (RestoreLogs.Count > 0)
+                    if (LoadLog.Count > 0)
                     {
                         // 1つ以上ログを取得したら復旧する
-                        reqRestore = true;
+                        hasLog = true;
                     }
                 }
             }
@@ -122,7 +124,7 @@ namespace TaskTimer
                     foreach (var item in subkey.Item)
                     {
                         var dictkey = (key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item);
-                        if (RestoreLogs.TryGetValue(dictkey, out int min))
+                        if (LoadLog.TryGetValue(dictkey, out int min))
                         {
                             item.time = min;
                             item.MakeDispTime();
@@ -143,7 +145,7 @@ namespace TaskTimer
                 elem += key.SubKey.Count;
             }
             // 要素分の領域を確保して初期化
-            Logs = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)>(elem);
+            SaveBuff = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)>(elem);
             // 最新のタスク設定を取得
             foreach (var key in TaskKeys)
             {
@@ -154,7 +156,7 @@ namespace TaskTimer
                         // 全部出力する
                         //if (item.time != 0)
                         {
-                            Logs.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.time));
+                            SaveBuff.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.time));
                         }
                     }
                 }
@@ -166,7 +168,7 @@ namespace TaskTimer
             // ファイル書き込み
             using (var writer = new StreamWriter(logFileTemp))
             {
-                foreach (var key in Logs)
+                foreach (var key in SaveBuff)
                 {
                     writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.min}");
                 }

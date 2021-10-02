@@ -48,9 +48,11 @@ namespace TaskTimer
 
         public Settings settings;
         public Logger logger;
+        private bool hasChangeLog;          // ログ変更有無(TaskKey, TaskKeySub, TaskItemの変化有無)
         private Summary summary;
         public Timer timer;
         private Action updateTaskMain;
+        private Action updateTaskSub;
         private Action<int, int> updateItem;
         private Task logSaveTask = null;
         private Task settingSaveTask = null;
@@ -66,15 +68,25 @@ namespace TaskTimer
             //
             logger = new Logger();
             logger.Load();
+            hasChangeLog = false;
 
             // ChildからのNotify用コールバック
             updateTaskMain = () =>
             {
+                // ログ更新あり
+                hasChangeLog = true;
                 //_updateSelectTaskMain();
                 //NotifyPropertyChanged(nameof(SelectTask));
             };
+            updateTaskSub = () =>
+            {
+                // ログ更新あり
+                hasChangeLog = true;
+            };
             updateItem = (int oldtime, int newtime) =>
             {
+                // ログ更新あり
+                hasChangeLog = true;
                 //_updateSelectTaskSub();
                 //NotifyPropertyChanged(nameof(SelectTask));
                 int diff = newtime - oldtime;
@@ -89,8 +101,9 @@ namespace TaskTimer
             timer = new Timer();
             baseCount = timer.BaseCountTime();
 
-            LoadSettings();
-            LoadLog();
+            // Logに全要素を吐き出す前提
+            // ロードしたLogファイルが存在すればLogに必要な情報はすべてあるのでLogの展開のみ行う
+            LoadTask();
 
             /*
             //[Test]
@@ -126,17 +139,34 @@ namespace TaskTimer
             TimerEllapse(1);
         }
 
-        private void LoadSettings()
+
+
+        private void LoadTask()
         {
             // インスタンス作成
             this.key = new ObservableCollection<TaskKey>();
+            // タスク展開
+            if (logger.hasLog)
+            {
+                // Logファイルから読みだしたデータがあればログを展開
+                LoadLog();
+            }
+            else
+            {
+                // Logファイルから読みだしたデータが無ければsettingsからタスクを展開
+                LoadSettings();
+            }
+        }
+
+        private void LoadSettings()
+        {
             // 設定ロード
             (string, string, string) mainCurrKey = ("", "", "");
             (string, string, string) mainNextKey;
             (string, string) subCurrKey = ("", "");
             (string, string) subNextKey;
             TaskKey taskMain = new TaskKey("", "", "", updateTaskMain);    // ダミーで初期化
-            TaskKeySub taskSub = new TaskKeySub("", "");
+            TaskKeySub taskSub = new TaskKeySub("", "", updateTaskSub);
             // settingからタスク設定をロード
             foreach (var keys in settings.Keys)
             {
@@ -154,7 +184,7 @@ namespace TaskTimer
                     {
                         // SubKeyが異なればオブジェクト追加
                         // SubKey追加
-                        taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode);
+                        taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub);
                         taskMain.SubKey.Add(taskSub);
                         // Item追加
                         taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
@@ -168,7 +198,7 @@ namespace TaskTimer
                     taskMain = new TaskKey(keys.Alias, keys.Code, keys.Name, updateTaskMain);
                     this.key.Add(taskMain);
                     // SubKey追加
-                    taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode);
+                    taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub);
                     taskMain.SubKey.Add(taskSub);
                     // Item追加
                     taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
@@ -182,13 +212,68 @@ namespace TaskTimer
 
         private void LoadLog()
         {
-            if (logger.reqRestore)
+            // ログの内容を展開
+            //int sum = logger.Expand(key);
+            int sum = 0;
+            // 設定ロード
+            (string, string, string) mainCurrKey = ("", "", "");
+            (string, string, string) mainNextKey;
+            (string, string) subCurrKey = ("", "");
+            (string, string) subNextKey;
+            TaskKey taskMain = new TaskKey("", "", "", updateTaskMain);    // ダミーで初期化
+            TaskKeySub taskSub = new TaskKeySub("", "", updateTaskSub);
+            TaskItem taskItem;
+            foreach (var item in logger.LoadLog)
             {
-                // 復旧要求があれば
-                int sum = logger.Restore(key);
-                // 
-                SummaryAdd(sum);
+                mainNextKey = (item.Key.Code, item.Key.Name, item.Key.Alias);
+                subNextKey = (item.Key.SubCode, item.Key.SubAlias);
+                if (mainCurrKey.Equals(mainNextKey))
+                {
+                    // MainKeyが同じならSubKeyチェック
+                    if (subCurrKey.Equals(subNextKey))
+                    {
+                        // SubKeyが同じならItem追加
+                        taskItem = new TaskItem(item.Key.Item, updateItem);
+                        taskItem.Time = item.Value;
+                        taskSub.Item.Add(taskItem);
+                    }
+                    else
+                    {
+                        // SubKeyが異なればオブジェクト追加
+                        // SubKey追加
+                        taskSub = new TaskKeySub(item.Key.SubAlias, item.Key.SubCode, updateTaskSub);
+                        taskMain.SubKey.Add(taskSub);
+                        // Item追加
+                        taskItem = new TaskItem(item.Key.Item, updateItem);
+                        taskItem.Time = item.Value;
+                        taskSub.Item.Add(taskItem);
+                        // SubKey更新
+                        subCurrKey = subNextKey;
+                    }
+                }
+                else
+                {
+                    // MainKeyが異なれば新しくオブジェクト追加
+                    taskMain = new TaskKey(item.Key.Alias, item.Key.Code, item.Key.Name, updateTaskMain);
+                    this.key.Add(taskMain);
+                    // SubKey追加
+                    taskSub = new TaskKeySub(item.Key.SubAlias, item.Key.SubCode, updateTaskSub);
+                    taskMain.SubKey.Add(taskSub);
+                    // Item追加
+                    taskItem = new TaskItem(item.Key.Item, updateItem);
+                    taskItem.Time = item.Value;
+                    taskSub.Item.Add(taskItem);
+                    // MainKey更新
+                    mainCurrKey = mainNextKey;
+                    // SubKey更新
+                    subCurrKey = subNextKey;
+                }
+
+                // 総和加算
+                sum += item.Value;
             }
+            // ログ時間を展開
+            SummaryAdd(sum);
         }
 
         public void Close()
@@ -240,7 +325,9 @@ namespace TaskTimer
                 // フラグを下す
                 isTargetDateChanged = false;
                 // タイマを止める
-
+                TimerStop();
+                // 変更後日時でログをロードする
+                logger.Load();
             }
         }
 
@@ -306,13 +393,15 @@ namespace TaskTimer
 
         public void addTaskMain()
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // 新しいタスク追加
             var newtask = new TaskKey("NewAlias", "NewCode", "NewName", updateTaskMain);
             this.key.Add(newtask);
             // テンプレート展開
             (string, string) subCurrKey = ("", "");
             (string, string) subNextKey;
-            TaskKeySub taskSub = new TaskKeySub("", "");
+            TaskKeySub taskSub = new TaskKeySub("", "", updateTaskSub);
             foreach (var subkey in settings.SubKeys)
             {
                 subNextKey = (subkey.Code, subkey.Alias);
@@ -326,7 +415,7 @@ namespace TaskTimer
                 {
                     // SubKeyが異なればオブジェクト追加
                     // SubKey追加
-                    taskSub = new TaskKeySub(subkey.Alias, subkey.Code);
+                    taskSub = new TaskKeySub(subkey.Alias, subkey.Code, updateTaskSub);
                     newtask.SubKey.Add(taskSub);
                     // Item追加
                     taskSub.Item.Add(new TaskItem(subkey.Item, updateItem));
@@ -338,8 +427,10 @@ namespace TaskTimer
 
         public void addTaskSub()
         {
+            // ログ更新あり
+            hasChangeLog = true;
             // SubKey追加
-            TaskKeySub taskSub = new TaskKeySub("NewAlias", "NewCode");
+            TaskKeySub taskSub = new TaskKeySub("NewAlias", "NewCode", updateTaskSub);
             this.key[selectedIndex].SubKey.Add(taskSub);
             // Item追加
             taskSub.Item.Add(new TaskItem("NewItem", updateItem));
@@ -347,6 +438,9 @@ namespace TaskTimer
 
         public void addTaskItem()
         {
+            // ログ更新あり
+            hasChangeLog = true;
+            // Item追加
             this.key[selectedIndex].SubKey[selectedIndexSub].Item.Add(new TaskItem("NewItem", updateItem));
         }
 
@@ -373,6 +467,8 @@ namespace TaskTimer
                 this.key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].MakeDispTime();
                 this.timer.CountRestart();
                 this.SummaryAdd(min);
+                // ログ更新あり
+                hasChangeLog = true;
             }
             // 全体時間更新
             UpdateBaseCount();
@@ -386,11 +482,15 @@ namespace TaskTimer
         {
             ticker.Start();
             this.timer.CountStart();
+            buttonTimerOn = "タイマ停止";
+            NotifyPropertyChanged(nameof(ButtonTimerOn));
         }
 
         public void TimerStop()
         {
             ticker.Stop();
+            buttonTimerOn = "タイマ開始";
+            NotifyPropertyChanged(nameof(ButtonTimerOn));
         }
 
         private void UpdateBaseCount()
@@ -415,6 +515,8 @@ namespace TaskTimer
                 // running中のタスクがあるならスキップ
                 if (logSaveTask == null || logSaveTask.IsCompleted)
                 {
+                    // ログ更新保存済み
+                    hasChangeLog = false;
                     // UIスレッド内でログを転送
                     this.logger.Update(this.key);
                     // asyncにファイル書き込みを投げる
@@ -602,15 +704,12 @@ namespace TaskTimer
             {
                 // 現在カウント中なら
                 TimerStop();
-                buttonTimerOn = "タイマ停止";
             } 
             else
             {
                 // 現在カウント中でないなら
                 TimerStart();
-                buttonTimerOn = "タイマ開始";
             }
-            NotifyPropertyChanged(nameof(ButtonTimerOn));
         }
         private string buttonTimerOn = "タイマ開始";
         public string ButtonTimerOn
@@ -782,16 +881,13 @@ namespace TaskTimer
             set { subkey = value; }
         }
 
-        private Action _updateSelectTaskMain = null;
-        private Action<int, int> _updateSelectTaskSub = null;
-
         public string alias;
         public string Alias {
             get { return alias; }
             set
             {
                 alias = value;
-                //_updateSelectTaskMain?.Invoke();
+                _update?.Invoke();
             }
         }
 
@@ -801,7 +897,7 @@ namespace TaskTimer
             get { return code; }
             set {
                 code = value;
-                //_updateSelectTaskMain?.Invoke();
+                _update?.Invoke();
             }
         }
 
@@ -812,28 +908,21 @@ namespace TaskTimer
             set
             {
                 name = value;
-                //_updateSelectTaskMain?.Invoke();
+                _update?.Invoke();
             }
         }
+
+        private Action _update = null;
 
         public TaskKey(string alias, string code, string name, Action _main)
         {
             // SubKey初期値
             this.subkey = new ObservableCollection<TaskKeySub>();
-            /*
-            this.subkey.Add(new TaskKeySub("sub" + id + "-1", "code_sub" + id + "-1", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-2", "code_sub" + id + "-2", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-3", "code_sub" + id + "-3", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-4", "code_sub" + id + "-4", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-5", "code_sub" + id + "-5", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-6", "code_sub" + id + "-6", _sub));
-            this.subkey.Add(new TaskKeySub("sub" + id + "-7", "code_sub" + id + "-7", _sub));
-            */
 
             this.alias = alias;
             this.code = code;
             this.name = name;
-            _updateSelectTaskMain = _main;
+            _update = _main;
         }
     }
 
@@ -886,11 +975,14 @@ namespace TaskTimer
         }
         */
 
-        public TaskKeySub(string alias, string code)
+        private Action _update = null;
+
+        public TaskKeySub(string alias, string code, Action _update)
         {
             this.item = new ObservableCollection<TaskItem>();
             this.alias = alias;
             this.code = code;
+            this._update = _update;
         }
         
     }
@@ -930,6 +1022,15 @@ namespace TaskTimer
             }
         }
 
+        public int Time
+        {
+            get { return time; }
+            set
+            {
+                time = value;
+                MakeDispTime();
+            }
+        }
         public void TimerEllapse(int min)
         {
             time += min;
