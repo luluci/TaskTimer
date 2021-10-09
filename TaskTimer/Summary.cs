@@ -172,7 +172,7 @@ namespace TaskTimer
         {
             // ファイルがロックされているかどうかをチェック
             var output = GetSummaryFile(format);
-            return Util.CheckFileOpen(output);
+            return !Util.IsFileLocked(output);
         }
 
         public async Task SaveAsync(SummarySaveFormat format)

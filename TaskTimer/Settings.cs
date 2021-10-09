@@ -179,7 +179,7 @@ namespace TaskTimer
         public bool CheckFileLock()
         {
             // ファイルがロックされているかどうかをチェック
-            return Util.CheckFileOpen(inputKeyFile);
+            return !Util.IsFileLocked(inputKeyFile);
         }
 
         public async Task SaveAsync()
