@@ -184,17 +184,22 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Width="200" Binding="{Binding Alias, Mode=OneWay}">
+                        <DataGridTextColumn Width="200" Binding="{Binding Col1, Mode=OneWay}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="{x:Type TextBlock}"/>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Width="*" Binding="{Binding Item, Mode=OneWay}">
+                        <DataGridTextColumn Width="*" Binding="{Binding Col2, Mode=OneWay}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="{x:Type TextBlock}"/>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Width="70" Binding="{Binding Time, Mode=OneWay}">
+                        <DataGridTextColumn Width="60" Binding="{Binding Col3, Mode=OneWay}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="{x:Type TextBlock}"/>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="70" Binding="{Binding Col4, Mode=OneWay}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="{x:Type TextBlock}"/>
                             </DataGridTextColumn.ElementStyle>

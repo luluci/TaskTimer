@@ -253,7 +253,7 @@ namespace TaskTimer
                     {
                         if (item.time != 0)
                         {
-                            data.Add(new SummaryNode(key.Alias, item.Item, item.timeDisp, keyIndex, subkeyIndex, itemIndex));
+                            data.Add(new SummaryNode(key.Alias, item.Item, subkey.Code, item.timeDisp, keyIndex, subkeyIndex, itemIndex));
                         }
 
                         itemIndex++;
@@ -285,11 +285,12 @@ namespace TaskTimer
         private int subkeyIndex;
         private int itemIndex;
 
-        public SummaryNode(string alias, string item, string time, int keyIndex, int subkeyIndex, int itemIndex)
+        public SummaryNode(string col1, string col2, string col3, string col4, int keyIndex, int subkeyIndex, int itemIndex)
         {
-            this.alias = alias;
-            this.item = item;
-            this.time = time;
+            this.col1 = col1;
+            this.col2 = col2;
+            this.col3 = col3;
+            this.col4 = col4;
             this.keyIndex = keyIndex;
             this.subkeyIndex = subkeyIndex;
             this.itemIndex = itemIndex;
@@ -300,22 +301,28 @@ namespace TaskTimer
             return (keyIndex, subkeyIndex, itemIndex);
         }
 
-        private string alias;
-        public string Alias
+        private string col1;
+        public string Col1
         {
-            get { return alias; }
+            get { return col1; }
         }
 
-        private string item;
-        public string Item
+        private string col2;
+        public string Col2
         {
-            get { return item; }
+            get { return col2; }
         }
 
-        private string time;
-        public string Time
+        private string col3;
+        public string Col3
         {
-            get { return time; }
+            get { return col3; }
+        }
+
+        private string col4;
+        public string Col4
+        {
+            get { return col4; }
         }
     }
 }
