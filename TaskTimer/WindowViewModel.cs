@@ -579,7 +579,8 @@ namespace TaskTimer
                 }
             }
         }
-        
+
+
         public void OnClick_ManualSave()
         {
             // ログ更新保存済みならスキップ
@@ -643,6 +644,21 @@ namespace TaskTimer
             {
                 enableManualSave = value;
                 NotifyPropertyChanged(nameof(EnableManualSave));
+            }
+        }
+
+
+        public void OnClick_ManualSaveConfig()
+        {
+            // Config出力
+            if (configSaveTask == null || configSaveTask.IsCompleted)
+            {
+                // アプリ終了時のファイル保存はファイルロックの対処を確認する
+                var check = config.AskFileLock();
+                if (check)
+                {
+                    configSaveTask = config.SaveAsync();
+                }
             }
         }
 

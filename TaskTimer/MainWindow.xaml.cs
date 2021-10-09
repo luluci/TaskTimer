@@ -220,5 +220,10 @@ namespace TaskTimer
         {
             vm.TargetDateChanged();
         }
+
+        private void Button_SaveConfig_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OnClick_ManualSaveConfig();
+        }
     }
 }

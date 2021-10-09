@@ -73,6 +73,9 @@
                                 <TextBlock Text="Settingsフォルダパス" FontWeight="Bold" />
                                 <TextBox Text="{Binding SettingsDir}" TextWrapping="Wrap" Height="40" />
                             </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <Button Click="Button_SaveConfig_Click" Content="Save" ToolTip="アプリ設定を保存します" />
+                            </StackPanel>
                         </StackPanel>
                     </materialDesign:ColorZone>
                 </StackPanel>
