@@ -71,10 +71,10 @@ namespace TaskTimer
                 task.Wait();
             }
             //
-            settings = new Settings();
+            settings = new Settings(config.SettingsDir);
             settings.Load();
             //
-            logger = new Logger();
+            logger = new Logger(config.LogDir);
             logger.Load();
             hasChangeLog = false;
 
@@ -102,7 +102,7 @@ namespace TaskTimer
             };
 
             //
-            summary = new Summary();
+            summary = new Summary(config.SummaryDir);
             SummaryAdd(0);
 
             // 

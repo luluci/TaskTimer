@@ -14,8 +14,7 @@ namespace TaskTimer
 
     class Logger
     {
-        private string rootDir;
-        private string outDir;
+        private string tgtDir;
         private string baseFileName;
         private string daykey;
         private string logFile;
@@ -26,10 +25,9 @@ namespace TaskTimer
         public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)> SaveBuff;
         public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int> LoadLog;
 
-        public Logger()
+        public Logger(string tgtDirPath)
         {
-            rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            outDir = rootDir + @"\log";
+            tgtDir = tgtDirPath;
             baseFileName = "log";
             // ターゲット日時からファイル名等作成
             UpdateDate();
@@ -40,17 +38,17 @@ namespace TaskTimer
         private void MakeOutDir()
         {
             // フォルダチェック
-            if (!Directory.Exists(outDir))
+            if (!Directory.Exists(tgtDir))
             {
                 // 存在しない場合は作成する
-                Directory.CreateDirectory(outDir);
+                Directory.CreateDirectory(tgtDir);
             }
         }
 
         public void OpenOutDir()
         {
             MakeOutDir();
-            System.Diagnostics.Process.Start("explorer.exe", outDir);
+            System.Diagnostics.Process.Start("explorer.exe", tgtDir);
         }
 
         public void UpdateDate()
@@ -59,8 +57,8 @@ namespace TaskTimer
             // ログファイルキーとする
             daykey = Util.TargetDate.ToString("yyyyMMdd");
             // ログファイル名作成
-            logFile = $@"{outDir}\{baseFileName}.{daykey}.txt";
-            logFileTemp = $@"{outDir}\{baseFileName}.{daykey}.tmp";
+            logFile = $@"{tgtDir}\{baseFileName}.{daykey}.txt";
+            logFileTemp = $@"{tgtDir}\{baseFileName}.{daykey}.tmp";
         }
 
         public void Load()
@@ -71,10 +69,10 @@ namespace TaskTimer
             // 同じ日付のログがあったらツールが途中終了したものとして、続きからカウントできるようにする。
             // 設定ファイルからロード
             // フォルダチェック
-            if (!Directory.Exists(outDir))
+            if (!Directory.Exists(tgtDir))
             {
                 // 存在しない場合は作成する
-                Directory.CreateDirectory(outDir);
+                Directory.CreateDirectory(tgtDir);
             }
             else
             {

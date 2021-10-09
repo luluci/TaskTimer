@@ -21,7 +21,7 @@ namespace TaskTimer
     {
         // ファイル情報
         private string rootDir;
-        private string outDir;
+        private string tgtDir;
         private string baseFileName;
         private string daykey;
         private string summaryFileType1;
@@ -32,21 +32,20 @@ namespace TaskTimer
         public int timeAll;
         private string logdummy;
 
-        public Summary()
+        public Summary(string tgtDirPath)
         {
             // ファイル情報
-            rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            outDir = rootDir + @"\summary";
+            tgtDir = tgtDirPath;
             baseFileName = "summary";
             // 本日の日付取得
             // ログファイルキーとする
             DateTime dt = DateTime.Now;
             daykey = dt.ToString("yyyyMMdd");
             // ログファイル名作成
-            summaryFileType1 = $@"{outDir}\{baseFileName}.type1.{daykey}.txt";
-            summaryFileType1Temp = $@"{outDir}\{baseFileName}.type1.{daykey}.tmp";
-            summaryFileType2 = $@"{outDir}\{baseFileName}.type2.{daykey}.txt";
-            summaryFileType2Temp = $@"{outDir}\{baseFileName}.type2.{daykey}.tmp";
+            summaryFileType1 = $@"{tgtDir}\{baseFileName}.type1.{daykey}.txt";
+            summaryFileType1Temp = $@"{tgtDir}\{baseFileName}.type1.{daykey}.tmp";
+            summaryFileType2 = $@"{tgtDir}\{baseFileName}.type2.{daykey}.txt";
+            summaryFileType2Temp = $@"{tgtDir}\{baseFileName}.type2.{daykey}.tmp";
 
             timeAll = 0;
             logdummy = "";
@@ -56,17 +55,17 @@ namespace TaskTimer
         private void MakeOutDir()
         {
             // フォルダチェック
-            if (!Directory.Exists(outDir))
+            if (!Directory.Exists(tgtDir))
             {
                 // 存在しない場合は作成する
-                Directory.CreateDirectory(outDir);
+                Directory.CreateDirectory(tgtDir);
             }
         }
 
         public void OpenOutDir()
         {
             MakeOutDir();
-            System.Diagnostics.Process.Start("explorer.exe", outDir);
+            System.Diagnostics.Process.Start("explorer.exe", tgtDir);
         }
 
         public void Add(int min)

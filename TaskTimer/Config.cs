@@ -14,19 +14,85 @@ namespace TaskTimer
 {
     class Config
     {
-        private string tgtDir;
-        private string tgtDirPath;
-        private string configFileName;
         private string configFilePath;
         private JsonItem json;
 
         public Config()
         {
             // パス設定
-            tgtDir = @"settings";
-            tgtDirPath = Util.rootDirPath + @"\" + tgtDir;
-            configFileName = @"config.json";
-            configFilePath = tgtDirPath + @"\" + configFileName;
+            configFilePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + @".json";
+        }
+
+        public string LogDir
+        {
+            get
+            {
+                if (json.LogDir.Length == 0)
+                {
+                    return Util.rootDirPath + @"\log";
+                }
+                else
+                {
+                    return GetAbsPath(json.LogDir);
+                }
+            }
+        }
+
+        public string SummaryDir
+        {
+            get
+            {
+                if (json.SummaryDir.Length == 0)
+                {
+                    return Util.rootDirPath + @"\summary";
+                }
+                else
+                {
+                    return GetAbsPath(json.SummaryDir);
+                }
+            }
+        }
+
+        public string SettingsDir
+        {
+            get
+            {
+                if (json.SettingsDir.Length == 0)
+                {
+                    return Util.rootDirPath + @"\settings";
+                }
+                else
+                {
+                    return GetAbsPath(json.SettingsDir);
+                }
+            }
+        }
+
+        private string GetAbsPath(string path)
+        {
+            if (System.IO.Path.IsPathRooted(path))
+            {
+                var uri = new Uri(path);
+                if (uri.IsUnc)
+                {
+                    // UNCパスの場合
+                    return path;
+                }
+                else
+                {
+                    // 絶対パス
+                    return path;
+                }
+                // 絶対パス
+                return path;
+            }
+            else
+            {
+                // 相対パス
+                var baseuri = new Uri(Util.rootDirPath + "\\");
+                var absuri = new Uri(baseuri, path);
+                return absuri.LocalPath;
+            }
         }
 
         public async Task LoadAsync()
@@ -59,6 +125,7 @@ namespace TaskTimer
                 json = new JsonItem {
                     LogDir = "",
                     SummaryDir = "",
+                    SettingsDir = "",
                 };
             }
         }
@@ -91,6 +158,9 @@ namespace TaskTimer
 
         [JsonPropertyName("summary_dir")]
         public string SummaryDir { get; set; }
+
+        [JsonPropertyName("settings_dir")]
+        public string SettingsDir { get; set; }
 
     }
 }

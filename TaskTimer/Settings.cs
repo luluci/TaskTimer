@@ -15,8 +15,7 @@ namespace TaskTimer
 {
     class Settings
     {
-        private string rootDir;
-        private string inputDir;
+        private string tgtDir;
         private string inputKeyFile;
         private string inputKeyFileTemp;
         private string inputSubKeyFile;
@@ -26,14 +25,13 @@ namespace TaskTimer
         public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)> Keys;
         public List<(string Code, string Alias, string Item)> SubKeys;
 
-        public Settings()
+        public Settings(string tgtDirPath)
         {
-            rootDir = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            inputDir = rootDir + @"\settings";
-            inputKeyFile = inputDir + @"\key.txt";                          // Key * SubKey の全組み合わせを記憶
-            inputKeyFileTemp = inputDir + @"\key.tmp";                      // Key * SubKey の全組み合わせを記憶
-            inputSubKeyFile = inputDir + @"\subkey_template.txt";           // SubKeyのテンプレート設定ファイル
-            inputSubKeyFileTemp = inputDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
+            tgtDir = tgtDirPath;
+            inputKeyFile = tgtDir + @"\key.txt";                          // Key * SubKey の全組み合わせを記憶
+            inputKeyFileTemp = tgtDir + @"\key.tmp";                      // Key * SubKey の全組み合わせを記憶
+            inputSubKeyFile = tgtDir + @"\subkey_template.txt";           // SubKeyのテンプレート設定ファイル
+            inputSubKeyFileTemp = tgtDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
             settingFileLoaded = false;
 
             Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)>();
@@ -47,10 +45,10 @@ namespace TaskTimer
 
             // 設定ファイルからロード
             // フォルダチェック
-            if (!Directory.Exists(inputDir))
+            if (!Directory.Exists(tgtDir))
             {
                 // 存在しない場合は作成する
-                Directory.CreateDirectory(inputDir);
+                Directory.CreateDirectory(tgtDir);
             }
             // ファイルチェック
             // メインキーファイル
