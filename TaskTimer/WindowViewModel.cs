@@ -71,10 +71,10 @@ namespace TaskTimer
                 task.Wait();
             }
             //
-            settings = new Settings(config.SettingsDir);
+            settings = new Settings(config.SettingsDirPath);
             settings.Load();
             //
-            logger = new Logger(config.LogDir);
+            logger = new Logger(config.LogDirPath);
             logger.Load();
             hasChangeLog = false;
 
@@ -102,7 +102,7 @@ namespace TaskTimer
             };
 
             //
-            summary = new Summary(config.SummaryDir);
+            summary = new Summary(config.SummaryDirPath);
             SummaryAdd(0);
 
             // 
@@ -352,6 +352,23 @@ namespace TaskTimer
         }
 
 
+        public string LogDir
+        {
+            get { return config.LogDir; }
+            set {
+                config.LogDir = value;
+            }
+        }
+        public string SummaryDir
+        {
+            get { return config.SummaryDir; }
+            set { config.SummaryDir = value; }
+        }
+        public string SettingsDir
+        {
+            get { return config.SettingsDir; }
+            set { config.SettingsDir = value; }
+        }
 
 
         private int selectedIndex;

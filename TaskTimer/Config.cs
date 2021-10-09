@@ -25,6 +25,13 @@ namespace TaskTimer
 
         public string LogDir
         {
+            get { return json.LogDir; }
+            set {
+                json.LogDir = value;
+            }
+        }
+        public string LogDirPath
+        {
             get
             {
                 if (json.LogDir.Length == 0)
@@ -40,6 +47,11 @@ namespace TaskTimer
 
         public string SummaryDir
         {
+            get { return json.SummaryDir; }
+            set { json.SummaryDir = value; }
+        }
+        public string SummaryDirPath
+        {
             get
             {
                 if (json.SummaryDir.Length == 0)
@@ -54,6 +66,11 @@ namespace TaskTimer
         }
 
         public string SettingsDir
+        {
+            get { return json.SettingsDir; }
+            set { json.SettingsDir = value; }
+        }
+        public string SettingsDirPath
         {
             get
             {
@@ -140,7 +157,7 @@ namespace TaskTimer
             //
             string jsonStr = JsonSerializer.Serialize(json, options);
             //
-            using (var stream = new FileStream(configFilePath, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var stream = new FileStream(configFilePath, FileMode.Create, FileAccess.Write))
             {
                 // 呼び出し元でWait()している。ConfigureAwait(false)無しにawaitするとデッドロックで死ぬ。
                 await JsonSerializer.SerializeAsync(stream, json, options).ConfigureAwait(false);
