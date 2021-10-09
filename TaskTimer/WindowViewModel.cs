@@ -280,8 +280,13 @@ namespace TaskTimer
             // Config出力
             if (configSaveTask == null || configSaveTask.IsCompleted)
             {
-                configSaveTask = config.SaveAsync();
-                configSaveTask.Wait();
+                // アプリ終了時のファイル保存はファイルロックの対処を確認する
+                var check = config.AskFileLock();
+                if (check)
+                {
+                    configSaveTask = config.SaveAsync();
+                    configSaveTask.Wait();
+                }
             }
             // Setting出力
             // running中のタスクがあるならスキップ
