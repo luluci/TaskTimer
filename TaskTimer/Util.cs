@@ -18,6 +18,8 @@ namespace TaskTimer
         public const int countDiv = 60;
 #endif
 
+        public static readonly string rootDirPath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+
         public static readonly DateTime CurrentDate = DateTime.Now;     // 今日の日時。起動時の日時に依存して固定とする
         public static DateTime TargetDate = DateTime.Now;               // カレンダーで指定する表示対象の日時
 

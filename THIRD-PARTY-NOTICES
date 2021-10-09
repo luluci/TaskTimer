@@ -18,9 +18,41 @@ License notice for MaterialDesignThemes.MahApps
 --------------------------
 https://licenses.nuget.org/MIT
 
+License notice for Microsoft.Bcl.AsyncInterfaces
+--------------------------
+https://licenses.nuget.org/MIT
+
 License notice for Microsoft.Xaml.Behaviors.Wpf
 --------------------------
 https://licenses.nuget.org/MIT
+
+License notice for System.Buffers
+--------------------------
+https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
+
+License notice for System.Memory
+--------------------------
+https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
+
+License notice for System.Numerics.Vectors
+--------------------------
+https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
+
+License notice for System.Runtime.CompilerServices.Unsafe
+--------------------------
+https://licenses.nuget.org/MIT
+
+License notice for System.Text.Encodings.Web
+--------------------------
+https://licenses.nuget.org/MIT
+
+License notice for System.Text.Json
+--------------------------
+https://licenses.nuget.org/MIT
+
+License notice for System.Threading.Tasks.Extensions
+--------------------------
+https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
 
 License notice for System.ValueTuple
 --------------------------
@@ -29,5 +61,4 @@ https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
 License notice for WPF.ListViewLayoutManager
 --------------------------
 https://www.codeproject.com/info/cpol10.aspx
-
 

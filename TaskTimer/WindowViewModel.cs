@@ -46,6 +46,7 @@ namespace TaskTimer
             set { key = value; }
         }
 
+        public Config config;
         public Settings settings;
         public Logger logger;
         private bool hasChangeLog;          // ログ変更有無(TaskKey, TaskKeySub, TaskItemの変化有無)
@@ -59,9 +60,16 @@ namespace TaskTimer
         private TaskClass selectTaskClass;
         private bool isTargetDateChanged = false;
         private DispatcherTimer ticker;
+        private Task configSaveTask = null;
 
         public WindowViewModel()
         {
+            // 最初にconfigをロード
+            config = new Config();
+            {
+                var task = config.LoadAsync();
+                task.Wait();
+            }
             //
             settings = new Settings();
             settings.Load();
@@ -269,6 +277,12 @@ namespace TaskTimer
             //
             ticker.Stop();
 
+            // Config出力
+            if (configSaveTask == null || configSaveTask.IsCompleted)
+            {
+                configSaveTask = config.SaveAsync();
+                configSaveTask.Wait();
+            }
             // Setting出力
             // running中のタスクがあるならスキップ
             if (settingSaveTask == null || settingSaveTask.IsCompleted)
