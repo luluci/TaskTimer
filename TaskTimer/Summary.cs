@@ -17,6 +17,12 @@ namespace TaskTimer
         CodeNameAliasSubItemNonZero,    // MainCode/MainName/MainAlias/SubCode/Item で非ゼロ値のレコードを出力
     }
 
+    public enum SummaryDispFormat
+    {
+        AliasItemCode,                  // MainAlias/Item/SubCode
+        CodeNameCode,                   // MainCode/MainName/SubCode
+    }
+
     class Summary
     {
         // ファイル情報
@@ -237,10 +243,25 @@ namespace TaskTimer
         /** Summary作成
          * 
          */
-        public void Update(ObservableCollection<TaskKey> TaskKeys)
+        public void Update(ObservableCollection<TaskKey> TaskKeys, SummaryDispFormat form)
         {
             // 要素分の領域を確保して初期化
             data = new ObservableCollection<SummaryNode>();
+            switch (form)
+            {
+                case SummaryDispFormat.AliasItemCode:
+                    MakeSummary1(TaskKeys);
+                    break;
+                case SummaryDispFormat.CodeNameCode:
+                    MakeSummary2(TaskKeys);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void MakeSummary1(ObservableCollection<TaskKey> TaskKeys)
+        {
             // 最新のタスク設定を取得
             int keyIndex = 0;
             foreach (var key in TaskKeys)
@@ -263,6 +284,50 @@ namespace TaskTimer
                 }
 
                 keyIndex++;
+            }
+        }
+
+        private void MakeSummary2(ObservableCollection<TaskKey> TaskKeys)
+        {
+            // 最新のタスク設定を取得
+            var dict = new Dictionary<(string, string, string), int>();
+            int keyIndex = 0;
+            foreach (var key in TaskKeys)
+            {
+                int subkeyIndex = 0;
+                foreach (var subkey in key.SubKey)
+                {
+                    int itemIndex = 0;
+                    foreach (var item in subkey.Item)
+                    {
+                        if (item.time != 0)
+                        {
+                            var dickey = (key.Code, key.Name, subkey.Code);
+                            if (dict.ContainsKey(dickey))
+                            {
+                                if (dict.TryGetValue(dickey, out int min))
+                                {
+                                    //min += item.time;
+                                }
+                                dict[dickey] += item.time;
+                            }
+                            else
+                            {
+                                dict.Add(dickey, item.time);
+                            }
+                        }
+
+                        itemIndex++;
+                    }
+
+                    subkeyIndex++;
+                }
+
+                keyIndex++;
+            }
+            foreach (var item in dict)
+            {
+                data.Add(new SummaryNode(item.Key.Item1, item.Key.Item2, item.Key.Item3, Util.Min2Time(item.Value), -1, -1, -1));
             }
         }
 

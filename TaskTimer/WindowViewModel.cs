@@ -682,9 +682,9 @@ namespace TaskTimer
             get { return summary.Data; }
         }
 
-        public void MakeSummary()
+        public void MakeSummary(SummaryDispFormat form)
         {
-            summary.Update(key);
+            summary.Update(key, form);
             NotifyPropertyChanged(nameof(SummaryView));
         }
 

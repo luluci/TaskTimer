@@ -176,7 +176,8 @@
                 </Button>
             </Grid>
             <Grid Background="#FFFAFF99" Height="251" VerticalAlignment="Bottom">
-                <Button Click="Button_MakeSummary_Click" Content="Summary作成" Height="27" Margin="16,213,0,11" HorizontalAlignment="Left" Width="126"/>
+                <Button Click="Button_MakeSummary1_Click" Content="Summary1" Height="27" Margin="11,214,0,10" HorizontalAlignment="Left" Width="99"/>
+                <Button Click="Button_MakeSummary2_Click" Content="Summary2" Height="27" Margin="115,214,0,10" HorizontalAlignment="Left" Width="99"/>
                 <DataGrid SelectedIndex="{Binding SelectedIndexSummary}" MouseLeftButtonUp="DataGrid_Summary_MouseLeftButtonUp" ItemsSource="{Binding SummaryView}" RowHeight="32" AutoGenerateColumns="False" Margin="10,10,10,46" FontSize="11">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -206,15 +207,15 @@
                         </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="160,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
-                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="156,243,0,0" VerticalAlignment="Top" Width="194"/>
-                <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="207,212,0,0" VerticalAlignment="Top" Width="57"/>
-                <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="270,212,0,0" VerticalAlignment="Top" Width="74"/>
-                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="365,243,0,0" VerticalAlignment="Top" Width="193"/>
-                <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="368,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
-                <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="415,213,0,0" VerticalAlignment="Top" Width="57"/>
-                <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="479,213,0,0" VerticalAlignment="Top" Width="74"/>
-                <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="601,210,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
+                <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="234,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/SubCode/Time]によりファイル出力" Text="Save[1]"/>
+                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="230,243,0,0" VerticalAlignment="Top" Width="190"/>
+                <Button Click="Button_SaveSummary1All_Click" IsEnabled="{Binding EnableSaveSummary1All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="281,212,0,0" VerticalAlignment="Top" Width="57"/>
+                <Button Click="Button_SaveSummary1NonZero_Click" IsEnabled="{Binding EnableSaveSummary1NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="344,212,0,0" VerticalAlignment="Top" Width="72"/>
+                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="429,243,0,0" VerticalAlignment="Top" Width="190"/>
+                <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="432,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
+                <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="479,213,0,0" VerticalAlignment="Top" Width="57"/>
+                <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="543,213,0,0" VerticalAlignment="Top" Width="72"/>
+                <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="630,211,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
                     <materialDesign:PackIcon Kind="FolderDownloadOutline" Height="23" Width="23"/>
                 </Button>
             </Grid>

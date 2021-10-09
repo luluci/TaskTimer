@@ -99,9 +99,14 @@ namespace TaskTimer
             this.vm.addTaskItem();
         }
 
-        private void Button_MakeSummary_Click(object sender, RoutedEventArgs e)
+        private void Button_MakeSummary1_Click(object sender, RoutedEventArgs e)
         {
-            this.vm.MakeSummary();
+            this.vm.MakeSummary(SummaryDispFormat.AliasItemCode);
+        }
+
+        private void Button_MakeSummary2_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.MakeSummary(SummaryDispFormat.CodeNameCode);
         }
 
         private void DataGrid_Summary_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
