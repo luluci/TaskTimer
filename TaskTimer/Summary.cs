@@ -20,7 +20,6 @@ namespace TaskTimer
     class Summary
     {
         // ファイル情報
-        private string rootDir;
         private string tgtDir;
         private string baseFileName;
         private string daykey;

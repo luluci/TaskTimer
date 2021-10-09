@@ -100,8 +100,6 @@ namespace TaskTimer
                     // 絶対パス
                     return path;
                 }
-                // 絶対パス
-                return path;
             }
             else
             {
