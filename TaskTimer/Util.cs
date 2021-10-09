@@ -33,6 +33,46 @@ namespace TaskTimer
             return TargetDate.Date.CompareTo(CurrentDate.Date) >= 0;
         }
 
+        static public bool AskFileLock(string path, string title)
+        {
+            bool result = false;
+            if (IsFileLocked(path))
+            {
+                // ファイルがロックされていたら解放を促す
+                bool lockchecked;
+                do
+                {
+                    var msgresult = System.Windows.MessageBox.Show("ファイルが開かれています。\r\n閉じたら[OK], 保存しないなら[Cancel]", title, System.Windows.MessageBoxButton.OKCancel);
+                    if (msgresult == System.Windows.MessageBoxResult.OK)
+                    {
+                        // OKが選択されたら再度ロックチェック
+                        if (IsFileLocked(path))
+                        {
+                            // まだロックされていたらループ
+                            lockchecked = false;
+                        }
+                        else
+                        {
+                            result = true;
+                            lockchecked = true;
+                        }
+                    }
+                    else
+                    {
+                        // キャンセルされたら終了
+                        result = false;
+                        lockchecked = true;
+                    }
+                } while (!lockchecked);
+            }
+            else
+            {
+                // ファイルがロックされていなければ正常終了
+                result = true;
+            }
+            return result;
+        }
+
         static public bool CheckFileOpen(string path)
         {
             if (IsFileLocked(path))
@@ -60,6 +100,10 @@ namespace TaskTimer
         {
             try
             {
+                if (!File.Exists(path))
+                {
+                    return false;
+                }
                 // 書き込みモードでファイルを開けるか確認
                 using (FileStream fp = File.Open(path, FileMode.Open, FileAccess.Write))
                 {

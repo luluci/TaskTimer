@@ -148,6 +148,33 @@ namespace TaskTimer
             }
         }
 
+        private string GetSummaryFile(SummarySaveFormat format)
+        {
+            switch (format)
+            {
+                case SummarySaveFormat.CodeNameSubAll:
+                case SummarySaveFormat.CodeNameSubNonZero:
+                    return summaryFileType1;
+                case SummarySaveFormat.CodeNameAliasSubItemAll:
+                case SummarySaveFormat.CodeNameAliasSubItemNonZero:
+                    return summaryFileType2;
+                default:
+                    return "";
+            }
+        }
+        public bool AskFileLock(SummarySaveFormat format)
+        {
+            // ファイルがロックされていたら、ファイルを閉じることを促す
+            var output = GetSummaryFile(format);
+            return Util.AskFileLock(output, $"設定ファイル({output})を保存しています");
+        }
+        public bool CheckFileLock(SummarySaveFormat format)
+        {
+            // ファイルがロックされているかどうかをチェック
+            var output = GetSummaryFile(format);
+            return Util.CheckFileOpen(output);
+        }
+
         public async Task SaveAsync(SummarySaveFormat format)
         {
             // フォルダチェック

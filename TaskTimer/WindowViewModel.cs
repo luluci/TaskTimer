@@ -107,20 +107,6 @@ namespace TaskTimer
             this.key = new ObservableCollection<TaskKey>();
             LoadTask();
 
-            /*
-            //[Test]
-            // テスト用初期値設定
-            this.key = new ObservableCollection<TaskKey>();
-            this.key.Add(new TaskKey("alias1", "code1", "name1", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("エイリアス3", "コード3", "名前3", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("長い名前の表示名４", "CODE4:AAAAAAAAA-AA", "長い名前のタスク名4", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
-            this.key.Add(new TaskKey("alias2", "code2", "name2", updateTaskMain, updateTaskSub));
-            */
-
-
             // 要素の移動(Up,Down,Deleteボタンを押下したときの操作対象)に関する設定
             selectTaskClass = TaskClass.MainKey;            // 操作対象：MainKey
 
@@ -287,20 +273,31 @@ namespace TaskTimer
             // running中のタスクがあるならスキップ
             if (settingSaveTask == null || settingSaveTask.IsCompleted)
             {
+                // Keyはツール起動当日のものだけ保存する
                 if (Util.CheckTargetDateIsToday())
                 {
-                    this.settings.Update(this.key);
-                    settingSaveTask = this.settings.SaveAsync();
-                    settingSaveTask.Wait();
+                    // アプリ終了時のファイル保存はファイルロックの対処を確認する
+                    var check = settings.AskFileLock();
+                    if (check)
+                    {
+                        this.settings.Update(this.key);
+                        settingSaveTask = this.settings.SaveAsync();
+                        settingSaveTask.Wait();
+                    }
                 }
             }
             // ログ出力
             // running中のタスクがあるならスキップ
             if (logSaveTask == null || logSaveTask.IsCompleted)
             {
-                this.logger.Update(this.key);
-                logSaveTask = this.logger.SaveAsync();
-                logSaveTask.Wait();
+                // アプリ終了時のファイル保存はファイルロックの対処を確認する
+                var check = logger.AskFileLock();
+                if (check)
+                {
+                    this.logger.Update(this.key);
+                    logSaveTask = this.logger.SaveAsync();
+                    logSaveTask.Wait();
+                }
             }
         }
 
@@ -519,7 +516,12 @@ namespace TaskTimer
         {
             if (timer.ReqAutoSave())
             {
-                SaveLog();
+                // 自動セーブ時はファイルがロックされていたらスキップ
+                var check = logger.CheckFileLock();
+                if (check)
+                {
+                    SaveLog();
+                }
             }
         }
 
@@ -556,20 +558,37 @@ namespace TaskTimer
                 hasChangeLog = false;
                 // GUI無効化
                 EnableManualSave = false;
-                // ログ作成
-                // UIスレッド内でログを転送
-                if (Util.CheckTargetDateIsToday())
+                if (AskManualSave())
                 {
-                    // 今日を対象としたkeyの変化のみ保存する
-                    // 過去のタスクは保存しない
-                    // 未来のタスクなんてわからないので保存する必要なし
-                    this.settings.Update(this.key);
+                    // ログ作成
+                    // UIスレッド内でログを転送
+                    if (Util.CheckTargetDateIsToday())
+                    {
+                        // 今日を対象としたkeyの変化のみ保存する
+                        // 過去のタスクは保存しない
+                        // 未来のタスクなんてわからないので保存する必要なし
+                        this.settings.Update(this.key);
+                    }
+                    this.logger.Update(this.key);
+                    // ログ保存
+                    logSaveTask = ManualSaveAsync();
+                    settingSaveTask = logSaveTask;
                 }
-                this.logger.Update(this.key);
-                // ログ保存
-                logSaveTask = ManualSaveAsync();
-                settingSaveTask = logSaveTask;
             }
+        }
+        private bool AskManualSave()
+        {
+            // 手動保存対象のファイルがロックされていないかチェック
+            // 手動保存ではファイルロックの解放を確認する
+            {
+                var result = settings.AskFileLock();
+                if (!result) return false;
+            }
+            {
+                var result = logger.AskFileLock();
+                if (!result) return false;
+            }
+            return true;
         }
         public async Task ManualSaveAsync()
         {
@@ -641,10 +660,23 @@ namespace TaskTimer
             EnableSaveSummary1NonZero = false;
             EnableSaveSummary2All = false;
             EnableSaveSummary2NonZero = false;
-            // ログバッファ作成
-            summary.MakeLog(key, form);
-            // ログ保存
-            SaveSummaryAsync(form);
+            // ファイルロック確認
+            var check = summary.AskFileLock(form);
+            if (check)
+            {
+                // ログバッファ作成
+                summary.MakeLog(key, form);
+                // ログ保存
+                SaveSummaryAsync(form);
+            }
+            else
+            {
+                // GUI有効化して終了
+                EnableSaveSummary1All = true;
+                EnableSaveSummary1NonZero = true;
+                EnableSaveSummary2All = true;
+                EnableSaveSummary2NonZero = true;
+            }
         }
         public async Task SaveSummaryAsync(SummarySaveFormat form)
         {

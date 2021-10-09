@@ -181,6 +181,17 @@ namespace TaskTimer
             }
         }
 
+        public bool AskFileLock()
+        {
+            // ファイルがロックされていたら、ファイルを閉じることを促す
+            return Util.AskFileLock(logFile, $"設定ファイル({logFile})を保存しています");
+        }
+        public bool CheckFileLock()
+        {
+            // ファイルがロックされているかどうかをチェック
+            return Util.CheckFileOpen(logFile);
+        }
+
         public async Task SaveAsync()
         {
             // ファイル書き込み
