@@ -26,6 +26,14 @@ License notice for Microsoft.Xaml.Behaviors.Wpf
 --------------------------
 https://licenses.nuget.org/MIT
 
+License notice for Selenium.WebDriver
+--------------------------
+http://www.apache.org/licenses/LICENSE-2.0
+
+License notice for Selenium.WebDriver.MSEdgeDriver
+--------------------------
+https://www.nuget.org/packages/Selenium.WebDriver.MSEdgeDriver/96.0.1037-pre/license
+
 License notice for System.Buffers
 --------------------------
 https://github.com/dotnet/corefx/blob/master/LICENSE.TXT

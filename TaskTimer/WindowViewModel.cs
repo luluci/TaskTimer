@@ -13,6 +13,9 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Threading;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium;
+using System.Windows;
 
 namespace TaskTimer
 {
@@ -62,7 +65,7 @@ namespace TaskTimer
         private bool isTargetDateChanged = false;
         private DispatcherTimer ticker;
         private Task configSaveTask = null;
-
+        private EdgeCtrl EdgeCtrl = null;
 
         public WindowViewModel()
         {
@@ -123,6 +126,9 @@ namespace TaskTimer
             ticker = new DispatcherTimer();
             ticker.Interval = new TimeSpan(0, 0, 1);
             ticker.Tick += new EventHandler(timer_Tick);
+
+            //
+            EdgeCtrl = new EdgeCtrl();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -277,6 +283,7 @@ namespace TaskTimer
             try
             {
                 await CloseImpl();
+                EdgeCtrl.Dispose();
             }
             catch
             {
@@ -1027,6 +1034,18 @@ namespace TaskTimer
             hasChangeLog = true;
             // 
             key[selectedIndex].SubKey[selectedIndexSub].Item.RemoveAt(curr);
+        }
+
+
+        public string URL { get; set; } = "https://www.google.com/";
+
+        public async Task OnButtonClick_EdgeCtrlLaunch()
+        {
+            await EdgeCtrl.Init();
+        }
+        public async Task OnButtonClick_EdgeCtrlNavigate()
+        {
+            await EdgeCtrl.Navigate(URL);
         }
     }
 

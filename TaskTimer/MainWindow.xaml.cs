@@ -233,5 +233,15 @@ namespace TaskTimer
         {
             vm.OnClick_ManualSaveConfig();
         }
+
+        private async void Button_Web_Click(object sender, RoutedEventArgs e)
+        {
+            await vm.OnButtonClick_EdgeCtrlLaunch();
+        }
+
+        private async void Button_WebNavigate_Click(object sender, RoutedEventArgs e)
+        {
+            await vm.OnButtonClick_EdgeCtrlNavigate();
+        }
     }
 }

@@ -76,6 +76,16 @@
                             <StackPanel Margin="0,0,0,15">
                                 <Button Click="Button_SaveConfig_Click" Content="Save" ToolTip="アプリ設定を保存します" />
                             </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="URL" FontWeight="Bold" />
+                                <TextBox Text="{Binding URL}" TextWrapping="Wrap" Height="40" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <Button Click="Button_Web_Click" Content="Web" ToolTip="Web" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <Button Click="Button_WebNavigate_Click" Content="Web Navigate" ToolTip="Web" />
+                            </StackPanel>
                         </StackPanel>
                     </materialDesign:ColorZone>
                 </StackPanel>
