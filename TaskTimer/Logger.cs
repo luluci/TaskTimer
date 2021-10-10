@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace TaskTimer
 {
@@ -192,18 +193,20 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync START");
             // ファイル書き込み
             using (var writer = new StreamWriter(logFileTemp))
             {
                 foreach (var key in SaveBuff)
                 {
-                    writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.min}");
+                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.min}");
                 }
             }
             // 旧ファイルを削除
             File.Delete(logFile);
             // tmpファイルを新ファイルとしてリネーム
             File.Move(logFileTemp, logFile);
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync FINISH");
         }
     }
 }

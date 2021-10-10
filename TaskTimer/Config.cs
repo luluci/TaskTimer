@@ -110,7 +110,10 @@ namespace TaskTimer
             }
         }
 
-        public async Task LoadAsync()
+        /** 初回起動用に同期的に動作する
+         * 
+         */
+        public async Task Load()
         {
             // 設定ロード
             if (File.Exists(configFilePath))
@@ -169,8 +172,8 @@ namespace TaskTimer
             using (var stream = new FileStream(configFilePath, FileMode.Create, FileAccess.Write))
             {
                 // 呼び出し元でWait()している。ConfigureAwait(false)無しにawaitするとデッドロックで死ぬ。
-                await JsonSerializer.SerializeAsync(stream, json, options).ConfigureAwait(false);
-                //await JsonSerializer.SerializeAsync(stream, json, options);
+                //await JsonSerializer.SerializeAsync(stream, json, options).ConfigureAwait(false);
+                await JsonSerializer.SerializeAsync(stream, json, options);
                 //var task = JsonSerializer.SerializeAsync(stream, json, options);
                 //task.Wait();
             }

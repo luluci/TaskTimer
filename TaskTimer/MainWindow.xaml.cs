@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace TaskTimer
 {
@@ -111,27 +112,29 @@ namespace TaskTimer
 
         private void DataGrid_Summary_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: DataGrid_Summary_MouseLeftButtonUp START");
             this.vm.OnMouseLeftButtonUp_Summary();
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: DataGrid_Summary_MouseLeftButtonUp FINISH");
         }
 
-        private void Button_SaveSummary1All_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveSummary1All_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_SaveSummary1All();
+            await vm.OnClick_SaveSummary1All();
         }
 
-        private void Button_SaveSummary1NonZero_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveSummary1NonZero_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_SaveSummary1NonZero();
+            await vm.OnClick_SaveSummary1NonZero();
         }
 
-        private void Button_SaveSummary2All_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveSummary2All_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_SaveSummary2All();
+            await vm.OnClick_SaveSummary2All();
         }
 
-        private void Button_SaveSummary2NonZero_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveSummary2NonZero_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_SaveSummary2NonZero();
+            await vm.OnClick_SaveSummary2NonZero();
         }
 
         private void Button_OpenSummaryDir_Click(object sender, RoutedEventArgs e)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace TaskTimer
 {
@@ -181,6 +182,7 @@ namespace TaskTimer
 
         public async Task SaveAsync(SummarySaveFormat format)
         {
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync START");
             // フォルダチェック
             MakeOutDir();
             // 保存
@@ -197,7 +199,7 @@ namespace TaskTimer
                     {
                         foreach (var record in log)
                         {
-                            writer.WriteLine($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{Util.Min2Time(record.Value)}");
+                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{Util.Min2Time(record.Value)}");
                         }
                     }
                     break;
@@ -210,7 +212,7 @@ namespace TaskTimer
                     {
                         foreach (var record in log)
                         {
-                            writer.WriteLine($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{record.Key.Item4}\t{record.Key.Item5}\t{Util.Min2Time(record.Value)}");
+                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{record.Key.Item4}\t{record.Key.Item5}\t{Util.Min2Time(record.Value)}");
                         }
                     }
                     break;
@@ -221,6 +223,8 @@ namespace TaskTimer
             File.Delete(output);
             // tmpファイルを新ファイルとしてリネーム
             File.Move(outputTemp, output);
+
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync FINISH");
         }
 
         private ObservableCollection<SummaryNode> data;

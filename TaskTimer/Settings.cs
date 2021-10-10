@@ -188,7 +188,7 @@ namespace TaskTimer
             {
                 foreach (var key in Keys)
                 {
-                    writer.WriteLine($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}");
+                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}");
                 }
             }
             // 旧ファイルを削除

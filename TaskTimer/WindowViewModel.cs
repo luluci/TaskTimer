@@ -12,6 +12,7 @@ using TaskTimer;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace TaskTimer
 {
@@ -62,14 +63,13 @@ namespace TaskTimer
         private DispatcherTimer ticker;
         private Task configSaveTask = null;
 
+
         public WindowViewModel()
         {
             // 最初にconfigをロード
             config = new Config();
-            {
-                var task = config.LoadAsync();
-                task.Wait();
-            }
+            //await config.Load();
+            config.Load().Wait();   // UIスレッドを進めたくないので同期的に実行
             //
             settings = new Settings(config.SettingsDirPath);
             settings.Load();
@@ -272,7 +272,18 @@ namespace TaskTimer
             SummaryAdd(sum);
         }
 
-        public void Close()
+        public async void Close()
+        {
+            try
+            {
+                await CloseImpl();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public async Task CloseImpl()
         {
             //
             ticker.Stop();
@@ -285,7 +296,7 @@ namespace TaskTimer
                 if (check)
                 {
                     configSaveTask = config.SaveAsync();
-                    configSaveTask.Wait();
+                    await configSaveTask;
                 }
             }
             // Setting出力
@@ -301,7 +312,7 @@ namespace TaskTimer
                     {
                         this.settings.Update(this.key);
                         settingSaveTask = this.settings.SaveAsync();
-                        settingSaveTask.Wait();
+                        await settingSaveTask;
                     }
                 }
             }
@@ -315,7 +326,7 @@ namespace TaskTimer
                 {
                     this.logger.Update(this.key);
                     logSaveTask = this.logger.SaveAsync();
-                    logSaveTask.Wait();
+                    await logSaveTask;
                 }
             }
         }
@@ -575,7 +586,9 @@ namespace TaskTimer
                     // UIスレッド内でログを転送
                     this.logger.Update(this.key);
                     // asyncにファイル書き込みを投げる
+                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveLog START");
                     logSaveTask = this.logger.SaveAsync();
+                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveLog FINISH");
                 }
             }
         }
@@ -591,12 +604,12 @@ namespace TaskTimer
             // 基本的にsettingはタスク終了時のみ保存するので問題ない。アンドで両方チェックしてしまう
             if ((logSaveTask == null || logSaveTask.IsCompleted) && (settingSaveTask == null || settingSaveTask.IsCompleted))
             {
-                // ログ更新保存済み
-                hasChangeLog = false;
                 // GUI無効化
                 EnableManualSave = false;
                 if (AskManualSave())
                 {
+                    // ログ更新保存済み
+                    hasChangeLog = false;
                     // ログ作成
                     // UIスレッド内でログを転送
                     if (Util.CheckTargetDateIsToday())
@@ -610,6 +623,10 @@ namespace TaskTimer
                     // ログ保存
                     logSaveTask = ManualSaveAsync();
                     settingSaveTask = logSaveTask;
+                }
+                else
+                {
+                    EnableManualSave = true;
                 }
             }
         }
@@ -630,8 +647,14 @@ namespace TaskTimer
         public async Task ManualSaveAsync()
         {
             // ログ保存
-            await this.settings.SaveAsync();
-            await this.logger.SaveAsync();
+            //await this.settings.SaveAsync();
+            //await this.logger.SaveAsync();
+            Func<Task> func = async () =>
+            {
+                await this.settings.SaveAsync();
+                await this.logger.SaveAsync();
+            };
+            await Task.Run(func);
             // GUI有効化
             EnableManualSave = true;
         }
@@ -657,7 +680,12 @@ namespace TaskTimer
                 var check = config.AskFileLock();
                 if (check)
                 {
-                    configSaveTask = config.SaveAsync();
+                    //configSaveTask = config.SaveAsync();
+                    Func<Task> func = async () =>
+                    {
+                        await config.SaveAsync();
+                    };
+                    configSaveTask = Task.Run(func);
                 }
             }
         }
@@ -705,8 +733,9 @@ namespace TaskTimer
 
         }
 
-        public void SaveSummary(SummarySaveFormat form)
+        public async Task SaveSummary(SummarySaveFormat form)
         {
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveSummary START");
             // GUI無効化
             EnableSaveSummary1All = false;
             EnableSaveSummary1NonZero = false;
@@ -719,46 +748,46 @@ namespace TaskTimer
                 // ログバッファ作成
                 summary.MakeLog(key, form);
                 // ログ保存
-                SaveSummaryAsync(form);
+                // Summary保存
+                //await summary.SaveAsync(form);
+                await SaveSummaryAsync(form);
             }
-            else
-            {
-                // GUI有効化して終了
-                EnableSaveSummary1All = true;
-                EnableSaveSummary1NonZero = true;
-                EnableSaveSummary2All = true;
-                EnableSaveSummary2NonZero = true;
-            }
-        }
-        public async Task SaveSummaryAsync(SummarySaveFormat form)
-        {
-            // Summary保存
-            await summary.SaveAsync(form);
             // GUI有効化
             EnableSaveSummary1All = true;
             EnableSaveSummary1NonZero = true;
             EnableSaveSummary2All = true;
             EnableSaveSummary2NonZero = true;
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveSummary FINISH");
+        }
+        public async Task SaveSummaryAsync(SummarySaveFormat form)
+        {
+            Func<Task> func = async () =>
+            {
+                // ログ保存
+                // Summary保存
+                await summary.SaveAsync(form);
+            };
+            await Task.Run(func);
         }
 
-        public void OnClick_SaveSummary1All()
+        public async Task OnClick_SaveSummary1All()
         {
-            SaveSummary(SummarySaveFormat.CodeNameSubAll);
+            await SaveSummary(SummarySaveFormat.CodeNameSubAll);
         }
 
-        public void OnClick_SaveSummary1NonZero()
+        public async Task OnClick_SaveSummary1NonZero()
         {
-            SaveSummary(SummarySaveFormat.CodeNameSubNonZero);
+            await SaveSummary(SummarySaveFormat.CodeNameSubNonZero);
         }
 
-        public void OnClick_SaveSummary2All()
+        public async Task OnClick_SaveSummary2All()
         {
-            SaveSummary(SummarySaveFormat.CodeNameAliasSubItemAll);
+            await SaveSummary(SummarySaveFormat.CodeNameAliasSubItemAll);
         }
 
-        public void OnClick_SaveSummary2NonZero()
+        public async Task OnClick_SaveSummary2NonZero()
         {
-            SaveSummary(SummarySaveFormat.CodeNameAliasSubItemNonZero);
+            await SaveSummary(SummarySaveFormat.CodeNameAliasSubItemNonZero);
         }
 
         public void OnClick_OpenSummaryDir()
