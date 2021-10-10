@@ -16,7 +16,9 @@ namespace TaskTimer
 
         public EdgeCtrl()
         {
-
+            // Edgeのバージョンに合わせてドライバをダウンロードする。
+            // "msedgedriver.exe"を"TaskTimer.exe"と同じフォルダに配置する。
+            // https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
         }
 
         public void Dispose()
