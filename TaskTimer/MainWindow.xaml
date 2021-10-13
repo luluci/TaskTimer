@@ -84,7 +84,7 @@
                                 <Button Click="Button_Web_Click" Content="Web" ToolTip="Web" />
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
-                                <Button Click="Button_WebNavigate_Click" Content="Web Navigate" ToolTip="Web" />
+                                <Button Click="Button_WebNavigate_Click" IsEnabled="{Binding WebNavigateEnable}" Content="Web Navigate" ToolTip="Web" />
                             </StackPanel>
                         </StackPanel>
                     </materialDesign:ColorZone>

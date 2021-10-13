@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Edge;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace TaskTimer
             service = null;
         }
 
-        public async Task Init()
+        public async Task<bool> Init()
         {
             try
             {
@@ -42,24 +43,17 @@ namespace TaskTimer
                     // EdgeChromium版を使用
                     options = new EdgeOptions();
                     options.UseChromium = true;
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;     // loadイベントが発生したときに処理が戻る？
                     // Driver作成
                     driver = new EdgeDriver(service, options);
                 });
-
-                //ユーザーID
-                //driver.FindElement(By.Name("pid")).SendKeys("userId");
-                //パスワード
-                //driver.FindElement(By.Name("password")).SendKeys("pw");
-
-                //ログインボタン
-                //IWebElement findbuttom = driver.FindElement(By.Name("btnname"));
-                //ログインボタンをクリック
-                //findbuttom.Click();
+                return true;
             }
             catch (Exception ex)
             {
                 Dispose();
                 MessageBox.Show(ex.ToString());
+                return false;
             }
         }
         
@@ -71,6 +65,8 @@ namespace TaskTimer
                 {
                     // サイトを開く
                     driver.Navigate().GoToUrl(url);
+                    // 検索ボックスにテキスト設定
+                    driver.FindElement(By.Name("q")).SendKeys("test");
                 });
 
                 //ユーザーID

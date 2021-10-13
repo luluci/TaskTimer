@@ -1038,14 +1038,27 @@ namespace TaskTimer
 
 
         public string URL { get; set; } = "https://www.google.com/";
+        private bool webNavigateEnable = false;
+        public bool WebNavigateEnable
+        {
+            get { return webNavigateEnable; }
+            set
+            {
+                webNavigateEnable = value;
+                NotifyPropertyChanged(nameof(WebNavigateEnable));
+            }
+        }
 
         public async Task OnButtonClick_EdgeCtrlLaunch()
         {
-            await EdgeCtrl.Init();
+            bool result = await EdgeCtrl.Init();
+            WebNavigateEnable = result;
         }
         public async Task OnButtonClick_EdgeCtrlNavigate()
         {
+            WebNavigateEnable = false;
             await EdgeCtrl.Navigate(URL);
+            WebNavigateEnable = true;
         }
     }
 
