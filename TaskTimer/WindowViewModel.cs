@@ -66,6 +66,7 @@ namespace TaskTimer
         private DispatcherTimer ticker;
         private Task configSaveTask = null;
         private EdgeCtrl EdgeCtrl = null;
+        private ExcelCtrl ExcelCtrl = null;
 
         public WindowViewModel()
         {
@@ -129,6 +130,7 @@ namespace TaskTimer
 
             //
             EdgeCtrl = new EdgeCtrl();
+            ExcelCtrl = new ExcelCtrl();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -1035,6 +1037,25 @@ namespace TaskTimer
             // 
             key[selectedIndex].SubKey[selectedIndexSub].Item.RemoveAt(curr);
         }
+
+
+
+        public string ExcelPath
+        {
+            get
+            {
+                return config.ExcelPath;
+            }
+            set
+            {
+                config.ExcelPath = value;
+            }
+        }
+        public async Task OnButtonClick_ExcelExport()
+        {
+            await ExcelCtrl.Export(config.ExcelPath, key, Util.TargetDate);
+        }
+
 
 
         public string AutoPilotUrl

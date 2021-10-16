@@ -243,5 +243,10 @@ namespace TaskTimer
         {
             await vm.OnButtonClick_EdgeCtrlNavigate();
         }
+
+        private async void Button_ExcelExport_Click(object sender, RoutedEventArgs e)
+        {
+            await vm.OnButtonClick_ExcelExport();
+        }
     }
 }

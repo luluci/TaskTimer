@@ -77,6 +77,13 @@
                                 <Button Click="Button_SaveConfig_Click" Content="Save" ToolTip="アプリ設定を保存します" />
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="Excel Log" FontWeight="Bold" />
+                                <TextBox Text="{Binding ExcelPath}" TextWrapping="Wrap" Height="40" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <Button Click="Button_ExcelExport_Click" Content="Excel Export" ToolTip="Excel Export" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
                                 <TextBlock Text="URL" FontWeight="Bold" />
                                 <TextBox Text="{Binding AutoPilotUrl}" TextWrapping="Wrap" Height="40" />
                             </StackPanel>

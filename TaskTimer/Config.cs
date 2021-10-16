@@ -111,6 +111,19 @@ namespace TaskTimer
         }
 
 
+        public string ExcelPath
+        {
+            get
+            {
+                return json.ExcelPath;
+            }
+            set
+            {
+                json.ExcelPath = value;
+            }
+        }
+
+
         public string AutoPilotUrl {
             get
             {
@@ -237,6 +250,7 @@ namespace TaskTimer
                     LogDir = "",
                     SummaryDir = "",
                     SettingsDir = "",
+                    ExcelPath = "",
                     AutoPilotUrl = "",
                     AutoPilotId = "",
                     AutoPilotPassword = "",
@@ -248,6 +262,10 @@ namespace TaskTimer
 
         private void LoadVersionUp()
         {
+            if (json.ExcelPath == null)
+            {
+                json.ExcelPath = "";
+            }
             if (json.AutoPilotUrl == null)
             {
                 json.AutoPilotUrl = "";
@@ -336,6 +354,9 @@ namespace TaskTimer
 
         [JsonPropertyName("settings_dir")]
         public string SettingsDir { get; set; }
+
+        [JsonPropertyName("excel_path")]
+        public string ExcelPath { get; set; }
 
         [JsonPropertyName("autopilot_url")]
         public string AutoPilotUrl { get; set; }
