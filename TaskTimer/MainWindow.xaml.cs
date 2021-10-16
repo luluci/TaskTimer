@@ -26,6 +26,8 @@ namespace TaskTimer
     {
         WindowViewModel vm;
 
+        private bool isClosing = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,9 +45,34 @@ namespace TaskTimer
 
             this.DataContext = this.vm;
             
-            this.Closing += (s, e) =>
+            this.Closing += async (s, e) =>
             {
-                this.vm.Close();
+                if (isClosing)
+                {
+                    // 終了処理中は終了させない
+                    e.Cancel = true;
+                }
+                else
+                {
+                    try
+                    {
+                        // 終了処理開始
+                        isClosing = true;
+                        e.Cancel = true;
+                        // 終了イベントはキャンセルして、アプリ終了時処理を開始
+                        await vm.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    finally
+                    {
+                        // 終了処理完了でアプリ終了ブロックを解除、改めてアプリ終了を開始
+                        isClosing = false;
+                        Application.Current.Shutdown();
+                    }
+                }
             };
 
             FocusManager.SetIsFocusScope(this, true);

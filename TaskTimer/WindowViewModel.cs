@@ -280,12 +280,14 @@ namespace TaskTimer
             SummaryAdd(sum);
         }
 
-        public async void Close()
+        public async Task Close()
         {
             try
             {
                 await CloseImpl();
+                if (EdgeCtrl.IsRunning()) await EdgeCtrl.WaitAsync();
                 EdgeCtrl.Dispose();
+                if (ExcelCtrl.IsRunning()) await ExcelCtrl.WaitAsync();
             }
             catch
             {

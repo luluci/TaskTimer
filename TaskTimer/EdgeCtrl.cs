@@ -15,6 +15,16 @@ namespace TaskTimer
         private EdgeOptions options = null;
         private EdgeDriver driver = null;
 
+        private Task autopilotTask = null;
+        public bool IsRunning()
+        {
+            return (autopilotTask != null && !autopilotTask.IsCompleted);
+        }
+        public async Task WaitAsync()
+        {
+            await autopilotTask;
+        }
+
         public EdgeCtrl()
         {
             // Edgeのバージョンに合わせてドライバをダウンロードする。
@@ -36,42 +46,51 @@ namespace TaskTimer
 
         public async Task<bool> Init()
         {
-            try
+            if (!IsRunning())
             {
-                await Task.Run(() =>
+                try
                 {
-                    // ドライバー起動時に表示されるコンソール画面を非表示にする
-                    service = EdgeDriverService.CreateChromiumService();
-                    service.HideCommandPromptWindow = true;
-                    // EdgeChromium版を使用
-                    options = new EdgeOptions();
-                    options.UseChromium = true;
-                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;     // loadイベントが発生したときに処理が戻る？
-                    // Driver作成
-                    driver = new EdgeDriver(service, options);
-                });
-                return true;
+                    autopilotTask = Task.Run(() =>
+                    {
+                        // ドライバー起動時に表示されるコンソール画面を非表示にする
+                        service = EdgeDriverService.CreateChromiumService();
+                        service.HideCommandPromptWindow = true;
+                        // EdgeChromium版を使用
+                        options = new EdgeOptions();
+                        options.UseChromium = true;
+                        options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;     // loadイベントが発生したときに処理が戻る？
+                                                                                                // Driver作成
+                        driver = new EdgeDriver(service, options);
+                    });
+                    await autopilotTask;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Dispose();
+                    MessageBox.Show(ex.ToString());
+                    return false;
+                }
             }
-            catch (Exception ex)
-            {
-                Dispose();
-                MessageBox.Show(ex.ToString());
-                return false;
-            }
+            return false;
         }
         
         public async Task Navigate(string url, string id, string password)
         {
-            try
+            if (!IsRunning())
             {
-                await Task.Run(() =>
+                try
                 {
-                    AutoPilot(url, id, password);
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
+                    autopilotTask = Task.Run(() =>
+                    {
+                        AutoPilot(url, id, password);
+                    });
+                    await autopilotTask;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
         }
 

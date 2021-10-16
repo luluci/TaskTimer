@@ -19,16 +19,29 @@ namespace TaskTimer
             // https://github.com/ClosedXML/ClosedXML/wiki
         }
 
+        private Task exportTask = null;
+        public bool IsRunning()
+        {
+            return (exportTask != null && !exportTask.IsCompleted);
+        }
+        public async Task WaitAsync()
+        {
+            await exportTask;
+        }
 
         public async Task Export(string path, ObservableCollection<TaskKey> TaskKeys, DateTime time)
         {
-            // 現データをバッファに展開
-            var data = MakeExportData(TaskKeys);
-            // Excelに書き出し
-            await Task.Run(() =>
+            if (!IsRunning())
             {
-                ExportExcel(path, data, time);
-            });
+                // 現データをバッファに展開
+                var data = MakeExportData(TaskKeys);
+                // Excelに書き出し
+                exportTask = Task.Run(() =>
+                {
+                    ExportExcel(path, data, time);
+                });
+                await exportTask;
+            }
         }
 
         private ExportData MakeExportData(ObservableCollection<TaskKey> TaskKeys)
