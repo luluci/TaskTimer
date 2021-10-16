@@ -294,6 +294,7 @@ namespace TaskTimer
         }
         public async Task CloseImpl()
         {
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: CloseImpl START");
             //
             ticker.Stop();
 
@@ -306,6 +307,7 @@ namespace TaskTimer
                 {
                     configSaveTask = config.SaveAsync();
                     await configSaveTask;
+                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: await configSaveTask FINISH");
                 }
             }
             // Setting出力
@@ -322,6 +324,7 @@ namespace TaskTimer
                         this.settings.Update(this.key);
                         settingSaveTask = this.settings.SaveAsync();
                         await settingSaveTask;
+                        //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: await settingSaveTask FINISH");
                     }
                 }
             }
@@ -336,8 +339,11 @@ namespace TaskTimer
                     this.logger.Update(this.key);
                     logSaveTask = this.logger.SaveAsync();
                     await logSaveTask;
+                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: await logSaveTask FINISH");
                 }
             }
+
+            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: CloseImpl FINISH");
         }
 
         public DateTime TargetDate
