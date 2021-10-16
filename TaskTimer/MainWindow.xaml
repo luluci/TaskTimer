@@ -82,11 +82,11 @@
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
                                 <TextBlock Text="ID" FontWeight="Bold" />
-                                <TextBox Text="{Binding AutoPilotId}" TextWrapping="Wrap" />
+                                <TextBox Text="{Binding AutoPilotId}" />
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
                                 <TextBlock Text="PASSWORD" FontWeight="Bold" />
-                                <TextBox Text="{Binding AutoPilotPassword}" TextWrapping="Wrap" />
+                                <PasswordBox mah:PasswordBoxBindingBehavior.Password="{Binding AutoPilotPassword}" />
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
                                 <Button Click="Button_Web_Click" Content="Web" ToolTip="Web" />

@@ -20,6 +20,9 @@ namespace TaskTimer
             // Edgeのバージョンに合わせてドライバをダウンロードする。
             // "msedgedriver.exe"を"TaskTimer.exe"と同じフォルダに配置する。
             // https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+
+            // Selenium
+            // https://www.seleniumqref.com/api/webdriver_gyaku.html
         }
 
         public void Dispose()
@@ -63,7 +66,7 @@ namespace TaskTimer
             {
                 await Task.Run(() =>
                 {
-                    AutoPilot(url);
+                    AutoPilot(url, id, password);
                 });
             }
             catch (Exception ex)
@@ -72,14 +75,14 @@ namespace TaskTimer
             }
         }
 
-        private void AutoPilot(string url)
+        private void AutoPilot(string url, string id, string password)
         {
             // サイトを開く
             driver.Navigate().GoToUrl(url);
 
             // title取得
             //var title = driver.FindElement(By.TagName("title"));
-            MessageBox.Show(driver.Title);
+            //MessageBox.Show(driver.Title);
 
             if (driver.Title == "Google")
             {
@@ -89,22 +92,31 @@ namespace TaskTimer
             else if (driver.Title == "ログイン - ニコニコ")
             {
                 // ID/Password入力
-                driver.FindElement(By.Id("input__mailtel")).SendKeys("hoge");
-                driver.FindElement(By.Id("input__password")).SendKeys("hoge");
+                driver.FindElement(By.Id("input__mailtel")).SendKeys(id);
+                driver.FindElement(By.Id("input__password")).SendKeys(password);
                 // ログインボタン
                 var loginbtn = driver.FindElement(By.Id("login__submit"));
+                loginbtn.Click();       // Clickもloadイベント発火で処理が戻ってくるっぽい
+                //
+                MessageBox.Show(driver.Title);
+            }
+            else if (driver.Title == "test_table")
+            {
+                var result = new StringBuilder();
+                var table = driver.FindElements(By.XPath("//*[@id='test_table_1']/tbody/tr"));
+                foreach (var row in table)
+                {
+                    var cols = row.FindElements(By.TagName("td"));
+                    foreach (var col in cols)
+                    {
+                        result.Append($"({col.Text}), ");
+                    }
+                    result.Append("\r\n");
+                }
+                MessageBox.Show(result.ToString());
             }
 
-
-            //ユーザーID
-            //driver.FindElement(By.Name("pid")).SendKeys("userId");
-            //パスワード
-            //driver.FindElement(By.Name("password")).SendKeys("pw");
-
-            //ログインボタン
-            //IWebElement findbuttom = driver.FindElement(By.Name("btnname"));
-            //ログインボタンをクリック
-            //findbuttom.Click();
+            
         }
     }
 }
