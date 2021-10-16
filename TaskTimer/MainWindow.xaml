@@ -78,7 +78,15 @@
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
                                 <TextBlock Text="URL" FontWeight="Bold" />
-                                <TextBox Text="{Binding URL}" TextWrapping="Wrap" Height="40" />
+                                <TextBox Text="{Binding AutoPilotUrl}" TextWrapping="Wrap" Height="40" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="ID" FontWeight="Bold" />
+                                <TextBox Text="{Binding AutoPilotId}" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="PASSWORD" FontWeight="Bold" />
+                                <TextBox Text="{Binding AutoPilotPassword}" TextWrapping="Wrap" />
                             </StackPanel>
                             <StackPanel Margin="0,0,0,15">
                                 <Button Click="Button_Web_Click" Content="Web" ToolTip="Web" />

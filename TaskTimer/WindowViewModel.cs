@@ -1037,7 +1037,39 @@ namespace TaskTimer
         }
 
 
-        public string URL { get; set; } = "https://www.google.com/";
+        public string AutoPilotUrl
+        {
+            get
+            {
+                return config.AutoPilotUrl;
+            }
+            set
+            {
+                config.AutoPilotUrl = value;
+            }
+        }
+        public string AutoPilotId
+        {
+            get
+            {
+                return config.AutoPilotId;
+            }
+            set
+            {
+                config.AutoPilotId = value;
+            }
+        }
+        public string AutoPilotPassword
+        {
+            get
+            {
+                return config.AutoPilotPassword;
+            }
+            set
+            {
+                config.AutoPilotPassword = value;
+            }
+        }
         private bool webNavigateEnable = false;
         public bool WebNavigateEnable
         {
@@ -1057,7 +1089,7 @@ namespace TaskTimer
         public async Task OnButtonClick_EdgeCtrlNavigate()
         {
             WebNavigateEnable = false;
-            await EdgeCtrl.Navigate(URL);
+            await EdgeCtrl.Navigate(AutoPilotUrl, AutoPilotId, AutoPilotPassword);
             WebNavigateEnable = true;
         }
     }

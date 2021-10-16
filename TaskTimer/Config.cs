@@ -110,6 +110,99 @@ namespace TaskTimer
             }
         }
 
+
+        public string AutoPilotUrl {
+            get
+            {
+                return json.AutoPilotUrl;
+            }
+            set
+            {
+                json.AutoPilotUrl = value;
+            }
+        }
+        public string AutoPilotId
+        {
+            get
+            {
+                return json.AutoPilotId;
+            }
+            set
+            {
+                json.AutoPilotId = value;
+            }
+        }
+        public string AutoPilotPassword
+        {
+            get
+            {
+                if (json.AutoPilotPassword == "") return json.AutoPilotPassword;
+                else return Decrypt(json.AutoPilotPassword);
+            }
+            set
+            {
+                json.AutoPilotPassword = Encrypt(value);
+            }
+        }
+
+        private string Encrypt(string text)
+        {
+            using (var rijndael = new System.Security.Cryptography.RijndaelManaged())
+            {
+                //myRijndael.BlockSize = 128;
+                //myRijndael.KeySize = 128;
+                rijndael.Mode = System.Security.Cryptography.CipherMode.CBC;
+                rijndael.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
+                rijndael.IV = Convert.FromBase64String(json.SecurityAesIv);
+                rijndael.Key = Convert.FromBase64String(json.SecurityAesKey);
+
+                var encryptor = rijndael.CreateEncryptor(rijndael.Key, rijndael.IV);
+
+                byte[] encrypted;
+
+                using (MemoryStream mStream = new MemoryStream())
+                {
+                    using (var ctStream = new System.Security.Cryptography.CryptoStream(mStream, encryptor, System.Security.Cryptography.CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter sw = new StreamWriter(ctStream))
+                        {
+                            sw.Write(text);
+                        }
+                        encrypted = mStream.ToArray();
+                    }
+                }
+                return Convert.ToBase64String(encrypted);
+            }
+        }
+        private string Decrypt(string text)
+        {
+            using (var rijndael = new System.Security.Cryptography.RijndaelManaged())
+            {
+                //myRijndael.BlockSize = 128;
+                //myRijndael.KeySize = 128;
+                rijndael.Mode = System.Security.Cryptography.CipherMode.CBC;
+                rijndael.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
+                rijndael.IV = Convert.FromBase64String(json.SecurityAesIv);
+                rijndael.Key = Convert.FromBase64String(json.SecurityAesKey);
+
+                var decryptor = rijndael.CreateDecryptor(rijndael.Key, rijndael.IV);
+
+                string plain = string.Empty;
+                using (MemoryStream mStream = new MemoryStream(Convert.FromBase64String(text)))
+                {
+                    using (var ctStream = new System.Security.Cryptography.CryptoStream(mStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                    {
+                        using (StreamReader sr = new StreamReader(ctStream))
+                        {
+                            plain = sr.ReadLine();
+                        }
+                    }
+                }
+                return plain;
+            }
+        }
+
+
         /** 初回起動用に同期的に動作する
          * 
          */
@@ -144,8 +237,61 @@ namespace TaskTimer
                     LogDir = "",
                     SummaryDir = "",
                     SettingsDir = "",
+                    AutoPilotUrl = "",
+                    AutoPilotId = "",
+                    AutoPilotPassword = "",
                 };
             }
+            // 不足設定を更新する
+            LoadVersionUp();
+        }
+
+        private void LoadVersionUp()
+        {
+            if (json.AutoPilotUrl == null)
+            {
+                json.AutoPilotUrl = "";
+            }
+            if (json.AutoPilotId == null)
+            {
+                json.AutoPilotId = "";
+            }
+            if (json.AutoPilotPassword == null)
+            {
+                json.AutoPilotPassword = "";
+            }
+            if (json.SecurityAesIv == null)
+            {
+                using (var myRijndael = new System.Security.Cryptography.RijndaelManaged())
+                {
+                    myRijndael.GenerateIV();
+                    json.SecurityAesIv = Convert.ToBase64String(myRijndael.IV);
+                    //json.SecurityAesIv = myRijndael.IV.ToString();
+                }
+            }
+            if (json.SecurityAesKey == null)
+            {
+                using (var myRijndael = new System.Security.Cryptography.RijndaelManaged())
+                {
+                    myRijndael.GenerateKey();
+                    json.SecurityAesKey = Convert.ToBase64String(myRijndael.Key);
+                    //json.SecurityAesKey = myRijndael.Key.ToString();
+                }
+            }
+        }
+
+        private string MakeRandom()
+        {
+            byte[] random = new byte[16];
+
+            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+
+                //rng.GetBytes(random);
+                rng.GetNonZeroBytes(random);
+            }
+
+            return random.ToString();
         }
 
         public bool AskFileLock()
@@ -191,5 +337,19 @@ namespace TaskTimer
         [JsonPropertyName("settings_dir")]
         public string SettingsDir { get; set; }
 
+        [JsonPropertyName("autopilot_url")]
+        public string AutoPilotUrl { get; set; }
+
+        [JsonPropertyName("autopilot_id")]
+        public string AutoPilotId { get; set; }
+
+        [JsonPropertyName("autopilot_password")]
+        public string AutoPilotPassword { get; set; }
+
+        [JsonPropertyName("security_aes_iv")]
+        public string SecurityAesIv { get; set; }
+
+        [JsonPropertyName("security_aes_key")]
+        public string SecurityAesKey { get; set; }
     }
 }

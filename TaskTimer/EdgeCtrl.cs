@@ -57,32 +57,54 @@ namespace TaskTimer
             }
         }
         
-        public async Task Navigate(string url)
+        public async Task Navigate(string url, string id, string password)
         {
             try
             {
                 await Task.Run(() =>
                 {
-                    // サイトを開く
-                    driver.Navigate().GoToUrl(url);
-                    // 検索ボックスにテキスト設定
-                    driver.FindElement(By.Name("q")).SendKeys("test");
+                    AutoPilot(url);
                 });
-
-                //ユーザーID
-                //driver.FindElement(By.Name("pid")).SendKeys("userId");
-                //パスワード
-                //driver.FindElement(By.Name("password")).SendKeys("pw");
-
-                //ログインボタン
-                //IWebElement findbuttom = driver.FindElement(By.Name("btnname"));
-                //ログインボタンをクリック
-                //findbuttom.Click();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void AutoPilot(string url)
+        {
+            // サイトを開く
+            driver.Navigate().GoToUrl(url);
+
+            // title取得
+            //var title = driver.FindElement(By.TagName("title"));
+            MessageBox.Show(driver.Title);
+
+            if (driver.Title == "Google")
+            {
+                // 検索ボックスにテキスト設定
+                driver.FindElement(By.Name("q")).SendKeys("test");
+            }
+            else if (driver.Title == "ログイン - ニコニコ")
+            {
+                // ID/Password入力
+                driver.FindElement(By.Id("input__mailtel")).SendKeys("hoge");
+                driver.FindElement(By.Id("input__password")).SendKeys("hoge");
+                // ログインボタン
+                var loginbtn = driver.FindElement(By.Id("login__submit"));
+            }
+
+
+            //ユーザーID
+            //driver.FindElement(By.Name("pid")).SendKeys("userId");
+            //パスワード
+            //driver.FindElement(By.Name("password")).SendKeys("pw");
+
+            //ログインボタン
+            //IWebElement findbuttom = driver.FindElement(By.Name("btnname"));
+            //ログインボタンをクリック
+            //findbuttom.Click();
         }
     }
 }
