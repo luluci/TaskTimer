@@ -193,7 +193,6 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
-            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync START");
             // ファイル書き込み
             using (var writer = new StreamWriter(logFileTemp))
             {
@@ -206,7 +205,6 @@ namespace TaskTimer
             File.Delete(logFile);
             // tmpファイルを新ファイルとしてリネーム
             File.Move(logFileTemp, logFile);
-            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveAsync FINISH");
         }
     }
 }

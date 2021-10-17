@@ -181,9 +181,9 @@ namespace TaskTimer
             vm.OnClick_OpenLogDir();
         }
 
-        private void Button_ManualSave_Click(object sender, RoutedEventArgs e)
+        private async void Button_ManualSave_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_ManualSave();
+            await vm.OnClick_ManualSave();
         }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -258,14 +258,14 @@ namespace TaskTimer
             FocusManager.SetFocusedElement(this, root);
         }
 
-        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            vm.TargetDateChanged();
+            await vm.TargetDateChanged();
         }
 
-        private void Button_SaveConfig_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveConfig_Click(object sender, RoutedEventArgs e)
         {
-            vm.OnClick_ManualSaveConfig();
+            await vm.OnClick_ManualSaveConfig();
         }
 
         private async void Button_Web_Click(object sender, RoutedEventArgs e)

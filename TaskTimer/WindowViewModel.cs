@@ -133,10 +133,10 @@ namespace TaskTimer
             ExcelCtrl = new ExcelCtrl();
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        private async void timer_Tick(object sender, EventArgs e)
         {
             // 1秒経過を通知
-            TimerEllapse(1);
+            await TimerEllapse(1);
         }
 
 
@@ -410,6 +410,15 @@ namespace TaskTimer
         }
 
 
+        private bool enableTargetDate = true;
+        public bool EnableTargetDate {
+            get { return enableTargetDate; }
+            set
+            {
+                enableTargetDate = value;
+                NotifyPropertyChanged(nameof(EnableTargetDate));
+            }
+        }
 
         public DateTime TargetDate
         {
@@ -427,23 +436,28 @@ namespace TaskTimer
             }
         }
 
-        public void TargetDateChanged()
+        public async Task TargetDateChanged()
         {
             // SetterでUtil.TargetDate更新後にコールされる
             // Setter内で処理したくなかったのでこちらで
             // 実際に日時が変わったときのみ処理
             if (isTargetDateChanged)
             {
+                EnableTargetDate = false;
                 // フラグを下す
                 isTargetDateChanged = false;
                 // タイマを止める
                 TimerStop();
                 // 現在ログを保存しておく
-                SaveLog();
+                await SaveLogAsync();
                 // 指定日時のログを展開する
                 logger.UpdateDate();
-                logger.Load();
+                await Task.Run(() =>
+                {
+                    logger.Load();
+                });
                 LoadTask();
+                EnableTargetDate = true;
             }
         }
 
@@ -588,7 +602,7 @@ namespace TaskTimer
             get { return delayCount; }
         }
 
-        public void TimerEllapse(int sec)
+        public async Task TimerEllapse(int sec)
         {
             // sec秒経過
             this.timer.Ellapse(sec);
@@ -608,7 +622,7 @@ namespace TaskTimer
             // delay時間更新
             UpdateDelayCount();
             // 自動保存処理
-            AutoSave();
+            await AutoSave();
         }
 
         public void TimerStart()
@@ -639,7 +653,7 @@ namespace TaskTimer
             NotifyPropertyChanged(nameof(DelayCount));
         }
 
-        private void AutoSave()
+        private async Task AutoSave()
         {
             if (timer.ReqAutoSave())
             {
@@ -647,12 +661,12 @@ namespace TaskTimer
                 var check = logger.CheckFileLock();
                 if (check)
                 {
-                    SaveLog();
+                    await SaveLogAsync();
                 }
             }
         }
 
-        private void SaveLog()
+        private async Task SaveLogAsync()
         {
             if (hasChangeLog)
             {
@@ -665,16 +679,15 @@ namespace TaskTimer
                     hasChangeLog = false;
                     // UIスレッド内でログを転送
                     this.logger.Update(this.key);
-                    // asyncにファイル書き込みを投げる
-                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveLog START");
-                    logSaveTask = this.logger.SaveAsync();
-                    //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: SaveLog FINISH");
+                    // Taskにファイル書き込みを投げる
+                    logSaveTask = logger.SaveAsync();
+                    await logSaveTask;
                 }
             }
         }
 
 
-        public void OnClick_ManualSave()
+        public async Task OnClick_ManualSave()
         {
             // ログ更新保存済みならスキップ
             if (!hasChangeLog) return;
@@ -703,6 +716,9 @@ namespace TaskTimer
                     // ログ保存
                     logSaveTask = ManualSaveAsync();
                     settingSaveTask = logSaveTask;
+                    await logSaveTask;
+                    // GUI有効化
+                    EnableManualSave = true;
                 }
                 else
                 {
@@ -735,8 +751,6 @@ namespace TaskTimer
                 await this.logger.SaveAsync();
             };
             await Task.Run(func);
-            // GUI有効化
-            EnableManualSave = true;
         }
 
         public bool enableManualSave = true;
@@ -751,7 +765,7 @@ namespace TaskTimer
         }
 
 
-        public void OnClick_ManualSaveConfig()
+        public async Task OnClick_ManualSaveConfig()
         {
             // Config出力
             if (configSaveTask == null || configSaveTask.IsCompleted)
@@ -766,6 +780,7 @@ namespace TaskTimer
                         await config.SaveAsync();
                     };
                     configSaveTask = Task.Run(func);
+                    await configSaveTask;
                 }
             }
         }
