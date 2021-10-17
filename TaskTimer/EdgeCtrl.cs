@@ -53,11 +53,11 @@ namespace TaskTimer
                     autopilotTask = Task.Run(() =>
                     {
                         // ドライバー起動時に表示されるコンソール画面を非表示にする
-                        service = EdgeDriverService.CreateChromiumService();
+                        service = EdgeDriverService.CreateDefaultService();
                         service.HideCommandPromptWindow = true;
                         // EdgeChromium版を使用
                         options = new EdgeOptions();
-                        options.UseChromium = true;
+                        //options.UseChromium = true;
                         options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;     // loadイベントが発生したときに処理が戻る？
                                                                                                 // Driver作成
                         driver = new EdgeDriver(service, options);
