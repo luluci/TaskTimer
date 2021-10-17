@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
+using MaterialDesignThemes.Wpf;
 
 namespace TaskTimer
 {
@@ -60,7 +61,13 @@ namespace TaskTimer
                         isClosing = true;
                         e.Cancel = true;
                         // 終了イベントはキャンセルして、アプリ終了時処理を開始
-                        await vm.Close();
+                        // 終了できないダイアログを出して終了処理を待機する
+                        var result = await DialogHost.Show(dialog, async delegate (object sender, DialogOpenedEventArgs args)
+                        {
+                            await vm.Close();
+                            //await Task.Delay(1000);
+                            args.Session.Close(false);
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -274,6 +281,21 @@ namespace TaskTimer
         private async void Button_ExcelExport_Click(object sender, RoutedEventArgs e)
         {
             await vm.OnButtonClick_ExcelExport();
+        }
+
+        private async void Button_Test_Click(object sender, RoutedEventArgs e)
+        {
+            //await vm.StartWaiting();
+            await DialogHost.Show(dialog, async delegate (object s, DialogOpenedEventArgs args)
+            {
+                await Task.Delay(1000);
+                args.Session.Close(false);
+            });
+        }
+
+        private void Button_Shutdown_Click(object sender, RoutedEventArgs e)
+        {
+            DialogHost.CloseDialogCommand.Execute(false, null);
         }
     }
 }

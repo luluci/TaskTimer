@@ -285,9 +285,6 @@ namespace TaskTimer
             try
             {
                 await CloseImpl();
-                if (EdgeCtrl.IsRunning()) await EdgeCtrl.WaitAsync();
-                EdgeCtrl.Dispose();
-                if (ExcelCtrl.IsRunning()) await ExcelCtrl.WaitAsync();
             }
             catch
             {
@@ -312,6 +309,8 @@ namespace TaskTimer
                     //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: await configSaveTask FINISH");
                 }
             }
+            ClosingSaveConfig = true;
+
             // Setting出力
             // running中のタスクがあるならスキップ
             if (settingSaveTask == null || settingSaveTask.IsCompleted)
@@ -330,6 +329,8 @@ namespace TaskTimer
                     }
                 }
             }
+            ClosingSaveSettings = true;
+
             // ログ出力
             // running中のタスクがあるならスキップ
             if (logSaveTask == null || logSaveTask.IsCompleted)
@@ -344,9 +345,71 @@ namespace TaskTimer
                     //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: await logSaveTask FINISH");
                 }
             }
+            ClosingSaveLog = true;
+
+            // EdgeCtrl終了待機
+            if (EdgeCtrl.IsRunning()) await EdgeCtrl.WaitAsync();
+            EdgeCtrl.Dispose();
+            ClosingSaveEdge = true;
+
+            // Excel Export終了待機
+            if (ExcelCtrl.IsRunning()) await ExcelCtrl.WaitAsync();
+            ClosingSaveExcel = true;
 
             //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}: CloseImpl FINISH");
         }
+
+        private bool closingSaveConfig = false;
+        public bool ClosingSaveConfig {
+            get { return closingSaveConfig; }
+            set
+            {
+                closingSaveConfig = value;
+                NotifyPropertyChanged(nameof(ClosingSaveConfig));
+            }
+        }
+        private bool closingSaveSettings = false;
+        public bool ClosingSaveSettings
+        {
+            get { return closingSaveSettings; }
+            set
+            {
+                closingSaveSettings = value;
+                NotifyPropertyChanged(nameof(ClosingSaveSettings));
+            }
+        }
+        private bool closingSaveLog = false;
+        public bool ClosingSaveLog
+        {
+            get { return closingSaveLog; }
+            set
+            {
+                closingSaveLog = value;
+                NotifyPropertyChanged(nameof(ClosingSaveLog));
+            }
+        }
+        private bool closingSaveEdge = false;
+        public bool ClosingSaveEdge
+        {
+            get { return closingSaveEdge; }
+            set
+            {
+                closingSaveEdge = value;
+                NotifyPropertyChanged(nameof(ClosingSaveEdge));
+            }
+        }
+        private bool closingSaveExcel = false;
+        public bool ClosingSaveExcel
+        {
+            get { return closingSaveExcel; }
+            set
+            {
+                closingSaveExcel = value;
+                NotifyPropertyChanged(nameof(ClosingSaveExcel));
+            }
+        }
+
+
 
         public DateTime TargetDate
         {
@@ -1120,6 +1183,24 @@ namespace TaskTimer
             WebNavigateEnable = false;
             await EdgeCtrl.Navigate(AutoPilotUrl, AutoPilotId, AutoPilotPassword);
             WebNavigateEnable = true;
+        }
+
+
+        private bool isWaiting = false;
+        public bool IsWaiting
+        {
+            get { return isWaiting; }
+            set {
+                isWaiting = value;
+                NotifyPropertyChanged(nameof(IsWaiting));
+            }
+        }
+
+        public async Task StartWaiting()
+        {
+            IsWaiting = true;
+            await Task.Delay(5000);
+            IsWaiting = false;
         }
     }
 
