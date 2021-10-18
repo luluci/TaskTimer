@@ -199,7 +199,7 @@ namespace TaskTimer
                     {
                         foreach (var record in log)
                         {
-                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{Util.Min2Time(record.Value)}");
+                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{record.Value}");
                         }
                     }
                     break;
@@ -212,7 +212,7 @@ namespace TaskTimer
                     {
                         foreach (var record in log)
                         {
-                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{record.Key.Item4}\t{record.Key.Item5}\t{Util.Min2Time(record.Value)}");
+                            await writer.WriteLineAsync($"{record.Key.Item1}\t{record.Key.Item2}\t{record.Key.Item3}\t{record.Key.Item4}\t{record.Key.Item5}\t{record.Value}");
                         }
                     }
                     break;
@@ -278,7 +278,7 @@ namespace TaskTimer
                     {
                         if (item.time != 0)
                         {
-                            data.Add(new SummaryNode(key.Alias, item.Item, subkey.Code, item.timeDisp, keyIndex, subkeyIndex, itemIndex));
+                            data.Add(new SummaryNode(key.Alias, item.ItemAlias, subkey.Code, item.timeDisp, keyIndex, subkeyIndex, itemIndex));
                         }
 
                         itemIndex++;

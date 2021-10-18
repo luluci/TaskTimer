@@ -139,7 +139,7 @@
 
             <Grid x:Name="root" Focusable="True">
                 <Grid Height="47" VerticalAlignment="Top" Background="#FFB7FF84">
-                    <ToggleButton x:Name="MenuToggleButton" IsChecked="False" Style="{DynamicResource MaterialDesignHamburgerToggleButton}" Margin="9,6,657,4" />
+                    <ToggleButton x:Name="MenuToggleButton" IsChecked="False" Style="{DynamicResource MaterialDesignHamburgerToggleButton}" Margin="9,6,0,4" HorizontalAlignment="Left" />
                     <Button Click="Button_Timer_Click" Content="{Binding ButtonTimerOn}" Height="29" Canvas.Left="10" Canvas.Top="10" Width="122" Margin="54,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                     <TextBlock Height="30" Canvas.Left="332" TextWrapping="Wrap" Text="{Binding BaseCount}" Width="98" FontWeight="Bold" TextAlignment="Center" FontSize="20" Canvas.Top="4" TextDecorations="Underline" Margin="0,2,97,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                     <TextBlock Height="17" Canvas.Left="332" TextWrapping="Wrap" Text="総カウント時間" Width="98" FontFamily="Meiryo UI" TextAlignment="Center" FontSize="11" Canvas.Top="30" Margin="0,30,97,0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
@@ -271,7 +271,7 @@
                     <TextBlock FontFamily="{StaticResource ResourceKey=MaterialDesignFont}" HorizontalAlignment="Left" Height="16" Margin="432,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" TextDecorations="{x:Null}" ToolTip="[Code/Name/Alias/SubCode/Time]によりファイル出力" Text="Save[2]"/>
                     <Button Click="Button_SaveSummary2All_Click" IsEnabled="{Binding EnableSaveSummary2All}" Content="ALL" HorizontalAlignment="Left" Height="27" Margin="479,213,0,0" VerticalAlignment="Top" Width="57"/>
                     <Button Click="Button_SaveSummary2NonZero_Click" IsEnabled="{Binding EnableSaveSummary2NonZero}" Content="Non 0" HorizontalAlignment="Left" Height="27" Margin="543,213,0,0" VerticalAlignment="Top" Width="72"/>
-                    <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="658,211,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
+                    <Button Click="Button_OpenSummaryDir_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="654,211,0,0" VerticalAlignment="Top" Width="33" Padding="5,4" ToolTip="Summaryフォルダを開く">
                         <materialDesign:PackIcon Kind="FolderDownloadOutline" Height="23" Width="23"/>
                     </Button>
                 </Grid>
