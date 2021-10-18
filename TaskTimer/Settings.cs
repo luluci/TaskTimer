@@ -22,8 +22,8 @@ namespace TaskTimer
         private string inputSubKeyFileTemp;
         private bool settingFileLoaded;
 
-        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)> Keys;
-        public List<(string Code, string Alias, string Item)> SubKeys;
+        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias)> Keys;
+        public List<(string Code, string Alias, string Item, string ItemAlias)> SubKeys;
 
         public Settings(string tgtDirPath)
         {
@@ -34,8 +34,8 @@ namespace TaskTimer
             inputSubKeyFileTemp = tgtDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
             settingFileLoaded = false;
 
-            Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)>();
-            SubKeys = new List<(string Code, string Alias, string Item)>();
+            Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias)>();
+            SubKeys = new List<(string Code, string Alias, string Item, string ItemAlias)>();
         }
 
         public void Load()
@@ -55,7 +55,7 @@ namespace TaskTimer
             if (File.Exists(inputKeyFile))
             {
                 // ファイルが存在するならロード
-                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
+                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
                 // ファイルが存在するならロード
                 using (var reader = new StreamReader(inputKeyFile))
                 {
@@ -72,7 +72,8 @@ namespace TaskTimer
                                 match.Groups[3].ToString(),
                                 match.Groups[4].ToString(),
                                 match.Groups[5].ToString(),
-                                match.Groups[6].ToString()
+                                match.Groups[6].ToString(),
+                                match.Groups[7].ToString()
                             ));
                         }
                     }
@@ -88,13 +89,13 @@ namespace TaskTimer
                 // ファイルが存在しなければベース作成
                 File.CreateText(inputKeyFile);
                 // ダミーでKey作成
-                Keys.Add(("NewCode", "NewName", "NewAlias", "NewSubCode", "NewSubAlias", "NewItem"));
+                Keys.Add(("NewCode", "NewName", "NewAlias", "NewSubCode", "NewSubAlias", "NewItem", "NewItemAlias"));
             }
             // サブキーファイル
             if (File.Exists(inputSubKeyFile))
             {
                 //
-                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
+                Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})$", RegexOptions.Compiled);
                 // ファイルが存在するならロード
                 using (var reader = new StreamReader(inputSubKeyFile))
                 {
@@ -108,7 +109,8 @@ namespace TaskTimer
                             SubKeys.Add((
                                 match.Groups[1].ToString(),
                                 match.Groups[2].ToString(),
-                                match.Groups[3].ToString()
+                                match.Groups[3].ToString(),
+                                match.Groups[4].ToString()
                             ));
                         }
                     }
@@ -123,18 +125,16 @@ namespace TaskTimer
             {
                 // ファイルが存在しなければテンプレートでファイル作成
                 // テンプレートでSubKey作成
-                SubKeys.Add(("CodeA", "AliasA", "ItemA"));
-                SubKeys.Add(("CodeB", "AliasB", "ItemB"));
-                SubKeys.Add(("CodeC", "AliasC", "ItemC"));
-                SubKeys.Add(("CodeD", "AliasD", "ItemD"));
-                SubKeys.Add(("CodeE", "AliasE", "ItemE"));
-                SubKeys.Add(("CodeF", "AliasF", "ItemF"));
+                SubKeys.Add(("CodeA", "AliasA", "ItemA", "ItemA_1"));
+                SubKeys.Add(("CodeB", "AliasB", "ItemB", "ItemB_1"));
+                SubKeys.Add(("CodeC", "AliasC", "ItemC", "ItemC_1"));
+                SubKeys.Add(("CodeD", "AliasD", "ItemD", "ItemD_1"));
                 // ファイル書き込み
                 using (var writer = File.CreateText(inputSubKeyFile))
                 {
                     foreach (var subkey in SubKeys)
                     {
-                        writer.WriteLine($"{subkey.Code}\t{subkey.Alias}\t{subkey.Item}");
+                        writer.WriteLine($"{subkey.Code}\t{subkey.Alias}\t{subkey.Item}\t{subkey.ItemAlias}");
                     }
                 }
             }
@@ -155,7 +155,7 @@ namespace TaskTimer
                 }
             }
             // 要素分の領域を確保して初期化
-            Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item)>(elem);
+            Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias)>(elem);
             // 最新のタスク設定を取得
             foreach (var key in TaskKeys)
             {
@@ -163,7 +163,7 @@ namespace TaskTimer
                 {
                     foreach (var item in subkey.Item)
                     {
-                        Keys.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item));
+                        Keys.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.ItemAlias));
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace TaskTimer
             {
                 foreach (var key in Keys)
                 {
-                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}");
+                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.ItemAlias}");
                 }
             }
             // 旧ファイルを削除

@@ -182,7 +182,7 @@ namespace TaskTimer
                     if (subCurrKey.Equals(subNextKey))
                     {
                         // SubKeyが同じならItem追加
-                        taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                        taskSub.Item.Add(new TaskItem(keys.ItemAlias, keys.Item, updateItem));
                     }
                     else
                     {
@@ -191,7 +191,7 @@ namespace TaskTimer
                         taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub);
                         taskMain.SubKey.Add(taskSub);
                         // Item追加
-                        taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                        taskSub.Item.Add(new TaskItem(keys.ItemAlias, keys.Item, updateItem));
                         // SubKey更新
                         subCurrKey = subNextKey;
                     }
@@ -205,7 +205,7 @@ namespace TaskTimer
                     taskSub = new TaskKeySub(keys.SubAlias, keys.SubCode, updateTaskSub);
                     taskMain.SubKey.Add(taskSub);
                     // Item追加
-                    taskSub.Item.Add(new TaskItem(keys.Item, updateItem));
+                    taskSub.Item.Add(new TaskItem(keys.ItemAlias, keys.Item, updateItem));
                     // MainKey更新
                     mainCurrKey = mainNextKey;
                     // SubKey更新
@@ -237,7 +237,7 @@ namespace TaskTimer
                     if (subCurrKey.Equals(subNextKey))
                     {
                         // SubKeyが同じならItem追加
-                        taskItem = new TaskItem(item.Key.Item, updateItem);
+                        taskItem = new TaskItem(item.Key.ItemAlias, item.Key.Item, updateItem);
                         taskItem.Time = item.Value;
                         taskSub.Item.Add(taskItem);
                     }
@@ -248,7 +248,7 @@ namespace TaskTimer
                         taskSub = new TaskKeySub(item.Key.SubAlias, item.Key.SubCode, updateTaskSub);
                         taskMain.SubKey.Add(taskSub);
                         // Item追加
-                        taskItem = new TaskItem(item.Key.Item, updateItem);
+                        taskItem = new TaskItem(item.Key.ItemAlias, item.Key.Item, updateItem);
                         taskItem.Time = item.Value;
                         taskSub.Item.Add(taskItem);
                         // SubKey更新
@@ -264,7 +264,7 @@ namespace TaskTimer
                     taskSub = new TaskKeySub(item.Key.SubAlias, item.Key.SubCode, updateTaskSub);
                     taskMain.SubKey.Add(taskSub);
                     // Item追加
-                    taskItem = new TaskItem(item.Key.Item, updateItem);
+                    taskItem = new TaskItem(item.Key.ItemAlias, item.Key.Item, updateItem);
                     taskItem.Time = item.Value;
                     taskSub.Item.Add(taskItem);
                     // MainKey更新
@@ -556,7 +556,7 @@ namespace TaskTimer
                 if (subCurrKey.Equals(subNextKey))
                 {
                     // SubKeyが同じならItem追加
-                    taskSub.Item.Add(new TaskItem(subkey.Item, updateItem));
+                    taskSub.Item.Add(new TaskItem(subkey.ItemAlias, subkey.Item, updateItem));
                 }
                 else
                 {
@@ -565,7 +565,7 @@ namespace TaskTimer
                     taskSub = new TaskKeySub(subkey.Alias, subkey.Code, updateTaskSub);
                     newtask.SubKey.Add(taskSub);
                     // Item追加
-                    taskSub.Item.Add(new TaskItem(subkey.Item, updateItem));
+                    taskSub.Item.Add(new TaskItem(subkey.ItemAlias, subkey.Item, updateItem));
                     // SubKey更新
                     subCurrKey = subNextKey;
                 }
@@ -580,7 +580,7 @@ namespace TaskTimer
             TaskKeySub taskSub = new TaskKeySub("NewAlias", "NewCode", updateTaskSub);
             this.key[selectedIndex].SubKey.Add(taskSub);
             // Item追加
-            taskSub.Item.Add(new TaskItem("NewItem", updateItem));
+            taskSub.Item.Add(new TaskItem("NewItemAlias", "NewItem", updateItem));
         }
 
         public void addTaskItem()
@@ -588,7 +588,7 @@ namespace TaskTimer
             // ログ更新あり
             hasChangeLog = true;
             // Item追加
-            this.key[selectedIndex].SubKey[selectedIndexSub].Item.Add(new TaskItem("NewItem", updateItem));
+            this.key[selectedIndex].SubKey[selectedIndexSub].Item.Add(new TaskItem("NewItemAlias", "NewItem", updateItem));
         }
 
         private string baseCount;
@@ -1310,17 +1310,6 @@ namespace TaskTimer
             }
         }
 
-        /*
-        private async Task test1()
-        {
-            await test2();
-        }
-        private async Task test2()
-        {
-            await Task.Delay(10 * 1000);
-            System.Windows.MessageBox.Show("delayed！");
-        }
-        */
 
         private Action _update = null;
 
@@ -1336,6 +1325,7 @@ namespace TaskTimer
 
     class TaskItem : INotifyPropertyChanged
     {
+        public string itemAlias;
         public string item;
         public int time;
         public string timeDisp;
@@ -1343,8 +1333,9 @@ namespace TaskTimer
         private readonly Regex reTimeWithoutColon;
         private Action<int, int> _updateTimeItem = null;
 
-        public TaskItem(string item, Action<int, int> _item)
+        public TaskItem(string alias, string item, Action<int, int> _item)
         {
+            this.itemAlias = alias;
             this.item = item;
             this.time = 0;
             this._updateTimeItem = _item;
@@ -1358,6 +1349,16 @@ namespace TaskTimer
         {
             var e = new PropertyChangedEventArgs(PropertyName);
             PropertyChanged?.Invoke(this, e);
+        }
+
+        public string ItemAlias
+        {
+            get { return itemAlias; }
+            set
+            {
+                itemAlias = value;
+                NotifyPropertyChanged(nameof(ItemAlias));
+            }
         }
 
         public string Item

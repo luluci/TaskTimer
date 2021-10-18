@@ -23,8 +23,8 @@ namespace TaskTimer
 
         public bool hasLog;
 
-        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)> SaveBuff;
-        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int> LoadLog;
+        public List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias, int min)> SaveBuff;
+        public Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias), int> LoadLog;
 
         public Logger(string tgtDirPath)
         {
@@ -66,7 +66,7 @@ namespace TaskTimer
         {
             // ログ読み出し情報初期化
             hasLog = false;
-            LoadLog = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item), int>();
+            LoadLog = new Dictionary<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias), int>();
             // 同じ日付のログがあったらツールが途中終了したものとして、続きからカウントできるようにする。
             // 設定ファイルからロード
             // フォルダチェック
@@ -82,7 +82,7 @@ namespace TaskTimer
                 if (File.Exists(logFile))
                 {
                     // ファイルから読み込み
-                    Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+(\d+)$", RegexOptions.Compiled);
+                    Regex re = new Regex($@"^({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+({Util.reWord})\t+(\d+)$", RegexOptions.Compiled);
                     using (var reader = new StreamReader(logFile))
                     {
                         string buff;
@@ -95,7 +95,7 @@ namespace TaskTimer
                                 int min;
                                 try
                                 {
-                                    min = int.Parse(match.Groups[7].ToString());
+                                    min = int.Parse(match.Groups[8].ToString());
                                 }
                                 catch
                                 {
@@ -107,7 +107,8 @@ namespace TaskTimer
                                     match.Groups[3].ToString(),
                                     match.Groups[4].ToString(),
                                     match.Groups[5].ToString(),
-                                    match.Groups[6].ToString()
+                                    match.Groups[6].ToString(),
+                                    match.Groups[7].ToString()
                                 );
                                 if (LoadLog.ContainsKey(key))
                                 {
@@ -140,7 +141,7 @@ namespace TaskTimer
                 {
                     foreach (var item in subkey.Item)
                     {
-                        var dictkey = (key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item);
+                        var dictkey = (key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.ItemAlias);
                         if (LoadLog.TryGetValue(dictkey, out int min))
                         {
                             item.time = min;
@@ -162,7 +163,7 @@ namespace TaskTimer
                 elem += key.SubKey.Count;
             }
             // 要素分の領域を確保して初期化
-            SaveBuff = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, int min)>(elem);
+            SaveBuff = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias, int min)>(elem);
             // 最新のタスク設定を取得
             foreach (var key in TaskKeys)
             {
@@ -173,7 +174,7 @@ namespace TaskTimer
                         // 全部出力する
                         //if (item.time != 0)
                         {
-                            SaveBuff.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.time));
+                            SaveBuff.Add((key.Code, key.Name, key.Alias, subkey.Code, subkey.Alias, item.Item, item.ItemAlias, item.time));
                         }
                     }
                 }
@@ -198,7 +199,7 @@ namespace TaskTimer
             {
                 foreach (var key in SaveBuff)
                 {
-                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.min}");
+                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.ItemAlias}\t{key.min}");
                 }
             }
             // 旧ファイルを削除
