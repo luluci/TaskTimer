@@ -25,6 +25,9 @@ namespace TaskTimer
 
         public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
 
+        public static readonly Regex reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
+        public static readonly Regex reTimeWithoutColon = new Regex(@"(?:^(?<min>\d{1,2})$|^(?<hr>\d+)(?<min>\d\d)$)", RegexOptions.Compiled);
+
         static public bool CheckTargetDateIsToday()
         {
             return TargetDate.Date.Equals(CurrentDate.Date);

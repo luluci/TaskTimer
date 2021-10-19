@@ -216,11 +216,15 @@
                     <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Margin="0,0,225,6" TextWrapping="Wrap" HorizontalAlignment="Right" Width="64" Height="24" VerticalAlignment="Bottom"/>
                     <TextBox Text="{Binding Key/SubKey/Item/Item, Mode=TwoWay}" Margin="0,0,95,6" TextWrapping="Wrap" HorizontalAlignment="Right" Width="125" Height="24" VerticalAlignment="Bottom"/>
                     <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
+                    <!--
                     <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="219,8,0,0" Width="115" Height="27" VerticalAlignment="Top"/>
                     <Button Click="Button_AddSubTask_Click" Content="SubTask追加" HorizontalAlignment="Left" Margin="343,8,0,0" Width="123" Height="27" VerticalAlignment="Top"/>
+                    <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="475,8,0,0" Width="123" VerticalAlignment="Top"/>
+                    -->
+                    <Button Click="Button_NewElement_Click" Content="{Binding NewTaskElementDisp}" ToolTip="選択しているリストの末尾に新しい要素を追加" HorizontalAlignment="Left" Margin="397,8,0,0" Width="120" Height="27" VerticalAlignment="Top"/>
+                    <Button Click="Button_CloneElement_Click" Content="{Binding CloneTaskElementDisp}" ToolTip="選択している要素の後ろにクローンを追加" HorizontalAlignment="Left" Margin="532,8,0,0" Width="120" Height="27" VerticalAlignment="Top"/>
                     <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,0,20,6" TextWrapping="Wrap" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True" Height="24" VerticalAlignment="Bottom"/>
                     <TextBlock HorizontalAlignment="Right" Margin="0,0,20,5" TextWrapping="Wrap" Text="総計" Width="31" FontSize="11" TextAlignment="Right" Height="19" VerticalAlignment="Bottom"/>
-                    <Button Click="Button_AddItem_Click" Content="Item追加" HorizontalAlignment="Left" Height="27" Margin="475,8,0,0" Width="123" VerticalAlignment="Top"/>
                     <Button Click="Button_TaskViewOpeUp_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,5,0,0" Width="33" ToolTip="選択している要素を１つ上に移動" VerticalAlignment="Top">
                         <materialDesign:PackIcon Kind="ChevronUp" Height="23" Width="23"/>
                     </Button>

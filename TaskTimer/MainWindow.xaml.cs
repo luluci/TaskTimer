@@ -124,14 +124,24 @@ namespace TaskTimer
             this.vm.addTaskSub();
         }
 
-        private void Button_Timer_Click(object sender, RoutedEventArgs e)
-        {
-            this.vm.OnButtonClick_TimerOn();
-        }
-
         private void Button_AddItem_Click(object sender, RoutedEventArgs e)
         {
             this.vm.addTaskItem();
+        }
+
+        private void Button_NewElement_Click(object sender, RoutedEventArgs e)
+        {
+            vm.NewTaskElement();
+        }
+
+        private void Button_CloneElement_Click(object sender, RoutedEventArgs e)
+        {
+            vm.CloneTaskElement();
+        }
+
+        private void Button_Timer_Click(object sender, RoutedEventArgs e)
+        {
+            this.vm.OnButtonClick_TimerOn();
         }
 
         private void Button_MakeSummary1_Click(object sender, RoutedEventArgs e)

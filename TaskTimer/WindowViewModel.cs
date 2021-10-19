@@ -121,6 +121,7 @@ namespace TaskTimer
 
             // 要素の移動(Up,Down,Deleteボタンを押下したときの操作対象)に関する設定
             selectTaskClass = TaskClass.MainKey;            // 操作対象：MainKey
+            UpdateTaskElementDisp();
 
             // Ticker設定
             // 1秒基準でカウント
@@ -591,6 +592,117 @@ namespace TaskTimer
             this.key[selectedIndex].SubKey[selectedIndexSub].Item.Add(new TaskItem("NewItemAlias", "NewItem", updateItem));
         }
 
+        private string newTaskElementDisp;
+        public string NewTaskElementDisp
+        {
+            get { return newTaskElementDisp; }
+            set
+            {
+                newTaskElementDisp = value;
+                NotifyPropertyChanged(nameof(NewTaskElementDisp));
+            }
+        }
+        private string cloneTaskElementDisp;
+        public string CloneTaskElementDisp
+        {
+            get { return cloneTaskElementDisp; }
+            set
+            {
+                cloneTaskElementDisp = value;
+                NotifyPropertyChanged(nameof(CloneTaskElementDisp));
+            }
+        }
+
+        private void UpdateTaskElementDisp()
+        {
+            switch (selectTaskClass)
+            {
+                case TaskClass.MainKey:
+                    NewTaskElementDisp = "new Task";
+                    CloneTaskElementDisp = "clone Task";
+                    break;
+
+                case TaskClass.SubKey:
+                    NewTaskElementDisp = "new SubTask";
+                    CloneTaskElementDisp = "clone SubTask";
+                    break;
+
+                case TaskClass.Item:
+                    NewTaskElementDisp = "new Item";
+                    CloneTaskElementDisp = "clone Item";
+                    break;
+
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+
+        public void NewTaskElement()
+        {
+            switch (selectTaskClass)
+            {
+                case TaskClass.MainKey:
+                    addTaskMain();
+                    break;
+
+                case TaskClass.SubKey:
+                    addTaskSub();
+                    break;
+
+                case TaskClass.Item:
+                    addTaskItem();
+                    break;
+
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+
+        public void CloneTaskElement()
+        {
+            switch (selectTaskClass)
+            {
+                case TaskClass.MainKey:
+                    CloneTaskElementMain();
+                    break;
+
+                case TaskClass.SubKey:
+                    CloneTaskElementSub();
+                    break;
+
+                case TaskClass.Item:
+                    CloneTaskElementItem();
+                    break;
+
+                default:
+                    // 想定外のコマンド
+                    break;
+            }
+        }
+        private void CloneTaskElementMain()
+        {
+            // クローンを作成
+            var elem = (TaskKey)key[selectedIndex].Clone();
+            // クローンを追加
+            key.Insert(selectedIndex + 1, elem);
+        }
+        private void CloneTaskElementSub()
+        {
+            // クローンを作成
+            var elem = (TaskKeySub)key[selectedIndex].SubKey[selectedIndexSub].Clone();
+            // クローンを追加
+            key[selectedIndex].SubKey.Insert(selectedIndexSub + 1, elem);
+        }
+        private void CloneTaskElementItem()
+        {
+            // クローンを作成
+            var elem = (TaskItem)key[selectedIndex].SubKey[selectedIndexSub].Item[selectedIndexItem].Clone();
+            // クローンを追加
+            key[selectedIndex].SubKey[selectedIndexSub].Item.Insert(selectedIndexItem + 1, elem);
+        }
+
         private string baseCount;
         public string BaseCount
         {
@@ -962,6 +1074,7 @@ namespace TaskTimer
         public void SelectTaskView(TaskClass cls)
         {
             selectTaskClass = cls;
+            UpdateTaskElementDisp();
         }
 
         public void TaskViewOpe(TaskViewOpe ope)
@@ -1219,7 +1332,7 @@ namespace TaskTimer
         }
     }
 
-    class TaskKey
+    class TaskKey : ICloneable
     {
         private ObservableCollection<TaskKeySub> subkey;
         public ObservableCollection<TaskKeySub> SubKey
@@ -1271,9 +1384,25 @@ namespace TaskTimer
             this.name = name;
             _update = _main;
         }
+
+        public virtual object Clone()
+        {
+            // 自分のクローンを作成して返す
+            var elem = new TaskKey(alias, code, name, _update);
+            // DeepCopy
+            foreach (var it in this.subkey)
+            {
+                elem.subkey.Add((TaskKeySub)it.Clone());
+            }
+
+            return elem;
+
+
+            //return elem;
+        }
     }
 
-    class TaskKeySub : INotifyPropertyChanged
+    class TaskKeySub : INotifyPropertyChanged, ICloneable
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string PropertyName)
@@ -1320,17 +1449,26 @@ namespace TaskTimer
             this.code = code;
             this._update = _update;
         }
-        
+
+        public virtual object Clone()
+        {
+            var elem = new TaskKeySub(alias, code, _update);
+            // DeepCopy
+            foreach (var it in this.item)
+            {
+                elem.item.Add((TaskItem)it.Clone());
+            }
+
+            return elem;
+        }
     }
 
-    class TaskItem : INotifyPropertyChanged
+    class TaskItem : INotifyPropertyChanged, ICloneable
     {
         public string itemAlias;
         public string item;
         public int time;
         public string timeDisp;
-        private readonly Regex reTimeWithColon;
-        private readonly Regex reTimeWithoutColon;
         private Action<int, int> _updateTimeItem = null;
 
         public TaskItem(string alias, string item, Action<int, int> _item)
@@ -1340,8 +1478,15 @@ namespace TaskTimer
             this.time = 0;
             this._updateTimeItem = _item;
             this.MakeDispTime();
-            this.reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
-            this.reTimeWithoutColon = new Regex(@"(?:^(?<min>\d{1,2})$|^(?<hr>\d+)(?<min>\d\d)$)", RegexOptions.Compiled);
+        }
+
+        public virtual object Clone()
+        {
+            var elem = new TaskItem(itemAlias, item, _updateTimeItem);
+            // DeepCopy
+            // timeはコピーしない
+
+            return elem;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1395,7 +1540,7 @@ namespace TaskTimer
             set
             {
                 Match match;
-                match = reTimeWithColon.Match(value);
+                match = Util.reTimeWithColon.Match(value);
                 if (match.Success)
                 {
                     try
@@ -1418,7 +1563,7 @@ namespace TaskTimer
                 }
                 else
                 {
-                    match = reTimeWithoutColon.Match(value);
+                    match = Util.reTimeWithoutColon.Match(value);
                     if (match.Success)
                     {
                         try
