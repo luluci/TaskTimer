@@ -111,6 +111,18 @@ namespace TaskTimer
         }
 
 
+        public string FixTask
+        {
+            get
+            {
+                return json.FixTask;
+            }
+            set
+            {
+                json.FixTask = value;
+            }
+        }
+
         public string ExcelPath
         {
             get
@@ -157,6 +169,7 @@ namespace TaskTimer
                 json.AutoPilotPassword = Encrypt(value);
             }
         }
+
 
         private string Encrypt(string text)
         {
@@ -250,6 +263,7 @@ namespace TaskTimer
                     LogDir = "",
                     SummaryDir = "",
                     SettingsDir = "",
+                    FixTask = "",
                     ExcelPath = "",
                     AutoPilotUrl = "",
                     AutoPilotId = "",
@@ -262,6 +276,10 @@ namespace TaskTimer
 
         private void LoadVersionUp()
         {
+            if (json.FixTask == null)
+            {
+                json.FixTask = "";
+            }
             if (json.ExcelPath == null)
             {
                 json.ExcelPath = "";
@@ -354,6 +372,10 @@ namespace TaskTimer
 
         [JsonPropertyName("settings_dir")]
         public string SettingsDir { get; set; }
+
+        // 固定タスク：削除不可とする
+        [JsonPropertyName("fix_task")]
+        public string FixTask { get; set; }
 
         [JsonPropertyName("excel_path")]
         public string ExcelPath { get; set; }

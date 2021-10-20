@@ -23,7 +23,8 @@ namespace TaskTimer
         public static readonly DateTime CurrentDate = DateTime.Now;     // 今日の日時。起動時の日時に依存して固定とする
         public static DateTime TargetDate = DateTime.Now;               // カレンダーで指定する表示対象の日時
 
-        public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
+        //public static readonly string reWord = @"[\w\+\-\.\@\:\+\*\(\)_ !\?&@・（）、。,/]+";
+        public static readonly string reWord = @"[^\t]+";
 
         public static readonly Regex reTimeWithColon = new Regex(@"^(\d+):(\d+)$", RegexOptions.Compiled);
         public static readonly Regex reTimeWithoutColon = new Regex(@"(?:^(?<min>\d{1,2})$|^(?<hr>\d+)(?<min>\d\d)$)", RegexOptions.Compiled);

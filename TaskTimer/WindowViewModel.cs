@@ -1150,7 +1150,15 @@ namespace TaskTimer
                     // 必ず1つ以上のタスクが存在するようにチェック
                     if (key.Count > 1)
                     {
-                        taskDeleteMainKey(selectedIndex);
+                        // 固定タスクは削除不可
+                        if (!IsFixTask(key[selectedIndex].Alias))
+                        {
+                            taskDeleteMainKey(selectedIndex);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"'{key[selectedIndex].Alias}' は固定タスクに指定されています");
+                        }
                     }
                     break;
                 default:
@@ -1265,6 +1273,14 @@ namespace TaskTimer
             hasChangeLog = true;
             // 
             key[selectedIndex].SubKey[selectedIndexSub].Item.RemoveAt(curr);
+        }
+
+
+        private bool IsFixTask(string taskAlias)
+        {
+            // Aliasが固定タスクに指定されているかどうか判定する
+            // 固定タスクは削除不可
+            return (config.FixTask.Length != 0 && config.FixTask.Equals(taskAlias));
         }
 
 
