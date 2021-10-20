@@ -67,13 +67,18 @@ namespace TaskTimer
         private Task configSaveTask = null;
         private EdgeCtrl EdgeCtrl = null;
         private ExcelCtrl ExcelCtrl = null;
+        private Font Font;
 
         public WindowViewModel()
         {
+
             // 最初にconfigをロード
             config = new Config();
             //await config.Load();
             config.Load().Wait();   // UIスレッドを進めたくないので同期的に実行
+            //
+            
+            Font = new Font("Meiryo UI");
             //
             settings = new Settings(config.SettingsDirPath);
             settings.Load();
@@ -140,6 +145,25 @@ namespace TaskTimer
             await TimerEllapse(1);
         }
 
+
+        public string SelectFont
+        {
+            get { return Font.Select; }
+        }
+        public int SelectFontIndex
+        {
+            get { return Font.FontIndex; }
+            set
+            {
+                Font.FontIndex = value;
+                NotifyPropertyChanged(nameof(SelectFontIndex));
+                NotifyPropertyChanged(nameof(SelectFont));
+            }
+        }
+        public FontItem[] FontList
+        {
+            get { return Font.FontList; }
+        }
 
 
         private void LoadTask()

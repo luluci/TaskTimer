@@ -91,6 +91,18 @@
                         </materialDesign:ColorZone>
                         <materialDesign:ColorZone Mode="Standard" materialDesign:ShadowAssist.ShadowDepth="Depth1" Padding="16" Height="740" >
                             <StackPanel>
+                                <!--
+                                <StackPanel Margin="0,0,0,15" Orientation="Horizontal">
+                                    <TextBlock Text="Font:"/>
+                                    <ComboBox Width="170" Margin="10,0" ItemsSource="{Binding FontList, Mode=OneWay}" SelectedIndex="{Binding SelectFontIndex}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding LocalFontName}" FontFamily="{Binding FontFamily}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                -->
                                 <StackPanel Margin="0,0,0,15">
                                     <TextBlock Text="Logフォルダパス" FontWeight="Bold" />
                                     <TextBox Text="{Binding LogDir}" TextWrapping="Wrap" Height="40" />
@@ -154,8 +166,8 @@
                 <Grid Margin="0,47,0,251" Background="#FF98E8FF">
                     <Grid Margin="0,47,0,35" Background="#FF98E8FF">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"/>
                             <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="6*"/>
                         </Grid.ColumnDefinitions>
                         <ListBox x:Name="TaskKey1" ItemsSource="{Binding Key}" Grid.Row="0" Grid.Column="0" MouseLeftButtonDown="ListView_TaskMain_MouseLeftButtonDown" PreviewMouseLeftButtonUp="ListView_TaskMain_PreviewMouseLeftButtonUp" SelectionChanged="TaskMain_SelectionChanged" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" Margin="10,0,0,0" Background="White">
@@ -174,8 +186,8 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding Alias}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
-                                        <TextBox Text="{Binding Alias, Mode=TwoWay}" MinWidth="150" MaxWidth="180" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
+                                        <TextBlock Text="{Binding Alias}" FontFamily="{Binding SelectFont}" MouseDown="TextBlock_MouseDown" Grid.Row="0" />
+                                        <TextBox Text="{Binding Alias, Mode=TwoWay}" FontFamily="{Binding SelectFont}" MinWidth="150" MaxWidth="180" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" Visibility="Collapsed" Grid.Row="0" />
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
