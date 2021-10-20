@@ -1238,7 +1238,16 @@ namespace TaskTimer
         }
 
 
-
+        private bool excelExportEnable = true;
+        public bool ExcelExportEnable
+        {
+            get { return excelExportEnable; }
+            set
+            {
+                excelExportEnable = value;
+                NotifyPropertyChanged(nameof(ExcelExportEnable));
+            }
+        }
         public string ExcelPath
         {
             get
@@ -1252,7 +1261,9 @@ namespace TaskTimer
         }
         public async Task OnButtonClick_ExcelExport()
         {
+            ExcelExportEnable = false;
             await ExcelCtrl.Export(config.ExcelPath, key, Util.TargetDate);
+            ExcelExportEnable = true;
         }
 
 
