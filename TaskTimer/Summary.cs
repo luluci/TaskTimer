@@ -346,6 +346,11 @@ namespace TaskTimer
                 return (-1, -1, -1);
             }
         }
+
+        public void Clear()
+        {
+            data.Clear();
+        }
     }
 
     class SummaryNode

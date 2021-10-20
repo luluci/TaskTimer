@@ -479,6 +479,8 @@ namespace TaskTimer
                 isTargetDateChanged = false;
                 // タイマを止める
                 TimerStop();
+                // SummaryViewをクリア
+                InitSummary();
                 // 現在ログを保存しておく
                 await SaveLogAsync();
                 // 指定日時のログを展開する
@@ -950,6 +952,12 @@ namespace TaskTimer
         public void MakeSummary(SummaryDispFormat form)
         {
             summary.Update(key, form);
+            NotifyPropertyChanged(nameof(SummaryView));
+        }
+
+        public void InitSummary()
+        {
+            summary.Clear();
             NotifyPropertyChanged(nameof(SummaryView));
         }
 
