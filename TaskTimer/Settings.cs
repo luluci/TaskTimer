@@ -89,7 +89,7 @@ namespace TaskTimer
                 // ファイルが存在しなければベース作成
                 File.CreateText(inputKeyFile);
                 // ダミーでKey作成
-                Keys.Add(("NewCode", "NewName", "NewAlias", "NewSubCode", "NewSubAlias", "NewItem", "NewItemAlias"));
+                //Keys.Add(("NewCode", "NewName", "NewAlias", "NewSubCode", "NewSubAlias", "NewItem", "NewItemAlias"));
             }
             // サブキーファイル
             if (File.Exists(inputSubKeyFile))

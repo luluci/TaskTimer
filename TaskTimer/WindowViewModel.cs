@@ -82,6 +82,12 @@ namespace TaskTimer
             //
             settings = new Settings(config.SettingsDirPath);
             settings.Load();
+            if (settings.Keys.Count == 0)
+            {
+                // 何も要素が無ければ初期化
+                settings.Keys.Add(("Rule20%", "Rule20%", "Rule20%", "Rule20%", "Rule20%", "Rule20%", "Appli1"));
+                settings.Keys.Add(("Rule20%", "Rule20%", "Rule20%", "Rule20%", "Rule20%", "Rule20%", "Appli2"));
+            }
             //
             logger = new Logger(config.LogDirPath);
             logger.Load();
