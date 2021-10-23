@@ -232,10 +232,23 @@
                             </ListView>
                         </Grid>
                     </Grid>
-                    <TextBox Text="{Binding Key/Code, Mode=TwoWay}" HorizontalAlignment="Left" Margin="13,0,0,6" TextWrapping="Wrap" Width="130" Height="24" VerticalAlignment="Bottom"/>
-                    <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Margin="148,0,294,6" TextWrapping="Wrap" Height="24" VerticalAlignment="Bottom"/>
-                    <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Margin="0,0,225,6" TextWrapping="Wrap" HorizontalAlignment="Right" Width="64" Height="24" VerticalAlignment="Bottom"/>
-                    <TextBox Text="{Binding Key/SubKey/Item/Item, Mode=TwoWay}" Margin="0,0,95,6" TextWrapping="Wrap" HorizontalAlignment="Right" Width="125" Height="24" VerticalAlignment="Bottom"/>
+                    <Grid Background="#FF98E8FF" Height="35" VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding Key/Code, Mode=TwoWay}" Grid.Row="0" Grid.Column="0" Margin="10,5,12,6" TextWrapping="Wrap"/>
+                        <TextBox Text="{Binding Key/Name, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="10,5,0,6" TextWrapping="Wrap"/>
+                        <TextBox Text="{Binding Key/SubKey/Code, Mode=TwoWay}" Grid.Row="0" Grid.Column="2" Margin="12,5,0,6" TextWrapping="Wrap"/>
+                        <TextBox Text="{Binding Key/SubKey/Item/Item, Mode=TwoWay}" Grid.Row="0" Grid.Column="3" Margin="10,5,0,6" TextWrapping="Wrap"/>
+                        <Grid  Grid.Row="0" Grid.Column="4" Width="100">
+                            <TextBox Text="{Binding TimeSummary, Mode=OneWay}" Margin="15,5,20,6" TextWrapping="Wrap" IsEnabled="False" IsReadOnlyCaretVisible="True"/>
+                            <TextBlock Margin="0,0,20,5" TextWrapping="Wrap" Text="総計" FontSize="11" TextAlignment="Right" HorizontalAlignment="Right" Width="31" Height="19" VerticalAlignment="Bottom"/>
+                        </Grid>
+                    </Grid>
                     <!--<TextBox Text="{Binding SelectTask, Mode=OneWay}" HorizontalAlignment="Left" Margin="11,0,0,10" TextWrapping="Wrap" Width="438" Height="24" VerticalAlignment="Bottom"/>-->
                     <!--
                     <Button Click="Button_AddTask_Click" Content="Task追加" HorizontalAlignment="Left" Margin="219,8,0,0" Width="115" Height="27" VerticalAlignment="Top"/>
@@ -244,8 +257,6 @@
                     -->
                     <Button Click="Button_NewElement_Click" Content="{Binding NewTaskElementDisp}" ToolTip="選択しているリストの末尾に新しい要素を追加" HorizontalAlignment="Left" Margin="397,8,0,0" Width="120" Height="27" VerticalAlignment="Top"/>
                     <Button Click="Button_CloneElement_Click" Content="{Binding CloneTaskElementDisp}" ToolTip="選択している要素の後ろにクローンを追加" HorizontalAlignment="Left" Margin="532,8,0,0" Width="120" Height="27" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding TimeSummary, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,0,20,6" TextWrapping="Wrap" Width="60" IsEnabled="False" IsReadOnlyCaretVisible="True" Height="24" VerticalAlignment="Bottom"/>
-                    <TextBlock HorizontalAlignment="Right" Margin="0,0,20,5" TextWrapping="Wrap" Text="総計" Width="31" FontSize="11" TextAlignment="Right" Height="19" VerticalAlignment="Bottom"/>
                     <Button Click="Button_TaskViewOpeUp_Click" Style="{DynamicResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Height="33" Margin="12,5,0,0" Width="33" ToolTip="選択している要素を１つ上に移動" VerticalAlignment="Top">
                         <materialDesign:PackIcon Kind="ChevronUp" Height="23" Width="23"/>
                     </Button>
