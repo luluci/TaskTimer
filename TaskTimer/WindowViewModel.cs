@@ -918,12 +918,7 @@ namespace TaskTimer
                 var check = config.AskFileLock();
                 if (check)
                 {
-                    //configSaveTask = config.SaveAsync();
-                    Func<Task> func = async () =>
-                    {
-                        await config.SaveAsync();
-                    };
-                    configSaveTask = Task.Run(func);
+                    configSaveTask = config.SaveAsync();
                     await configSaveTask;
                 }
             }

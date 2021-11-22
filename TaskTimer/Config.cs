@@ -343,22 +343,21 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
-            var options = new JsonSerializerOptions
+            await Task.Run(async () =>
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true,
-            };
-            //
-            string jsonStr = JsonSerializer.Serialize(json, options);
-            //
-            using (var stream = new FileStream(configFilePath, FileMode.Create, FileAccess.Write))
-            {
-                // 呼び出し元でWait()している。ConfigureAwait(false)無しにawaitするとデッドロックで死ぬ。
-                //await JsonSerializer.SerializeAsync(stream, json, options).ConfigureAwait(false);
-                await JsonSerializer.SerializeAsync(stream, json, options);
-                //var task = JsonSerializer.SerializeAsync(stream, json, options);
-                //task.Wait();
-            }
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true,
+                };
+                //
+                string jsonStr = JsonSerializer.Serialize(json, options);
+                //
+                using (var stream = new FileStream(configFilePath, FileMode.Create, FileAccess.Write))
+                {
+                    await JsonSerializer.SerializeAsync(stream, json, options);
+                }
+            });
         }
     }
 

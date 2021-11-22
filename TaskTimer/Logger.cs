@@ -194,18 +194,30 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
-            // ファイル書き込み
-            using (var writer = new StreamWriter(logFileTemp))
+            await Task.Run(async () =>
             {
-                foreach (var key in SaveBuff)
+                // ファイル書き込み
+                using (var writer = new StreamWriter(logFileTemp))
                 {
-                    await writer.WriteLineAsync($"{key.Code}\t{key.Name}\t{key.Alias}\t{key.SubCode}\t{key.SubAlias}\t{key.Item}\t{key.ItemAlias}\t{key.min}");
+                    foreach (var key in SaveBuff)
+                    {
+                        //
+                        var code = key.Code.Replace('\t', '_');
+                        var name = key.Name.Replace('\t', '_');
+                        var alias = key.Alias.Replace('\t', '_');
+                        var subcode = key.SubCode.Replace('\t', '_');
+                        var subalias = key.SubAlias.Replace('\t', '_');
+                        var item = key.Item.Replace('\t', '_');
+                        var itemalias = key.ItemAlias.Replace('\t', '_');
+                        //
+                        await writer.WriteLineAsync($"{code}\t{name}\t{alias}\t{subcode}\t{subalias}\t{item}\t{itemalias}\t{key.min}");
+                    }
                 }
-            }
-            // 旧ファイルを削除
-            File.Delete(logFile);
-            // tmpファイルを新ファイルとしてリネーム
-            File.Move(logFileTemp, logFile);
+                // 旧ファイルを削除
+                File.Delete(logFile);
+                // tmpファイルを新ファイルとしてリネーム
+                File.Move(logFileTemp, logFile);
+            });
         }
     }
 }
