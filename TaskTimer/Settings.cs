@@ -28,14 +28,24 @@ namespace TaskTimer
         public Settings(string tgtDirPath)
         {
             tgtDir = tgtDirPath;
-            inputKeyFile = tgtDir + @"\key.txt";                          // Key * SubKey の全組み合わせを記憶
-            inputKeyFileTemp = tgtDir + @"\key.tmp";                      // Key * SubKey の全組み合わせを記憶
-            inputSubKeyFile = tgtDir + @"\subkey_template.txt";           // SubKeyのテンプレート設定ファイル
-            inputSubKeyFileTemp = tgtDir + @"\subkey_template.tmp";       // SubKeyのテンプレート設定保存時一時ファイル
+            inputKeyFile = Path.Combine(tgtDir, $"key.txt");                        // Key * SubKey の全組み合わせを記憶
+            inputKeyFileTemp = Path.Combine(tgtDir, $"key.tmp");                    // Key * SubKey の全組み合わせを記憶
+            inputSubKeyFile = Path.Combine(tgtDir, $"subkey_template.txt");         // SubKeyのテンプレート設定ファイル
+            inputSubKeyFileTemp = Path.Combine(tgtDir, $"subkey_template.tmp");     // SubKeyのテンプレート設定保存時一時ファイル
             settingFileLoaded = false;
 
             Keys = new List<(string Code, string Name, string Alias, string SubCode, string SubAlias, string Item, string ItemAlias)>();
             SubKeys = new List<(string Code, string Alias, string Item, string ItemAlias)>();
+        }
+
+        public void UpdateTgtDir(string tgtDirPath)
+        {
+            tgtDir = tgtDirPath;
+            // ログファイル名作成
+            inputKeyFile = Path.Combine(tgtDir, $"key.txt");                        // Key * SubKey の全組み合わせを記憶
+            inputKeyFileTemp = Path.Combine(tgtDir, $"key.tmp");                    // Key * SubKey の全組み合わせを記憶
+            inputSubKeyFile = Path.Combine(tgtDir, $"subkey_template.txt");         // SubKeyのテンプレート設定ファイル
+            inputSubKeyFileTemp = Path.Combine(tgtDir, $"subkey_template.tmp");     // SubKeyのテンプレート設定保存時一時ファイル
         }
 
         public void Load()
@@ -182,9 +192,11 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
+            var outfiletemp = inputKeyFileTemp;
+            var outfile = inputKeyFile;
             // ファイル書き込み
             // tmpファイルに一旦保存する
-            using (var writer = new StreamWriter(inputKeyFileTemp))
+            using (var writer = new StreamWriter(outfiletemp))
             {
                 foreach (var key in Keys)
                 {
@@ -192,9 +204,9 @@ namespace TaskTimer
                 }
             }
             // 旧ファイルを削除
-            File.Delete(inputKeyFile);
+            File.Delete(outfile);
             // tmpファイルを新ファイルとしてリネーム
-            File.Move(inputKeyFileTemp, inputKeyFile);
+            File.Move(outfiletemp, outfile);
         }
     }
 }

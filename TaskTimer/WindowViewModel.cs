@@ -529,12 +529,18 @@ namespace TaskTimer
         public string SummaryDir
         {
             get { return config.SummaryDir; }
-            set { config.SummaryDir = value; }
+            set {
+                config.SummaryDir = value;
+                summary.UpdateTgtDir(config.SummaryDir);
+            }
         }
         public string SettingsDir
         {
             get { return config.SettingsDir; }
-            set { config.SettingsDir = value; }
+            set {
+                config.SettingsDir = value;
+                settings.UpdateTgtDir(config.SettingsDir);
+            }
         }
 
 

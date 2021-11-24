@@ -48,14 +48,24 @@ namespace TaskTimer
             DateTime dt = DateTime.Now;
             daykey = dt.ToString("yyyyMMdd");
             // ログファイル名作成
-            summaryFileType1 = $@"{tgtDir}\{baseFileName}.type1.{daykey}.txt";
-            summaryFileType1Temp = $@"{tgtDir}\{baseFileName}.type1.{daykey}.tmp";
-            summaryFileType2 = $@"{tgtDir}\{baseFileName}.type2.{daykey}.txt";
-            summaryFileType2Temp = $@"{tgtDir}\{baseFileName}.type2.{daykey}.tmp";
+            summaryFileType1 = Path.Combine(tgtDir, $"{baseFileName}.type1.{daykey}.txt");
+            summaryFileType1Temp = Path.Combine(tgtDir, $"{baseFileName}.type1.{daykey}.tmp");
+            summaryFileType2 = Path.Combine(tgtDir, $"{baseFileName}.type2.{daykey}.txt");
+            summaryFileType2Temp = Path.Combine(tgtDir, $"{baseFileName}.type2.{daykey}.tmp");
 
             timeAll = 0;
             logdummy = "";
             data = new ObservableCollection<SummaryNode>();
+        }
+
+        public void UpdateTgtDir(string tgtDirPath)
+        {
+            tgtDir = tgtDirPath;
+            // ログファイル名作成
+            summaryFileType1 = Path.Combine(tgtDir, $"{baseFileName}.type1.{daykey}.txt");
+            summaryFileType1Temp = Path.Combine(tgtDir, $"{baseFileName}.type1.{daykey}.tmp");
+            summaryFileType2 = Path.Combine(tgtDir, $"{baseFileName}.type2.{daykey}.txt");
+            summaryFileType2Temp = Path.Combine(tgtDir, $"{baseFileName}.type2.{daykey}.tmp");
         }
 
         private void MakeOutDir()
