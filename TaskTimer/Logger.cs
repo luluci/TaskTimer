@@ -52,6 +52,14 @@ namespace TaskTimer
             System.Diagnostics.Process.Start("explorer.exe", tgtDir);
         }
 
+        public void UpdateTgtDir(string tgtDirPath)
+        {
+            tgtDir = tgtDirPath;
+            // ログファイル名作成
+            logFile = Path.Combine(tgtDir, $"{baseFileName}.{daykey}.txt");
+            logFileTemp = Path.Combine(tgtDir, $"{baseFileName}.{daykey}.tmp");
+        }
+
         public void UpdateDate()
         {
             // 本日の日付取得
@@ -194,10 +202,14 @@ namespace TaskTimer
 
         public async Task SaveAsync()
         {
+            // 
+            var log = logFile;
+            var temp = logFileTemp;
             await Task.Run(async () =>
             {
+
                 // ファイル書き込み
-                using (var writer = new StreamWriter(logFileTemp))
+                using (var writer = new StreamWriter(temp))
                 {
                     foreach (var key in SaveBuff)
                     {
@@ -214,9 +226,9 @@ namespace TaskTimer
                     }
                 }
                 // 旧ファイルを削除
-                File.Delete(logFile);
+                File.Delete(log);
                 // tmpファイルを新ファイルとしてリネーム
-                File.Move(logFileTemp, logFile);
+                File.Move(temp, log);
             });
         }
     }

@@ -494,12 +494,36 @@ namespace TaskTimer
             }
         }
 
+        public async void TargetLogDirChanged()
+        {
+            // LogDirが変更されたタイミングでコール
+            // 
+            // タイマを止める
+            TimerStop();
+            // SummaryViewをクリア
+            InitSummary();
+            // 現在ログを保存しておく
+            await SaveLogAsync();
+            // LogDir更新
+            logger.UpdateTgtDir(config.LogDir);
+            // ログを展開する
+            await Task.Run(() =>
+            {
+                logger.Load();
+            });
+            LoadTask();
+        }
 
         public string LogDir
         {
             get { return config.LogDir; }
             set {
+                bool changed = (config.LogDir != value);
                 config.LogDir = value;
+                if (changed)
+                {
+                    TargetLogDirChanged();
+                }
             }
         }
         public string SummaryDir
