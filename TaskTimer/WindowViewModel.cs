@@ -308,6 +308,7 @@ namespace TaskTimer
                 sum += item.Value;
             }
             // ログ時間を展開
+            summary.Set(0);
             SummaryAdd(sum);
         }
 
@@ -982,7 +983,7 @@ namespace TaskTimer
 
         public void InitSummary()
         {
-            summary.Clear();
+            summary.ListClear();
             NotifyPropertyChanged(nameof(SummaryView));
         }
 

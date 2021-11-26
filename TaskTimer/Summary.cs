@@ -84,6 +84,10 @@ namespace TaskTimer
             System.Diagnostics.Process.Start("explorer.exe", tgtDir);
         }
 
+        public void Set(int min)
+        {
+            timeAll = min;
+        }
         public void Add(int min)
         {
             timeAll += min;
@@ -357,7 +361,7 @@ namespace TaskTimer
             }
         }
 
-        public void Clear()
+        public void ListClear()
         {
             data.Clear();
         }
